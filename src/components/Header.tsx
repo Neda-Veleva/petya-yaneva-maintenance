@@ -43,7 +43,7 @@ export default function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-gray-200 hover:text-gold-400 transition-colors duration-300 font-medium text-sm"
+                className="text-gold-400 hover:text-white transition-colors duration-300 font-medium text-sm"
               >
                 {item.label}
               </a>
@@ -59,7 +59,7 @@ export default function Header() {
 
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden absolute right-0 p-2 text-gray-200 hover:text-gold-400 transition-colors"
+            className="lg:hidden absolute right-0 p-2 text-gold-400 hover:text-white transition-colors"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -74,7 +74,7 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-gray-200 hover:text-gold-400 transition-colors duration-300 font-medium py-2"
+                className="text-gold-400 hover:text-white transition-colors duration-300 font-medium py-2"
               >
                 {item.label}
               </a>
