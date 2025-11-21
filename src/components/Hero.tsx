@@ -31,7 +31,13 @@ const slides = [
     titleGold: 'Студио',
     badge: 'Премиум Lash Studio',
     description: 'Луксозно студио в сърцето на София, оборудвано с най-модерните технологии и висококачествени продукти за перфектни резултати.',
-    image: 'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1080',
+    images: [
+      'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      'https://images.pexels.com/photos/3997376/pexels-photo-3997376.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1080',
+    ],
     thumbnail: 'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=300',
     stat: { value: 'София', label: 'Централна локация' },
     icon: MapPin,
@@ -40,6 +46,7 @@ const slides = [
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSalonImage, setCurrentSalonImage] = useState(0);
   const slide = slides[currentSlide];
 
   return (
@@ -131,12 +138,29 @@ export default function Hero() {
           <div className="relative animate-float order-3">
             <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
               <img
-                src={slide.image}
+                src={slide.type === 'salon' ? slide.images[currentSalonImage] : slide.image}
                 alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title}
                 className="w-full h-full object-cover brightness-110 transition-all duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
               <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
+
+              {/* Salon Image Navigation */}
+              {slide.type === 'salon' && slide.images && (
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
+                  {slide.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSalonImage(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentSalonImage
+                          ? 'bg-gold-500 w-6'
+                          : 'bg-gray-400 hover:bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="absolute -bottom-8 -left-8 bg-charcoal-400 border border-gold-500/30 rounded-2xl shadow-dark-xl p-8 backdrop-blur-md">
