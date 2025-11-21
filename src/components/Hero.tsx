@@ -75,31 +75,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-[auto_1fr_1fr] gap-8 items-center">
-          {/* Thumbnails sidebar */}
-          <div className="flex lg:flex-col gap-4 justify-center lg:justify-start order-2 lg:order-1">
-            {slides.map((s, index) => (
-              <button
-                key={s.id}
-                onClick={() => setCurrentSlide(index)}
-                className={`relative w-20 h-20 rounded-xl overflow-hidden transition-all duration-300 ${
-                  index === currentSlide
-                    ? 'ring-2 ring-gold-500 shadow-gold-glow scale-110'
-                    : 'opacity-50 hover:opacity-100 hover:scale-105'
-                }`}
-              >
-                <img
-                  src={s.thumbnail}
-                  alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
-              </button>
-            ))}
-          </div>
-
+        <div className="grid lg:grid-cols-[1fr_1fr_auto] gap-8 items-center">
           {/* Content */}
-          <div className="space-y-8 order-1 lg:order-2">
+          <div className="space-y-8 order-1">
             <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow">
               <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
               <span className="text-sm text-gold-400 font-medium tracking-wide">{slide.badge}</span>
@@ -224,6 +202,28 @@ export default function Hero() {
 
             <div className="absolute -top-4 -right-4 w-32 h-32 border-2 border-gold-500/30 rounded-full blur-sm"></div>
             <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-gold-500/20 rounded-full blur-sm"></div>
+          </div>
+
+          {/* Thumbnails sidebar */}
+          <div className="flex lg:flex-col gap-4 justify-center lg:justify-start order-3">
+            {slides.map((s, index) => (
+              <button
+                key={s.id}
+                onClick={() => setCurrentSlide(index)}
+                className={`relative w-20 h-20 rounded-xl overflow-hidden transition-all duration-300 ${
+                  index === currentSlide
+                    ? 'ring-2 ring-gold-500 shadow-gold-glow scale-110'
+                    : 'opacity-50 hover:opacity-100 hover:scale-105'
+                }`}
+              >
+                <img
+                  src={s.thumbnail}
+                  alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
