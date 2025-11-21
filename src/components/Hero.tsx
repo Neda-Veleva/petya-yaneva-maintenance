@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
+import ImageGrid from './ImageGrid';
 
 const slides = [
   {
@@ -55,7 +56,7 @@ export default function Hero() {
   const slide = slides[currentSlide];
 
   useEffect(() => {
-    if (slide.type === 'salon' && slide.imageSlides) {
+    if (slide.type === 'salon' && slide.imageSlides && slide.imageSlides.length > 1) {
       const interval = setInterval(() => {
         setCurrentSalonImage((prev) => (prev + 1) % slide.imageSlides.length);
       }, 4000);
@@ -130,47 +131,28 @@ export default function Hero() {
           {/* Image */}
           <div className="relative animate-float order-3">
             {slide.type === 'salon' && slide.imageSlides ? (
-              <div className="relative w-full h-[650px]">
-                <div className="grid grid-cols-2 gap-3 h-full">
-                  <div className="col-span-2 rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
-                    <img
-                      src={slide.imageSlides[currentSalonImage][0]}
-                      alt="Studio 1"
-                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
-                    <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
-                  </div>
-                  <div className="rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
-                    <img
-                      src={slide.imageSlides[currentSalonImage][1]}
-                      alt="Studio 2"
-                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
-                    />
-                  </div>
-                  <div className="rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
-                    <img
-                      src={slide.imageSlides[currentSalonImage][2]}
-                      alt="Studio 3"
-                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
-                    />
-                  </div>
-                </div>
+              <div className="relative">
+                <ImageGrid
+                  images={slide.imageSlides[currentSalonImage]}
+                  slideIndex={currentSalonImage}
+                />
 
                 {/* Salon Slide Navigation */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
-                  {slide.imageSlides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSalonImage(index)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        index === currentSalonImage
-                          ? 'bg-gold-500 w-6'
-                          : 'bg-gray-400 hover:bg-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
+                {slide.imageSlides.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
+                    {slide.imageSlides.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSalonImage(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentSalonImage
+                            ? 'bg-gold-500 w-6'
+                            : 'bg-gray-400 hover:bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
