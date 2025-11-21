@@ -29,7 +29,7 @@ const slides = [
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1583001809350-ed2c54f0d1a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxleWVsYXNoZXMlMjBjbG9zZXVwfGVufDF8fHx8MTc2MzEzMzQ0Nnww&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=1080',
     title: 'Перфектна',
     titleGold: 'очна линия',
     subtitle: 'Удължаване на мигли с естествен ефект',
