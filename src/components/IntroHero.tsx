@@ -14,10 +14,12 @@ const slides = [
     image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
     title: 'Специална',
     titleGold: 'промоция',
-    subtitle: 'Класически екстеншъни',
+    subtitle: 'Класически мигли за първи клиенти',
     promotion: {
+      service: 'Класически Екстеншъни',
       oldPrice: '80лв',
       newPrice: '60лв',
+      description: 'Само за нови клиенти през този месец',
     },
   },
   {
@@ -134,27 +136,41 @@ export default function IntroHero() {
           }`}
         >
           {slide.promotion ? (
-            <div className="inline-block">
-              <div className="relative bg-charcoal-400/60 backdrop-blur-xl border-2 border-gold-500/40 rounded-2xl px-8 py-6 shadow-gold-glow-lg overflow-hidden">
+            <div className="max-w-2xl mx-auto">
+              <div className="relative bg-charcoal-400/60 backdrop-blur-xl border-2 border-gold-500/40 rounded-3xl p-10 shadow-gold-glow-lg overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-400/10 to-transparent animate-shimmer"></div>
 
-                <div className="relative flex items-center gap-6">
-                  <span className="text-2xl text-gray-400 line-through font-light">
-                    {slide.promotion.oldPrice}
-                  </span>
-                  <span className="text-5xl md:text-6xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
-                    {slide.promotion.newPrice}
-                  </span>
+                <div className="relative space-y-6">
+                  <div className="inline-flex items-center px-4 py-2 bg-gold-500/20 rounded-full border border-gold-400/50">
+                    <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">Ограничена оферта</span>
+                  </div>
+
+                  <h3 className="text-3xl md:text-4xl font-serif text-white font-bold">
+                    {slide.promotion.service}
+                  </h3>
+
+                  <div className="flex items-center justify-center gap-6">
+                    <span className="text-3xl text-gray-500 line-through font-light">
+                      {slide.promotion.oldPrice}
+                    </span>
+                    <span className="text-6xl md:text-7xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
+                      {slide.promotion.newPrice}
+                    </span>
+                  </div>
+
+                  <p className="text-gray-300 text-lg">
+                    {slide.promotion.description}
+                  </p>
+
+                  <a
+                    href="#services"
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-bold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 group"
+                  >
+                    <span>Виж повече</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </a>
                 </div>
               </div>
-
-              <a
-                href="#services"
-                className="inline-flex items-center gap-2 mt-6 px-8 py-3 bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500/10 rounded-full font-semibold transition-all duration-300 hover:shadow-gold-glow group"
-              >
-                <span>Виж повече</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
             </div>
           ) : slide.service ? (
             <a
