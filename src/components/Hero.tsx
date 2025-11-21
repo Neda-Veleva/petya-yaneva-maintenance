@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
 
 const slides = [
@@ -53,6 +53,16 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentSalonImage, setCurrentSalonImage] = useState(0);
   const slide = slides[currentSlide];
+
+  useEffect(() => {
+    if (slide.type === 'salon' && slide.imageSlides) {
+      const interval = setInterval(() => {
+        setCurrentSalonImage((prev) => (prev + 1) % slide.imageSlides.length);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+  }, [currentSlide, slide]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-gradient">
