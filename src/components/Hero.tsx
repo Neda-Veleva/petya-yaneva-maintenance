@@ -20,10 +20,10 @@ export default function Hero() {
 
           <div className="space-y-4">
             <h1 className="font-serif text-6xl lg:text-8xl text-white leading-none tracking-tight">
-              Lashes by
+              Петя
             </h1>
             <h2 className="font-serif text-6xl lg:text-8xl bg-gold-shimmer bg-clip-text text-transparent leading-none tracking-tight animate-shimmer">
-              Petya Yaneva
+              Янева
             </h2>
             <div className="h-1 w-32 bg-gold-shimmer animate-shimmer"></div>
           </div>

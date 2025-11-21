@@ -15,14 +15,13 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-center h-20 relative">
           <div className="absolute left-0 flex items-center gap-3">
        
             <div>
-              <p className="text-xs text-gray-500">Lashes by</p>
-              <h1 className="font-serif text-2xl text-gold-600 font-bold">Petya Yaneva</h1>
+              <h1 className="font-serif text-6xl text-gold-600 font-bold">PY</h1>
             </div>
           </div>
 
