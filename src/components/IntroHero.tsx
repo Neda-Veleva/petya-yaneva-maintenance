@@ -68,22 +68,32 @@ export default function IntroHero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background images with crossfade */}
       <div className="absolute inset-0">
-        {slides.map((s, index) => (
-          <div
-            key={s.id}
-            className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
-              index === currentSlide
-                ? 'opacity-50 scale-100'
-                : 'opacity-0 scale-110'
-            }`}
-          >
+        {slides.length > 1 ? (
+          slides.map((s, index) => (
+            <div
+              key={s.id}
+              className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
+                index === currentSlide
+                  ? 'opacity-50 scale-100'
+                  : 'opacity-0 scale-110'
+              }`}
+            >
+              <img
+                src={s.image}
+                alt="Luxury lashes"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))
+        ) : (
+          <div className="absolute inset-0">
             <img
-              src={s.image}
+              src={slide.image}
               alt="Luxury lashes"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover opacity-50"
             />
           </div>
-        ))}
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-charcoal-500/60 via-charcoal-600/50 to-black/70"></div>
       </div>
 
@@ -105,7 +115,7 @@ export default function IntroHero() {
         <div className="flex justify-center">
           <div
             className={`relative transition-all duration-700 ${
-              isTransitioning ? 'scale-0 rotate-180 opacity-0' : 'scale-100 rotate-0 opacity-100'
+              slides.length > 1 && isTransitioning ? 'scale-0 rotate-180 opacity-0' : 'scale-100 rotate-0 opacity-100'
             }`}
           >
             <div className="absolute inset-0 bg-gold-400/20 rounded-full blur-2xl animate-pulse"></div>
@@ -120,7 +130,7 @@ export default function IntroHero() {
         {/* Main headline with sexy slide animation */}
         <div
           className={`space-y-6 transition-all duration-[1000ms] ${
-            isTransitioning
+            slides.length > 1 && isTransitioning
               ? 'opacity-0 translate-y-10 scale-95'
               : 'opacity-100 translate-y-0 scale-100'
           }`}
@@ -144,7 +154,7 @@ export default function IntroHero() {
         {/* Content: Stats or Promotion */}
         <div
           className={`pt-8 transition-all duration-[1000ms] delay-200 ${
-            isTransitioning
+            slides.length > 1 && isTransitioning
               ? 'opacity-0 translate-y-10'
               : 'opacity-100 translate-y-0'
           }`}
