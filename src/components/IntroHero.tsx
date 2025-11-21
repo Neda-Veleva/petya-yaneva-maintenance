@@ -27,6 +27,19 @@ const slides = [
       description: 'Само за нови клиенти през този месец',
     },
   },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1583001809350-ed2c54f0d1a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxleWVsYXNoZXMlMjBjbG9zZXVwfGVufDF8fHx8MTc2MzEzMzQ0Nnww&ixlib=rb-4.1.0&q=80&w=1080',
+    title: 'Перфектна',
+    titleGold: 'очна линия',
+    subtitle: 'Удължаване на мигли с естествен ефект',
+    promotion: {
+      service: 'Удължаване на мигли - Очна линия',
+      oldPrice: '100лв',
+      newPrice: '80лв',
+      description: 'Специална цена за всички клиенти',
+    },
+  },
 ];
 
 export default function IntroHero() {
@@ -172,10 +185,10 @@ export default function IntroHero() {
                   </p>
 
                   <a
-                    href="#contact"
+                    href="#services"
                     className="inline-flex items-center gap-2 px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-bold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 group"
                   >
-                    <span>Запази сега</span>
+                    <span>Виж повече</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </a>
                 </div>
