@@ -15,7 +15,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-charcoal-600/95 backdrop-blur-sm shadow-md">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-center h-20 relative">
           <div className="absolute left-0 flex items-center gap-3">
@@ -43,7 +43,7 @@ export default function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-gold-600 transition-colors duration-300 font-medium text-sm"
+                className="text-gray-200 hover:text-gold-400 transition-colors duration-300 font-medium text-sm"
               >
                 {item.label}
               </a>
@@ -59,7 +59,7 @@ export default function Header() {
 
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden absolute right-0 p-2 text-gray-700 hover:text-gold-600 transition-colors"
+            className="lg:hidden absolute right-0 p-2 text-gray-200 hover:text-gold-400 transition-colors"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -67,14 +67,14 @@ export default function Header() {
       </div>
 
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-nude-200 shadow-lg">
+        <div className="lg:hidden bg-charcoal-600 border-t border-charcoal-500 shadow-lg">
           <nav className="flex flex-col py-4 px-6 space-y-4">
             {menuItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-gray-700 hover:text-gold-600 transition-colors duration-300 font-medium py-2"
+                className="text-gray-200 hover:text-gold-400 transition-colors duration-300 font-medium py-2"
               >
                 {item.label}
               </a>
