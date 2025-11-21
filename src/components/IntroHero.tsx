@@ -49,6 +49,8 @@ export default function IntroHero() {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
+
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -200,25 +202,27 @@ export default function IntroHero() {
         </div>
 
         {/* Slide indicators */}
-        <div className="flex justify-center gap-3 pt-6">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setIsTransitioning(true);
-                setTimeout(() => {
-                  setCurrentSlide(index);
-                  setIsTransitioning(false);
-                }, 800);
-              }}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                index === currentSlide
-                  ? 'w-12 bg-gold-shimmer shadow-gold-glow'
-                  : 'w-6 bg-gray-600 hover:bg-gray-500'
-              }`}
-            />
-          ))}
-        </div>
+        {slides.length > 1 && (
+          <div className="flex justify-center gap-3 pt-6">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setIsTransitioning(true);
+                  setTimeout(() => {
+                    setCurrentSlide(index);
+                    setIsTransitioning(false);
+                  }, 800);
+                }}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  index === currentSlide
+                    ? 'w-12 bg-gold-shimmer shadow-gold-glow'
+                    : 'w-6 bg-gray-600 hover:bg-gray-500'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Scroll indicator */}
         <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">

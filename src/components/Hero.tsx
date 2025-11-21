@@ -205,26 +205,28 @@ export default function Hero() {
           </div>
 
           {/* Thumbnails sidebar */}
-          <div className="flex lg:flex-col gap-4 justify-center lg:justify-start order-3">
-            {slides.map((s, index) => (
-              <button
-                key={s.id}
-                onClick={() => setCurrentSlide(index)}
-                className={`relative w-20 h-20 rounded-xl overflow-hidden transition-all duration-300 ${
-                  index === currentSlide
-                    ? 'ring-2 ring-gold-500 shadow-gold-glow scale-110'
-                    : 'opacity-50 hover:opacity-100 hover:scale-105'
-                }`}
-              >
-                <img
-                  src={s.thumbnail}
-                  alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
-              </button>
-            ))}
-          </div>
+          {slides.length > 1 && (
+            <div className="flex lg:flex-col gap-4 justify-center lg:justify-start order-3">
+              {slides.map((s, index) => (
+                <button
+                  key={s.id}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`relative w-20 h-20 rounded-xl overflow-hidden transition-all duration-300 ${
+                    index === currentSlide
+                      ? 'ring-2 ring-gold-500 shadow-gold-glow scale-110'
+                      : 'opacity-50 hover:opacity-100 hover:scale-105'
+                  }`}
+                >
+                  <img
+                    src={s.thumbnail}
+                    alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
