@@ -15,7 +15,7 @@ export default function Hero() {
         <div className="space-y-8">
           <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow">
             <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
-            <span className="text-sm text-gold-400 font-medium tracking-wide">Премиум студио за професионално удължаване на мигли</span>
+            <span className="text-sm text-gold-400 font-medium tracking-wide">Професионално Поставяне на Мигли</span>
           </div>
 
           <div className="space-y-4">
@@ -53,7 +53,7 @@ export default function Hero() {
         <div className="relative animate-float">
           <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
             <img
-              src="https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=1K0ySL7UA8oQ7kNvwEOzvpU&_nc_oc=AdlJq1pKYc-Zfmri6XgFeHU34E4QFj44MeY5IqB0M-n8QjIfeeOunKLhQ3AOW9Ploa5YQOx4lO28dGifNPTn2eoF&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=vU1fBc0MMnCDfOsXzNZdXA&oh=00_AfjAdx6mm5_p846MMuIwyQgtomygI-QDqZgNXLBAE9NfTw&oe=691F759E"
+              src="https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=x5lg9rZw5HEQ7kNvwGdgBLI&_nc_oc=AdlsR1jtOcvn9PSZ5hl4upnB9knVxOHPnf-42QChH9gBoiDRqVyeHA4J9g-y33v5gfHqAPwnKjlaJ843Wlw2MniZ&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=c2QvUpJle5jLyFCZGGOLQg&oh=00_Afjlbzsxd44w4eRxCdZlMelCjJmFrYS1tAhrY2c2-BNPCg&oe=6925645E"
               alt="Petya Yaneva - Професионален специалист по мигли"
               className="w-full h-full object-cover brightness-110"
             />

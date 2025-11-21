@@ -5,8 +5,8 @@ const slides = [
   {
     id: 1,
     image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMGNsb3NldXB8ZW58MXx8fHwxNzYzMTMzNDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    title: 'Красотата е в',
-    titleGold: 'детайлите',
+    title: 'Lashes by',
+    titleGold: 'Petya Yaneva',
     subtitle: 'Открийте света на луксозната грижа за мигли',
     stats: [
       { value: '500+', label: 'Клиенти' },
@@ -19,22 +19,24 @@ const slides = [
     image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
     title: 'Специална',
     titleGold: 'промоция',
-    subtitle: 'Класически мигли за първи клиенти',
+    // subtitle: 'Класически мигли за първи клиенти',
     promotion: {
-      service: 'Класически Екстеншъни',
-      oldPrice: '80лв',
-      newPrice: '60лв',
+      service: 'Мигли руски обем',
+      oldPrice: '140лв',
+      newPrice: '100лв',
       description: 'Само за нови клиенти през този месец',
     },
   },
   {
     id: 3,
     image: 'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=1080',
-    title: 'Перфектна',
-    titleGold: 'очна линия',
-    subtitle: 'Удължаване на мигли с естествен ефект',
+    // title: 'Перфектна',
+    // titleGold: 'очна линия',
+    title: 'Специална',
+    titleGold: 'промоция',
+    // subtitle: 'Удължаване на мигли с естествен ефект',
     promotion: {
-      service: 'Удължаване на мигли - Очна линия',
+      service: 'Удължаване на мигли очна линия',
       oldPrice: '100лв',
       newPrice: '80лв',
       description: 'Специална цена за всички клиенти',
@@ -164,7 +166,7 @@ export default function IntroHero() {
 
                 <div className="relative space-y-6">
                   <div className="inline-flex items-center px-4 py-2 bg-gold-500/20 rounded-full border border-gold-400/50">
-                    <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">Ограничена оферта</span>
+                    <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">Промоционална оферта</span>
                   </div>
 
                   <h3 className="text-3xl md:text-4xl font-serif text-white font-bold">
