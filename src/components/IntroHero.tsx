@@ -71,7 +71,7 @@ export default function IntroHero() {
             key={s.id}
             className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
               index === currentSlide
-                ? 'opacity-40 scale-100'
+                ? 'opacity-50 scale-100'
                 : 'opacity-0 scale-110'
             }`}
           >
@@ -82,7 +82,7 @@ export default function IntroHero() {
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal-500/80 via-charcoal-600/70 to-black/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal-500/60 via-charcoal-600/50 to-black/70"></div>
       </div>
 
       {/* Animated background gradient lights */}
