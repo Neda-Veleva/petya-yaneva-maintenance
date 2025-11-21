@@ -8,24 +8,25 @@ const slides = [
     title: 'Красотата е в',
     titleGold: 'детайлите',
     subtitle: 'Открийте света на луксозната грижа за мигли',
-    stats: [
-      { value: '500+', label: 'Клиенти' },
-      { value: '5+', label: 'Години опит' },
-      { value: '100%', label: 'Качество' },
-    ],
   },
   {
     id: 2,
     image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
     title: 'Специална',
     titleGold: 'промоция',
-    subtitle: 'Класически мигли за първи клиенти',
+    subtitle: 'Класически екстеншъни',
     promotion: {
-      service: 'Класически Екстеншъни',
       oldPrice: '80лв',
       newPrice: '60лв',
-      description: 'Само за нови клиенти през този месец',
     },
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1583001308122-223faf90e14a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    title: 'Удължаване на мигли',
+    titleGold: 'очна линия',
+    subtitle: 'Дефинирайте погледа си с елегантност',
+    service: true,
   },
 ];
 
@@ -83,9 +84,9 @@ export default function IntroHero() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 text-center px-6 space-y-12 max-w-5xl mx-auto">
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
         {/* Icon */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-8">
           <div
             className={`relative transition-all duration-700 ${
               isTransitioning ? 'scale-0 rotate-180 opacity-0' : 'scale-100 rotate-0 opacity-100'
@@ -93,22 +94,22 @@ export default function IntroHero() {
           >
             <div className="absolute inset-0 bg-gold-400/20 rounded-full blur-2xl animate-pulse"></div>
             {slide.promotion ? (
-              <Tag className="relative w-16 h-16 text-gold-400 animate-pulse" />
+              <Tag className="relative w-12 h-12 text-gold-400 animate-pulse" />
             ) : (
-              <Sparkles className="relative w-16 h-16 text-gold-400 animate-pulse" />
+              <Sparkles className="relative w-12 h-12 text-gold-400 animate-pulse" />
             )}
           </div>
         </div>
 
         {/* Main headline with sexy slide animation */}
         <div
-          className={`space-y-6 transition-all duration-[1000ms] ${
+          className={`space-y-4 transition-all duration-[1000ms] ${
             isTransitioning
               ? 'opacity-0 translate-y-10 scale-95'
               : 'opacity-100 translate-y-0 scale-100'
           }`}
         >
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight tracking-tight">
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white leading-tight tracking-tight">
             {slide.title}
             <span className="block mt-2 bg-gold-shimmer bg-clip-text text-transparent animate-shimmer">
               {slide.titleGold}
@@ -119,68 +120,50 @@ export default function IntroHero() {
             <div className="h-px w-24 bg-gold-shimmer animate-shimmer"></div>
           </div>
 
-          <p className="text-xl md:text-2xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
             {slide.subtitle}
           </p>
         </div>
 
-        {/* Content: Stats or Promotion */}
+        {/* Content: Promotion or CTA */}
         <div
-          className={`pt-8 transition-all duration-[1000ms] delay-200 ${
+          className={`pt-10 transition-all duration-[1000ms] delay-200 ${
             isTransitioning
               ? 'opacity-0 translate-y-10'
               : 'opacity-100 translate-y-0'
           }`}
         >
-          {slide.stats ? (
-            <div className="flex flex-wrap justify-center gap-12 md:gap-20">
-              {slide.stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-4xl md:text-5xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-gray-300 tracking-widest uppercase">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          ) : slide.promotion ? (
-            <div className="max-w-2xl mx-auto">
-              <div className="relative bg-charcoal-400/60 backdrop-blur-xl border-2 border-gold-500/40 rounded-3xl p-10 shadow-gold-glow-lg overflow-hidden">
-                {/* Shine effect */}
+          {slide.promotion ? (
+            <div className="inline-block">
+              <div className="relative bg-charcoal-400/60 backdrop-blur-xl border-2 border-gold-500/40 rounded-2xl px-8 py-6 shadow-gold-glow-lg overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-400/10 to-transparent animate-shimmer"></div>
 
-                <div className="relative space-y-6">
-                  <div className="inline-flex items-center px-4 py-2 bg-gold-500/20 rounded-full border border-gold-400/50">
-                    <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">Ограничена оферта</span>
-                  </div>
-
-                  <h3 className="text-3xl md:text-4xl font-serif text-white font-bold">
-                    {slide.promotion.service}
-                  </h3>
-
-                  <div className="flex items-center justify-center gap-6">
-                    <span className="text-3xl text-gray-500 line-through font-light">
-                      {slide.promotion.oldPrice}
-                    </span>
-                    <span className="text-6xl md:text-7xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
-                      {slide.promotion.newPrice}
-                    </span>
-                  </div>
-
-                  <p className="text-gray-300 text-lg">
-                    {slide.promotion.description}
-                  </p>
-
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-bold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 group"
-                  >
-                    <span>Запази сега</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                <div className="relative flex items-center gap-6">
+                  <span className="text-2xl text-gray-400 line-through font-light">
+                    {slide.promotion.oldPrice}
+                  </span>
+                  <span className="text-5xl md:text-6xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
+                    {slide.promotion.newPrice}
+                  </span>
                 </div>
               </div>
+
+              <a
+                href="#services"
+                className="inline-flex items-center gap-2 mt-6 px-8 py-3 bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500/10 rounded-full font-semibold transition-all duration-300 hover:shadow-gold-glow group"
+              >
+                <span>Виж повече</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
             </div>
+          ) : slide.service ? (
+            <a
+              href="#services"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500/10 rounded-full font-semibold transition-all duration-300 hover:shadow-gold-glow group"
+            >
+              <span>Виж повече</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </a>
           ) : null}
         </div>
 
