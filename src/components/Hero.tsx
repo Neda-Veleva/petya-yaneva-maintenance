@@ -31,12 +31,17 @@ const slides = [
     titleGold: 'Студио',
     badge: 'Премиум Lash Studio',
     description: 'Луксозно студио в сърцето на София, оборудвано с най-модерните технологии и висококачествени продукти за перфектни резултати.',
-    images: [
-      'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      'https://images.pexels.com/photos/3997376/pexels-photo-3997376.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1080',
+    imageSlides: [
+      [
+        'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1080',
+        'https://images.pexels.com/photos/3997376/pexels-photo-3997376.jpeg?auto=compress&cs=tinysrgb&w=1080',
+        'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      ],
+      [
+        'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=1080',
+        'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1080',
+        'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=1080',
+      ],
     ],
     thumbnail: 'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=300',
     stat: { value: 'София', label: 'Централна локация' },
@@ -136,19 +141,37 @@ export default function Hero() {
 
           {/* Image */}
           <div className="relative animate-float order-3">
-            <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
-              <img
-                src={slide.type === 'salon' ? slide.images[currentSalonImage] : slide.image}
-                alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title}
-                className="w-full h-full object-cover brightness-110 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
-              <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
+            {slide.type === 'salon' && slide.imageSlides ? (
+              <div className="relative w-full h-[650px]">
+                <div className="grid grid-cols-2 gap-3 h-full">
+                  <div className="col-span-2 rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
+                    <img
+                      src={slide.imageSlides[currentSalonImage][0]}
+                      alt="Studio 1"
+                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
+                  </div>
+                  <div className="rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
+                    <img
+                      src={slide.imageSlides[currentSalonImage][1]}
+                      alt="Studio 2"
+                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
+                    <img
+                      src={slide.imageSlides[currentSalonImage][2]}
+                      alt="Studio 3"
+                      className="w-full h-full object-cover brightness-110 transition-all duration-500"
+                    />
+                  </div>
+                </div>
 
-              {/* Salon Image Navigation */}
-              {slide.type === 'salon' && slide.images && (
+                {/* Salon Slide Navigation */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
-                  {slide.images.map((_, index) => (
+                  {slide.imageSlides.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSalonImage(index)}
@@ -160,8 +183,18 @@ export default function Hero() {
                     />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
+                <img
+                  src={slide.image}
+                  alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title}
+                  className="w-full h-full object-cover brightness-110 transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
+              </div>
+            )}
 
             <div className="absolute -bottom-8 -left-8 bg-charcoal-400 border border-gold-500/30 rounded-2xl shadow-dark-xl p-8 backdrop-blur-md">
               <div className="flex items-center space-x-4">
