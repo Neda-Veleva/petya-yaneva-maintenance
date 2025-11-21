@@ -17,8 +17,8 @@ const slides = [
   {
     id: 2,
     image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    title: 'Специална',
-    titleGold: 'промоция',
+    // title: 'Специална',
+    // titleGold: 'промоция',
     // subtitle: 'Класически мигли за първи клиенти',
     promotion: {
       service: 'Мигли руски обем',
@@ -29,11 +29,11 @@ const slides = [
   },
   {
     id: 3,
-    image: 'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=1080',
+    image: 'https://www.chanel.com/puls-img/c_limit,w_1920/q_auto:good,dpr_auto,f_auto/1707155775012-01headerjkd2880x1500jpg.jpg?auto=compress&cs=tinysrgb&w=1080',
     // title: 'Перфектна',
     // titleGold: 'очна линия',
-    title: 'Специална',
-    titleGold: 'промоция',
+    // title: 'Специална',
+    // titleGold: 'промоция',
     // subtitle: 'Удължаване на мигли с естествен ефект',
     promotion: {
       service: 'Удължаване на мигли очна линия',

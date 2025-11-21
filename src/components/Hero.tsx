@@ -27,14 +27,14 @@ const slides = [
   {
     id: 3,
     type: 'salon',
-    title: 'Нашето',
-    titleGold: 'Студио',
-    badge: 'Премиум Lash Studio',
+    title: 'Hair & Beauty',
+    titleGold: 'Livon',
+    badge: 'Премиум Beauty Studio',
     description: 'Луксозно студио в сърцето на София, оборудвано с най-модерните технологии и висококачествени продукти за перфектни резултати.',
     imageSlides: [
       [
-        'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1080',
-        'https://images.pexels.com/photos/3997376/pexels-photo-3997376.jpeg?auto=compress&cs=tinysrgb&w=1080',
+        'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=1080',
+        'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/53660.jpg?auto=compress&cs=tinysrgb&w=1080',
         'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
       ],
       [
@@ -43,7 +43,7 @@ const slides = [
         'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=1080',
       ],
     ],
-    thumbnail: 'https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=300',
+    thumbnail: 'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=300',
     stat: { value: 'София', label: 'Централна локация' },
     icon: MapPin,
   },
