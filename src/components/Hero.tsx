@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, MapPin } from 'lucide-react';
+import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
 
 const slides = [
   {
@@ -79,14 +79,7 @@ export default function Hero() {
           {/* Content */}
           <div className="space-y-8 order-1">
             <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-gold-400 animate-pulse">
-                <path d="M12 4C12 4 9 7 9 10C9 11.6569 10.3431 13 12 13C13.6569 13 15 11.6569 15 10C15 7 12 4 12 4Z" fill="currentColor" opacity="0.9"/>
-                <ellipse cx="12" cy="13" rx="8" ry="3" fill="currentColor" opacity="0.8"/>
-                <path d="M4 13C4 13 5 11.5 7 11C7.5 10.8 8 11 8 11.5C8 11.8 7.8 12 7.5 12.2C6.5 12.8 6 13.5 6 13.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
-                <path d="M20 13C20 13 19 11.5 17 11C16.5 10.8 16 11 16 11.5C16 11.8 16.2 12 16.5 12.2C17.5 12.8 18 13.5 18 13.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
-                <path d="M3 12C3 12 3.5 10 4 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M21 12C21 12 20.5 10 20 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
               <span className="text-sm text-gold-400 font-medium tracking-wide">{slide.badge}</span>
             </div>
 
@@ -197,14 +190,7 @@ export default function Hero() {
                   {slide.icon ? (
                     <slide.icon className="w-8 h-8 text-charcoal-600" />
                   ) : (
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-charcoal-600">
-                      <path d="M12 4C12 4 9 7 9 10C9 11.6569 10.3431 13 12 13C13.6569 13 15 11.6569 15 10C15 7 12 4 12 4Z" fill="currentColor" opacity="0.9"/>
-                      <ellipse cx="12" cy="13" rx="8" ry="3" fill="currentColor" opacity="0.8"/>
-                      <path d="M4 13C4 13 5 11.5 7 11C7.5 10.8 8 11 8 11.5C8 11.8 7.8 12 7.5 12.2C6.5 12.8 6 13.5 6 13.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
-                      <path d="M20 13C20 13 19 11.5 17 11C16.5 10.8 16 11 16 11.5C16 11.8 16.2 12 16.5 12.2C17.5 12.8 18 13.5 18 13.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
-                      <path d="M3 12C3 12 3.5 10 4 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                      <path d="M21 12C21 12 20.5 10 20 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
+                    <Sparkles className="w-8 h-8 text-charcoal-600" />
                   )}
                 </div>
                 <div>
