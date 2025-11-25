@@ -10,8 +10,8 @@ const slides = [
     lastName: 'Янева',
     badge: 'Професионално Поставяне на Мигли',
     description: 'Основател и водещ специалист с над 5 години опит в удължаване на мигли. Специализирана в класически и обемни техники с внимание към всеки детайл.',
-    image: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=x5lg9rZw5HEQ7kNvwGdgBLI&_nc_oc=AdlsR1jtOcvn9PSZ5hl4upnB9knVxOHPnf-42QChH9gBoiDRqVyeHA4J9g-y33v5gfHqAPwnKjlaJ843Wlw2MniZ&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=c2QvUpJle5jLyFCZGGOLQg&oh=00_Afjlbzsxd44w4eRxCdZlMelCjJmFrYS1tAhrY2c2-BNPCg&oe=6925645E',
-    thumbnail: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=x5lg9rZw5HEQ7kNvwGdgBLI&_nc_oc=AdlsR1jtOcvn9PSZ5hl4upnB9knVxOHPnf-42QChH9gBoiDRqVyeHA4J9g-y33v5gfHqAPwnKjlaJ843Wlw2MniZ&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=c2QvUpJle5jLyFCZGGOLQg&oh=00_Afjlbzsxd44w4eRxCdZlMelCjJmFrYS1tAhrY2c2-BNPCg&oe=6925645E',
+    image: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
+    thumbnail: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
     stat: { value: '500+', label: 'Доволни клиенти' },
   },
   {

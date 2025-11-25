@@ -5,7 +5,7 @@ import ParallaxBackground from './ParallaxBackground';
 const slides = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMGNsb3NldXB8ZW58MXx8fHwxNzYzMTMzNDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWUlMjBtYWtldXAlMjBsYXNoZXN8ZW58MXx8fHwxNzYzMTM0MTAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     title: 'Lashes by',
     titleGold: 'Petya Yaneva',
     subtitle: 'Открийте света на луксозната грижа за мигли',
@@ -82,7 +82,7 @@ export default function IntroHero() {
               key={s.id}
               className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
                 index === currentSlide
-                  ? 'opacity-50 scale-100'
+                  ? 'opacity-30 scale-100'
                   : 'opacity-0 scale-110'
               }`}
             >
@@ -243,12 +243,12 @@ export default function IntroHero() {
         )}
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
+        {/* <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
           <a href="#main-hero" className="flex flex-col items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors">
             <span className="text-xs tracking-widest uppercase">Scroll</span>
             <ChevronDown className="w-6 h-6" />
           </a>
-        </div>
+        </div> */}
       </div>
 
       {/* Decorative corners */}
