@@ -15,7 +15,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-gradient-to-b from-charcoal-600/98 via-charcoal-600/95 to-charcoal-600/90 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-b border-gold-500/10">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-gradient-to-b from-charcoal-600/98 via-charcoal-600/95 to-charcoal-600/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-b border-gold-500/10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-center h-20 relative">
           <div className="absolute left-0 flex items-center gap-3">

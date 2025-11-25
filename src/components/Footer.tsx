@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           <div className="text-center md:text-left">
             <h3 className="font-serif text-2xl text-gold-500 mb-2">Lashes by Petya Yaneva</h3>
-            <p className="text-gray-600 text-sm">Издигаме красотата, мигa по мигa</p>
+            <p className="text-gray-600 text-sm">Издигаме красотата, миг по миг</p>
           </div>
 
           <div className="flex items-center space-x-6">
