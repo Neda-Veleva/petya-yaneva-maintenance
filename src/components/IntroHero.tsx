@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ChevronDown, Tag, ArrowRight } from 'lucide-react';
+import ParallaxBackground from './ParallaxBackground';
 
 const slides = [
   {
@@ -66,6 +67,13 @@ export default function IntroHero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Parallax background layer */}
+      <ParallaxBackground
+        image="https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        opacity={0.08}
+        speed={0.2}
+      />
+
       {/* Background images with crossfade */}
       <div className="absolute inset-0">
         {slides.length > 1 ? (
