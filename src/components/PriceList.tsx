@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ParallaxBackground from './ParallaxBackground';
 
 interface Service {
   name: string;
@@ -149,8 +150,15 @@ export default function PriceList() {
   const currentCategory = categories.find(cat => cat.id === activeCategory);
 
   return (
-    <section id="prices" className="py-24 bg-gradient-to-br from-nude-50 via-white to-nude-100">
-      <div className="max-w-4xl mx-auto px-6">
+    <section id="prices" className="relative py-24 bg-gradient-to-br from-nude-50 via-white to-nude-100 overflow-hidden">
+      <ParallaxBackground
+        image="https://images.pexels.com/photos/8129903/pexels-photo-8129903.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        opacity={0.06}
+        speed={0.4}
+        isDark={false}
+      />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-serif text-5xl text-gold-500 mb-6">Ценоразпис</h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
