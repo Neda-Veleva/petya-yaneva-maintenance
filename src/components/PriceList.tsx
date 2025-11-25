@@ -148,9 +148,15 @@ export default function PriceList() {
 
   const currentCategory = categories.find(cat => cat.id === activeCategory);
 
+  const services = currentCategory?.services || [];
+  const shouldSplit = services.length > 6;
+  const midPoint = Math.ceil(services.length / 2);
+  const leftServices = shouldSplit ? services.slice(0, midPoint) : services;
+  const rightServices = shouldSplit ? services.slice(midPoint) : [];
+
   return (
     <section id="prices" className="py-24 bg-gradient-to-br from-nude-50 via-white to-nude-100">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-serif text-5xl text-gold-500 mb-6">Ценоразпис</h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -176,35 +182,70 @@ export default function PriceList() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-2xl p-12 md:p-16">
-          <div className="space-y-5">
-            {currentCategory?.services.map((service, index) => (
-              <div
-                key={index}
-                className="group"
-              >
-                <div className="flex items-start justify-between gap-6">
-                  <div className="flex-1">
-                    <h3 className="font-serif text-xl md:text-2xl text-gray-800 mb-2 group-hover:text-gold-600 transition-colors duration-300">
-                      {service.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">{service.duration}</p>
+        <div className={`grid ${shouldSplit ? 'md:grid-cols-2' : 'grid-cols-1 max-w-4xl mx-auto'} gap-8`}>
+          <div className="bg-white rounded-3xl shadow-2xl p-12 md:p-16">
+            <div className="space-y-5">
+              {leftServices.map((service, index) => (
+                <div
+                  key={index}
+                  className="group"
+                >
+                  <div className="flex items-start justify-between gap-6">
+                    <div className="flex-1">
+                      <h3 className="font-serif text-xl md:text-2xl text-gray-800 mb-2 group-hover:text-gold-600 transition-colors duration-300">
+                        {service.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">{service.duration}</p>
+                    </div>
+
+                    <div className="flex-shrink-0 flex items-center gap-4">
+                      <div className="hidden md:block flex-1 border-b-2 border-dotted border-gold-300 min-w-[60px]"></div>
+                      <span className="font-serif text-2xl md:text-3xl text-gold-500 font-semibold whitespace-nowrap">
+                        {service.price}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex-shrink-0 flex items-center gap-4">
-                    <div className="hidden md:block flex-1 border-b-2 border-dotted border-gold-300 min-w-[60px]"></div>
-                    <span className="font-serif text-2xl md:text-3xl text-gold-500 font-semibold whitespace-nowrap">
-                      {service.price}
-                    </span>
-                  </div>
+                  {index < leftServices.length - 1 && (
+                    <div className="mt-5 border-b border-nude-200"></div>
+                  )}
                 </div>
-
-                {index < (currentCategory?.services.length || 0) - 1 && (
-                  <div className="mt-5 border-b border-nude-200"></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
+          {shouldSplit && rightServices.length > 0 && (
+            <div className="bg-white rounded-3xl shadow-2xl p-12 md:p-16">
+              <div className="space-y-5">
+                {rightServices.map((service, index) => (
+                  <div
+                    key={index}
+                    className="group"
+                  >
+                    <div className="flex items-start justify-between gap-6">
+                      <div className="flex-1">
+                        <h3 className="font-serif text-xl md:text-2xl text-gray-800 mb-2 group-hover:text-gold-600 transition-colors duration-300">
+                          {service.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">{service.duration}</p>
+                      </div>
+
+                      <div className="flex-shrink-0 flex items-center gap-4">
+                        <div className="hidden md:block flex-1 border-b-2 border-dotted border-gold-300 min-w-[60px]"></div>
+                        <span className="font-serif text-2xl md:text-3xl text-gold-500 font-semibold whitespace-nowrap">
+                          {service.price}
+                        </span>
+                      </div>
+                    </div>
+
+                    {index < rightServices.length - 1 && (
+                      <div className="mt-5 border-b border-nude-200"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-12 text-center">
