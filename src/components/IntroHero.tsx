@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ChevronDown, Tag, ArrowRight } from 'lucide-react';
+import ParallaxBackground from './ParallaxBackground';
 
 const slides = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMGNsb3NldXB8ZW58MXx8fHwxNzYzMTMzNDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://www.chanel.com/puls-img/c_limit,w_1920/q_auto:good,dpr_auto,f_auto/1707155775012-01headerjkd2880x1500jpg.jpg?auto=compress&cs=tinysrgb&w=1080',
     title: 'Lashes by',
     titleGold: 'Petya Yaneva',
     subtitle: 'Открийте света на луксозната грижа за мигли',
@@ -29,7 +30,7 @@ const slides = [
   },
   {
     id: 3,
-    image: 'https://www.chanel.com/puls-img/c_limit,w_1920/q_auto:good,dpr_auto,f_auto/1707155775012-01headerjkd2880x1500jpg.jpg?auto=compress&cs=tinysrgb&w=1080',
+    image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMGNsb3NldXB8ZW58MXx8fHwxNzYzMTMzNDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080',
     // title: 'Перфектна',
     // titleGold: 'очна линия',
     // title: 'Специална',
@@ -66,6 +67,13 @@ export default function IntroHero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Parallax background layer */}
+      <ParallaxBackground
+        image="https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        opacity={0.08}
+        speed={0.2}
+      />
+
       {/* Background images with crossfade */}
       <div className="absolute inset-0">
         {slides.length > 1 ? (
@@ -74,7 +82,7 @@ export default function IntroHero() {
               key={s.id}
               className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
                 index === currentSlide
-                  ? 'opacity-50 scale-100'
+                  ? 'opacity-30 scale-100'
                   : 'opacity-0 scale-110'
               }`}
             >

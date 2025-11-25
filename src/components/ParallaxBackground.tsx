@@ -4,14 +4,12 @@ interface ParallaxBackgroundProps {
   image: string;
   opacity?: number;
   speed?: number;
-  isDark?: boolean;
 }
 
 export default function ParallaxBackground({
   image,
   opacity = 0.15,
-  speed = 0.5,
-  isDark = true
+  speed = 0.5
 }: ParallaxBackgroundProps) {
   const [scrollY, setScrollY] = useState(0);
 
@@ -40,11 +38,7 @@ export default function ParallaxBackground({
           style={{ opacity }}
         />
       </div>
-      <div className={`absolute inset-0 ${
-        isDark
-          ? 'bg-gradient-to-b from-charcoal-600/80 via-charcoal-600/60 to-charcoal-600/80'
-          : 'bg-gradient-to-b from-white/70 via-white/50 to-white/70'
-      }`}></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/80 via-charcoal-600/60 to-charcoal-600/80"></div>
     </div>
   );
 }

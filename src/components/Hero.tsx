@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
 import ImageGrid from './ImageGrid';
+import ParallaxBackground from './ParallaxBackground';
 
 const slides = [
   {
@@ -39,9 +40,9 @@ const slides = [
         'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
       ],
       [
+        'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=1080',
         'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=1080',
         'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1080',
-        'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=1080',
       ],
     ],
     thumbnail: 'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=300',
@@ -67,6 +68,12 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-gradient">
+      <ParallaxBackground
+        image="https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        opacity={0.12}
+        speed={0.3}
+      />
+
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
