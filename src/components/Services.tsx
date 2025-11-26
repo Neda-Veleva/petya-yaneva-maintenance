@@ -69,7 +69,7 @@ export default function Services() {
 
         <div className="flex justify-center mt-12">
           <a
-            href="#prices"
+            href="/services"
             className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-gold-400 to-gold-500 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             <span>Виж всички услуги</span>

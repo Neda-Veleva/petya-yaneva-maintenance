@@ -5,7 +5,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { label: 'Услуги', href: '#services' },
+    { label: 'Услуги', href: '/services' },
     { label: 'Ценоразпис', href: '#prices' },
     { label: 'Отзиви', href: '#reviews' },
     { label: 'Блог', href: '#blog' },
