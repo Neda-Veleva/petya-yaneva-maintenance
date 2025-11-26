@@ -253,23 +253,6 @@ export default function ServiceCategoryPage() {
     <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
       <Header />
 
-      <nav className="bg-white border-b border-nude-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-600 hover:text-gold-600 transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
-              <span>Начало</span>
-            </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link to="/services" className="text-gray-600 hover:text-gold-600 transition-colors">
-              Услуги
-            </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gold-600 font-medium">{categoryData.name}</span>
-          </div>
-        </div>
-      </nav>
-
       {!loading && topServices.length > 0 ? (
         <TopServiceSlider
           introSlide={{
@@ -312,6 +295,23 @@ export default function ServiceCategoryPage() {
           </div>
         </section>
       )}
+
+      <nav className="bg-white border-b border-nude-200">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center gap-2 text-sm">
+            <Link to="/" className="text-gray-600 hover:text-gold-600 transition-colors flex items-center gap-1">
+              <Home className="w-4 h-4" />
+              <span>Начало</span>
+            </Link>
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <Link to="/services" className="text-gray-600 hover:text-gold-600 transition-colors">
+              Услуги
+            </Link>
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <span className="text-gold-600 font-medium">{categoryData.name}</span>
+          </div>
+        </div>
+      </nav>
 
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
