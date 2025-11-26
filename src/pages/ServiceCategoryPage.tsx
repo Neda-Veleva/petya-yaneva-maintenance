@@ -303,7 +303,7 @@ export default function ServiceCategoryPage() {
               dbServices.map((service) => (
                 <Link
                   key={service.id}
-                  to={`/service/${service.slug}`}
+                  to={`/services/${category}/${service.slug}`}
                   className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                 >
                   <div className="relative h-56 overflow-hidden">

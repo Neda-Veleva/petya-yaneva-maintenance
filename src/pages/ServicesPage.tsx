@@ -140,7 +140,7 @@ export default function ServicesPage() {
                 {category.services.map((service) => (
                   <Link
                     key={service.id}
-                    to={`/service/${service.slug}`}
+                    to={`/services/${category.slug}/${service.slug}`}
                     className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
                     <div className="relative h-56 overflow-hidden">

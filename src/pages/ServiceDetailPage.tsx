@@ -40,7 +40,7 @@ interface Review {
 }
 
 export default function ServiceDetailPage() {
-  const { serviceSlug } = useParams<{ serviceSlug: string }>();
+  const { category: categorySlug, serviceSlug } = useParams<{ category: string; serviceSlug: string }>();
   const [service, setService] = useState<Service | null>(null);
   const [category, setCategory] = useState<ServiceCategory | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -49,12 +49,27 @@ export default function ServiceDetailPage() {
 
   useEffect(() => {
     async function loadService() {
-      if (!serviceSlug) return;
+      if (!serviceSlug || !categorySlug) return;
+
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('service_categories')
+        .select('id, slug, name')
+        .eq('slug', categorySlug)
+        .maybeSingle();
+
+      if (categoryError || !categoryData) {
+        console.error('Error fetching category:', categoryError);
+        setLoading(false);
+        return;
+      }
+
+      setCategory(categoryData);
 
       const { data: serviceData, error: serviceError } = await supabase
         .from('services')
         .select('*')
         .eq('slug', serviceSlug)
+        .eq('category_id', categoryData.id)
         .maybeSingle();
 
       if (serviceError) {
@@ -65,16 +80,6 @@ export default function ServiceDetailPage() {
 
       if (serviceData) {
         setService(serviceData);
-
-        const { data: categoryData, error: categoryError } = await supabase
-          .from('service_categories')
-          .select('id, slug, name')
-          .eq('id', serviceData.category_id)
-          .maybeSingle();
-
-        if (!categoryError && categoryData) {
-          setCategory(categoryData);
-        }
 
         const { data: reviewsData } = await supabase
           .from('service_reviews')
@@ -91,7 +96,7 @@ export default function ServiceDetailPage() {
     }
 
     loadService();
-  }, [serviceSlug]);
+  }, [serviceSlug, categorySlug]);
 
   if (loading) {
     return (
