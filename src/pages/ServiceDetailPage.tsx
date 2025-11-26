@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Tag, CheckCircle, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, Tag, CheckCircle, Sparkles, ChevronLeft, ChevronRight, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ServiceReviewsSlider from '../components/ServiceReviewsSlider';
@@ -154,16 +154,6 @@ export default function ServiceDetailPage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 py-16 text-center">
-          {category && (
-            <Link
-              to={`/services/${category.slug}`}
-              className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors mb-6 group"
-            >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              <span className="text-sm tracking-wide">Обратно към {category.name}</span>
-            </Link>
-          )}
-
           <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-6">
             <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
             <span className="text-sm text-gold-400 font-medium tracking-wide">Премиум услуга</span>
@@ -187,6 +177,30 @@ export default function ServiceDetailPage() {
               <Tag className="w-5 h-5 text-gold-400" />
               <span className="text-white font-medium">{service.price}</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-8 bg-nude-50/50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center gap-2 text-sm">
+            <Link to="/" className="text-gray-600 hover:text-gold-600 transition-colors">
+              Начало
+            </Link>
+            <ChevronRightIcon className="w-4 h-4 text-gray-400" />
+            <Link to="/services" className="text-gray-600 hover:text-gold-600 transition-colors">
+              Услуги
+            </Link>
+            {category && (
+              <>
+                <ChevronRightIcon className="w-4 h-4 text-gray-400" />
+                <Link to={`/services/${category.slug}`} className="text-gray-600 hover:text-gold-600 transition-colors">
+                  {category.name}
+                </Link>
+              </>
+            )}
+            <ChevronRightIcon className="w-4 h-4 text-gray-400" />
+            <span className="text-gold-600 font-medium">{service.name}</span>
           </div>
         </div>
       </section>
