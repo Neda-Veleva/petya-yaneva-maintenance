@@ -1,10 +1,20 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Eye, Crown, Heart, Sparkles } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TopServiceSlider from '../components/TopServiceSlider';
-import { getTopServices, getCategoryBySlug, TopService } from '../lib/supabase';
+import { getTopServices, getCategoryBySlug, TopService, supabase } from '../lib/supabase';
+
+interface DbService {
+  id: string;
+  slug: string;
+  name: string;
+  short_description: string;
+  duration: string;
+  price: string;
+  image_url: string;
+}
 
 const categoriesData = {
   lashes: {
@@ -191,22 +201,33 @@ export default function ServiceCategoryPage() {
   const { category } = useParams<{ category: string }>();
   const categoryData = category ? categoriesData[category as keyof typeof categoriesData] : null;
   const [topServices, setTopServices] = useState<TopService[]>([]);
+  const [dbServices, setDbServices] = useState<DbService[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadTopServices() {
+    async function loadData() {
       if (!category) return;
 
       setLoading(true);
       const dbCategory = await getCategoryBySlug(category);
       if (dbCategory) {
-        const services = await getTopServices(dbCategory.id);
-        setTopServices(services);
+        const topSvcs = await getTopServices(dbCategory.id);
+        setTopServices(topSvcs);
+
+        const { data: servicesData } = await supabase
+          .from('services')
+          .select('id, slug, name, short_description, duration, price, image_url')
+          .eq('category_id', dbCategory.id)
+          .order('order_position', { ascending: true });
+
+        if (servicesData) {
+          setDbServices(servicesData);
+        }
       }
       setLoading(false);
     }
 
-    loadTopServices();
+    loadData();
   }, [category]);
 
   if (!categoryData) {
@@ -278,38 +299,71 @@ export default function ServiceCategoryPage() {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categoryData.services.map((service, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-              >
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={service.image}
-                    alt={service.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="font-serif text-xl text-white mb-1">{service.name}</h3>
-                    <p className="text-sm text-gold-300">{service.duration}</p>
+            {dbServices.length > 0 ? (
+              dbServices.map((service) => (
+                <Link
+                  key={service.id}
+                  to={`/service/${service.slug}`}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                >
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={service.image_url}
+                      alt={service.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="font-serif text-xl text-white mb-1">{service.name}</h3>
+                      <p className="text-sm text-gold-300">{service.duration}</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-6 space-y-4">
-                  <p className="text-gray-600 leading-relaxed text-sm">{service.description}</p>
-                  <div className="flex items-center justify-between pt-4 border-t border-nude-200">
-                    <span className="text-2xl font-serif text-gold-500 font-semibold">{service.price}</span>
-                    <a
-                      href="#contact"
-                      className="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
-                    >
-                      Запази
-                    </a>
+                  <div className="p-6 space-y-4">
+                    <p className="text-gray-600 leading-relaxed text-sm">{service.short_description}</p>
+                    <div className="flex items-center justify-between pt-4 border-t border-nude-200">
+                      <span className="text-2xl font-serif text-gold-500 font-semibold">{service.price}</span>
+                      <span className="px-4 py-2 bg-gold-500 group-hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300">
+                        Виж повече
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              categoryData.services.map((service, index) => (
+                <div
+                  key={index}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                >
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={service.image}
+                      alt={service.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="font-serif text-xl text-white mb-1">{service.name}</h3>
+                      <p className="text-sm text-gold-300">{service.duration}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 space-y-4">
+                    <p className="text-gray-600 leading-relaxed text-sm">{service.description}</p>
+                    <div className="flex items-center justify-between pt-4 border-t border-nude-200">
+                      <span className="text-2xl font-serif text-gold-500 font-semibold">{service.price}</span>
+                      <a
+                        href="#contact"
+                        className="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
+                      >
+                        Запази
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
