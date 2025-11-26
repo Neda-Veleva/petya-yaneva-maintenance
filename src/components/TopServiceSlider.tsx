@@ -50,7 +50,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
     : currentService?.image_url;
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <div
           className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
@@ -76,7 +76,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
         <div className="absolute top-1/2 right-0 w-32 h-px bg-gradient-to-l from-transparent via-gold-500/50 to-transparent"></div>
       </div>
 
-      <div className="relative z-10 text-center px-6 space-y-12 max-w-5xl mx-auto">
+      <div className="relative z-10 text-center px-6 space-y-8 max-w-5xl mx-auto py-12">
         <div className="flex justify-center">
           <div
             className={`relative transition-all duration-700 ${
@@ -101,7 +101,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
         >
           {isIntroSlide ? (
             <>
-              <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight tracking-tight">
+              <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white leading-tight tracking-tight">
                 <span className="block bg-gold-shimmer bg-clip-text text-transparent animate-shimmer">
                   {introSlide.title}
                 </span>
@@ -112,7 +112,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
               </div>
 
               {introSlide.description && (
-                <p className="text-xl md:text-2xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
                   {introSlide.description}
                 </p>
               )}
@@ -123,7 +123,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
                 <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">Топ услуга</span>
               </div>
 
-              <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white leading-tight tracking-tight">
+              <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-tight tracking-tight">
                 <span className="block bg-gold-shimmer bg-clip-text text-transparent animate-shimmer">
                   {currentService.name}
                 </span>
@@ -134,14 +134,14 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
               </div>
 
               {currentService.description && (
-                <p className="text-xl md:text-2xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
                   {currentService.description}
                 </p>
               )}
 
               {currentService.price && (
-                <div className="pt-4">
-                  <span className="text-5xl md:text-6xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
+                <div className="pt-2">
+                  <span className="text-4xl md:text-5xl font-serif bg-gold-shimmer bg-clip-text text-transparent font-bold">
                     {currentService.price}
                   </span>
                 </div>
