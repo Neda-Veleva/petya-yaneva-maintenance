@@ -66,9 +66,9 @@ export default function ServiceReviewsSlider({ reviews }: ServiceReviewsSliderPr
           </p>
         </div>
 
-        <div className="relative max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 overflow-hidden">
-            <div className="flex-1 bg-gradient-to-br from-nude-50 via-white to-nude-50 rounded-3xl p-8 shadow-lg transition-all duration-500">
+        <div className="relative max-w-6xl mx-auto px-12">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 bg-gradient-to-br from-nude-50 via-white to-nude-50 rounded-3xl p-8 shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(184,134,11,0.3)] transition-all duration-500">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                   {currentReview.avatar_url ? (
