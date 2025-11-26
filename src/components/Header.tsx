@@ -47,21 +47,22 @@ export default function Header() {
           </div>
 
           <nav className="hidden lg:flex items-center gap-8">
-            <div
-              className="relative group"
-              onMouseEnter={() => setIsServicesOpen(true)}
-              onMouseLeave={() => setIsServicesOpen(false)}
-            >
+            <div className="relative group">
               <a
                 href="/services"
                 className="text-gold-400 hover:text-white transition-colors duration-300 font-medium text-sm flex items-center gap-1"
+                onMouseEnter={() => setIsServicesOpen(true)}
               >
                 Услуги
                 <ChevronDown className="w-4 h-4" />
               </a>
 
               {isServicesOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-charcoal-600/98 backdrop-blur-md rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden">
+                <div
+                  className="absolute top-full left-0 mt-2 w-56 bg-charcoal-600/98 backdrop-blur-md rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden"
+                  onMouseEnter={() => setIsServicesOpen(true)}
+                  onMouseLeave={() => setIsServicesOpen(false)}
+                >
                   <div className="py-2">
                     {serviceCategories.map((category) => (
                       <a
