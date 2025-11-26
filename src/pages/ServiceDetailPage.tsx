@@ -44,6 +44,7 @@ export default function ServiceDetailPage() {
   const [service, setService] = useState<Service | null>(null);
   const [category, setCategory] = useState<ServiceCategory | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [relatedServices, setRelatedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -89,6 +90,18 @@ export default function ServiceDetailPage() {
 
         if (reviewsData) {
           setReviews(reviewsData);
+        }
+
+        const { data: relatedData } = await supabase
+          .from('services')
+          .select('*')
+          .eq('category_id', categoryData.id)
+          .neq('id', serviceData.id)
+          .limit(3)
+          .order('order_position', { ascending: true });
+
+        if (relatedData) {
+          setRelatedServices(relatedData);
         }
       }
 
@@ -367,6 +380,68 @@ export default function ServiceDetailPage() {
       </section>
 
       {reviews.length > 0 && <ServiceReviewsSlider reviews={reviews} />}
+
+      {relatedServices.length > 0 && category && (
+        <section className="py-24 bg-gradient-to-br from-nude-50 via-white to-nude-100">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-4xl lg:text-5xl text-gold-500 mb-4">
+                Свързани услуги
+              </h2>
+              <p className="text-gray-600 text-lg">
+                Открийте други {category.name.toLowerCase()} услуги
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {relatedServices.map((relatedService) => (
+                <Link
+                  key={relatedService.id}
+                  to={`/services/${category.slug}/${relatedService.slug}`}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                >
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={relatedService.image_url}
+                      alt={relatedService.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="font-serif text-2xl text-gray-800 mb-3 group-hover:text-gold-600 transition-colors">
+                      {relatedService.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {relatedService.short_description}
+                    </p>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-nude-200">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Clock className="w-4 h-4" />
+                        <span className="text-sm">{relatedService.duration}</span>
+                      </div>
+                      <div className="font-serif text-2xl text-gold-500 font-semibold">
+                        {relatedService.price}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link
+                to={`/services/${category.slug}`}
+                className="inline-block px-8 py-4 bg-transparent border-2 border-gold-500 text-gold-600 hover:bg-gold-500 hover:text-white rounded-full font-semibold transition-all duration-300"
+              >
+                Виж всички {category.name.toLowerCase()}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>
