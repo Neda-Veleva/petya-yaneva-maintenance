@@ -1,7 +1,10 @@
 import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Eye, Crown, Heart, Sparkles } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import TopServiceSlider from '../components/TopServiceSlider';
+import { getTopServices, getCategoryBySlug, TopService } from '../lib/supabase';
 
 const categoriesData = {
   lashes: {
@@ -187,6 +190,24 @@ const categoriesData = {
 export default function ServiceCategoryPage() {
   const { category } = useParams<{ category: string }>();
   const categoryData = category ? categoriesData[category as keyof typeof categoriesData] : null;
+  const [topServices, setTopServices] = useState<TopService[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadTopServices() {
+      if (!category) return;
+
+      setLoading(true);
+      const dbCategory = await getCategoryBySlug(category);
+      if (dbCategory) {
+        const services = await getTopServices(dbCategory.id);
+        setTopServices(services);
+      }
+      setLoading(false);
+    }
+
+    loadTopServices();
+  }, [category]);
 
   if (!categoryData) {
     return (
@@ -211,37 +232,48 @@ export default function ServiceCategoryPage() {
     <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
       <Header />
 
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={categoryData.heroImage}
-            alt={categoryData.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
-        </div>
-
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
-            <Icon className="w-4 h-4 text-gold-400 animate-pulse" />
-            <span className="text-sm text-gold-400 font-medium tracking-wide">Професионални услуги</span>
+      {!loading && topServices.length > 0 ? (
+        <TopServiceSlider
+          introSlide={{
+            title: categoryData.name,
+            description: categoryData.description,
+            image_url: categoryData.heroImage,
+          }}
+          topServices={topServices}
+        />
+      ) : (
+        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0">
+            <img
+              src={categoryData.heroImage}
+              alt={categoryData.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
           </div>
 
-          <h1 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
-            {categoryData.name}
-          </h1>
-          <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          </div>
 
-          <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-            {categoryData.description}
-          </p>
-        </div>
-      </section>
+          <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
+            <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
+              <Icon className="w-4 h-4 text-gold-400 animate-pulse" />
+              <span className="text-sm text-gold-400 font-medium tracking-wide">Професионални услуги</span>
+            </div>
+
+            <h1 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
+              {categoryData.name}
+            </h1>
+            <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+
+            <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
+              {categoryData.description}
+            </p>
+          </div>
+        </section>
+      )}
 
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
