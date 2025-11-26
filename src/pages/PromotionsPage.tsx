@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Tag, Calendar, Info, AlertCircle } from 'lucide-react';
 import Header from '../components/Header';
+import CallToAction from '../components/CallToAction';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 
@@ -202,6 +203,7 @@ export default function PromotionsPage() {
         </div>
       </section>
 
+      <CallToAction />
       <Footer />
     </div>
   );

@@ -10,6 +10,7 @@ import PriceList from '../components/PriceList';
 import Reviews from '../components/Reviews';
 import Blog from '../components/Blog';
 import Contact from '../components/Contact';
+import CallToAction from '../components/CallToAction';
 import Footer from '../components/Footer';
 import { getTopServices, TopService } from '../lib/supabase';
 
@@ -52,6 +53,7 @@ export default function Home() {
       <Blog />
       <Contact />
       <BrandsSlider />
+      <CallToAction />
       <Footer />
     </div>
   );
