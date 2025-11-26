@@ -1,191 +1,93 @@
-import { Eye, Palette, TrendingUp, Sparkles, Crown, Scissors, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Eye, Sparkles, Crown, Heart } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { supabase } from '../lib/supabase';
 
-const categories = [
-  {
-    id: 'lashes',
-    name: 'Мигли',
-    icon: Eye,
-    services: [
-      {
-        name: 'Удължаване на мигли косъм по косъм',
-        duration: '1 ч. 30 мин.',
-        price: '80 лв.',
-        description: 'Класическа техника за естествен и елегантен вид',
-        image: 'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Удължаване на мигли 2D техника',
-        duration: '2 ч.',
-        price: '80 лв.',
-        description: 'Добавя обем и плътност за по-драматичен ефект',
-        image: 'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Удължаване на мигли 3D/4D техника',
-        duration: '1 ч. 45 мин.',
-        price: '90 лв.',
-        description: 'Максимален обем и луксозен вид',
-        image: 'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Удължаване на мигли тип 3D W shape',
-        duration: '1 ч. 45 мин.',
-        price: '96 лв.',
-        description: 'Специална форма за изразителен и отворен поглед',
-        image: 'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Удължаване на мигли очна линия',
-        duration: '2 ч. 30 мин.',
-        price: '100 лв.',
-        description: 'Ефект на очна линия за по-драматичен вид',
-        image: 'https://images.pexels.com/photos/8129903/pexels-photo-8129903.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Мигли руски обем',
-        duration: '2 ч. 30 мин.',
-        price: '140 лв.',
-        description: 'Максимален обем с множество тънки косъмчета',
-        image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Ламиниране + боядисване на мигли',
-        duration: '1 ч.',
-        price: '75 лв.',
-        description: 'Повдигане и извивка с дълготраен цвят',
-        image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Ламиниране на мигли с Lovely',
-        duration: '1 ч.',
-        price: '60 лв.',
-        description: 'Естествено повдигане с премиум продукти',
-        image: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Поддръжка на мигли до 3-та седмица',
-        duration: '1 ч. 30 мин.',
-        price: 'от 60 лв.',
-        description: 'Попълване и освежаване на съществуващи мигли',
-        image: 'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Сваляне на мигли',
-        duration: '30 мин.',
-        price: '30 лв.',
-        description: 'Професионално и безопасно премахване',
-        image: 'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Боядисване на мигли',
-        duration: '30 мин.',
-        price: '30 лв.',
-        description: 'Дълбок цвят за изразителен поглед',
-        image: 'https://images.pexels.com/photos/8129903/pexels-photo-8129903.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Боядисване на долни мигли',
-        duration: '35 мин.',
-        price: '30 лв.',
-        description: 'Завършек на перфектния поглед',
-        image: 'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Нано мъгла за мигли',
-        duration: '5 мин.',
-        price: '10 лв.',
-        description: 'Допълнителна грижа и защита',
-        image: 'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Камъчета (декорация) към миглите',
-        duration: '10 мин.',
-        price: '5 лв. / бр.',
-        description: 'Изискана декорация за специални случаи',
-        image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Цветни мигли (цели) към удължаване',
-        duration: '1 ч.',
-        price: '30 лв.',
-        description: 'Смел и креативен вид с цветни мигли',
-        image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Цветни мигли (декорация) в края на миглите',
-        duration: '15 мин.',
-        price: '7 лв.',
-        description: 'Фино цветно докосване',
-        image: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=800'
-      }
-    ]
-  },
-  {
-    id: 'brows',
-    name: 'Вежди',
-    icon: Crown,
-    services: [
-      {
-        name: 'Боядисване на вежди',
-        duration: '20 мин.',
-        price: '15 лв.',
-        description: 'Перфектен цвят и дефиниция',
-        image: 'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Оформяне на вежди с конец',
-        duration: '15 мин.',
-        price: '10 лв.',
-        description: 'Прецизна и деликатна техника',
-        image: 'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Микроблейдинг на вежди',
-        duration: '2 ч.',
-        price: '200 лв.',
-        description: 'Полу-перманентна техника за естествени вежди',
-        image: 'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=800'
-      }
-    ]
-  },
-  {
-    id: 'facial',
-    name: 'Други услуги за лице',
-    icon: Heart,
-    services: [
-      {
-        name: 'Почистване на лице',
-        duration: '1 ч.',
-        price: '60 лв.',
-        description: 'Дълбоко почистване и освежаване',
-        image: 'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Хидратираща терапия',
-        duration: '45 мин.',
-        price: '50 лв.',
-        description: 'Интензивна хидратация и грижа',
-        image: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=800'
-      },
-      {
-        name: 'Антиейдж масаж на лице',
-        duration: '30 мин.',
-        price: '40 лв.',
-        description: 'Подмладяващ и релаксиращ масаж',
-        image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?auto=compress&cs=tinysrgb&w=800'
-      }
-    ]
-  }
-];
+interface DbService {
+  id: string;
+  slug: string;
+  name: string;
+  short_description: string;
+  duration: string;
+  price: string;
+  image_url: string;
+}
+
+interface ServiceCategory {
+  id: string;
+  slug: string;
+  name: string;
+  icon: any;
+  services: DbService[];
+}
+
+const categoryIcons: { [key: string]: any } = {
+  lashes: Eye,
+  brows: Crown,
+  facial: Heart,
+};
 
 export default function ServicesPage() {
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadServices() {
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('service_categories')
+        .select('id, slug, name')
+        .order('order_position', { ascending: true });
+
+      if (categoriesError || !categoriesData) {
+        console.error('Error loading categories:', categoriesError);
+        setLoading(false);
+        return;
+      }
+
+      const categoriesWithServices = await Promise.all(
+        categoriesData.map(async (category) => {
+          const { data: servicesData } = await supabase
+            .from('services')
+            .select('id, slug, name, short_description, duration, price, image_url')
+            .eq('category_id', category.id)
+            .order('order_position', { ascending: true });
+
+          return {
+            ...category,
+            icon: categoryIcons[category.slug] || Eye,
+            services: servicesData || [],
+          };
+        })
+      );
+
+      setCategories(categoriesWithServices);
+      setLoading(false);
+    }
+
+    loadServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
+        <Header />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Зареждане на услуги...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
       <Header />
 
-      {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -222,12 +124,10 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Services by Category */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           {categories.map((category, categoryIndex) => (
             <div key={category.id} className={categoryIndex > 0 ? 'mt-32' : ''}>
-              {/* Category Header */}
               <div className="text-center mb-16">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-gold-shimmer rounded-full mb-6 shadow-gold-glow">
                   <category.icon className="w-10 h-10 text-charcoal-600" />
@@ -236,16 +136,16 @@ export default function ServicesPage() {
                 <div className="h-1 w-24 bg-gold-shimmer mx-auto"></div>
               </div>
 
-              {/* Services Grid */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {category.services.map((service, index) => (
-                  <div
-                    key={index}
+                {category.services.map((service) => (
+                  <Link
+                    key={service.id}
+                    to={`/service/${service.slug}`}
                     className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
                     <div className="relative h-56 overflow-hidden">
                       <img
-                        src={service.image}
+                        src={service.image_url}
                         alt={service.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
@@ -257,18 +157,15 @@ export default function ServicesPage() {
                     </div>
 
                     <div className="p-6 space-y-4">
-                      <p className="text-gray-600 leading-relaxed text-sm">{service.description}</p>
+                      <p className="text-gray-600 leading-relaxed text-sm">{service.short_description}</p>
                       <div className="flex items-center justify-between pt-4 border-t border-nude-200">
                         <span className="text-2xl font-serif text-gold-500 font-semibold">{service.price}</span>
-                        <a
-                          href="#contact"
-                          className="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
-                        >
-                          Запази
-                        </a>
+                        <span className="px-4 py-2 bg-gold-500 group-hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300">
+                          Виж повече
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -276,7 +173,6 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-24 bg-dark-gradient relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl"></div>

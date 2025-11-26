@@ -1,4 +1,5 @@
 import { Eye, Palette, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const services = [
   {
@@ -8,6 +9,7 @@ const services = [
     price: '100 лв.',
     image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMGNsb3NldXB8ZW58MXx8fHwxNzYzMTMzNDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     icon: Eye,
+    link: '/services/lashes',
   },
   {
     id: 2,
@@ -16,6 +18,7 @@ const services = [
     price: '40 лв.',
     image: 'https://images.pexels.com/photos/8129903/pexels-photo-8129903.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: Palette,
+    link: '/service/lash-tinting',
   },
   {
     id: 3,
@@ -24,6 +27,7 @@ const services = [
     price: '80 лв.',
     image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWUlMjBtYWtldXAlMjBsYXNoZXN8ZW58MXx8fHwxNzYzMTM0MTAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     icon: TrendingUp,
+    link: '/service/lash-lift-tint',
   },
 ];
 
@@ -40,8 +44,9 @@ export default function Services() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {services.map((service) => (
-            <div
+            <Link
               key={service.id}
+              to={service.link}
               className="group bg-nude-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
             >
               <div className="relative h-64 overflow-hidden">
@@ -63,7 +68,7 @@ export default function Services() {
                   <span className="text-3xl font-serif text-gray-900">{service.price}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
