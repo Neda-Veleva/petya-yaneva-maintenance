@@ -4,6 +4,7 @@ import GalleryPage from './pages/GalleryPage';
 import ServicesPage from './pages/ServicesPage';
 import ServiceCategoryPage from './pages/ServiceCategoryPage';
 import ServiceDetailPage from './pages/ServiceDetailPage';
+import PromotionsPage from './pages/PromotionsPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:category" element={<ServiceCategoryPage />} />
         <Route path="/services/:category/:serviceSlug" element={<ServiceDetailPage />} />
+        <Route path="/promotions" element={<PromotionsPage />} />
       </Routes>
     </Router>
   );

@@ -15,7 +15,7 @@ export default function Header() {
     { label: 'Ценоразпис', href: '#prices' },
     { label: 'Отзиви', href: '#reviews' },
     { label: 'Блог', href: '#blog' },
-    { label: 'Промоции', href: '#promotions' },
+    { label: 'Промоции', href: '/promotions' },
     { label: 'Галерия', href: '#gallery' },
     { label: 'Контакти', href: '#contact' }
   ];
