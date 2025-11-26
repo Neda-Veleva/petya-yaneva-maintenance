@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Eye, Crown, Heart, Sparkles, ChevronRight, Home } from 'lucide-react';
+import { Eye, Crown, Heart, Sparkles, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TopServiceSlider from '../components/TopServiceSlider';
@@ -296,12 +296,11 @@ export default function ServiceCategoryPage() {
         </section>
       )}
 
-      <nav className="bg-white border-b border-nude-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <section className="py-8 bg-nude-50/50">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-600 hover:text-gold-600 transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
-              <span>Начало</span>
+            <Link to="/" className="text-gray-600 hover:text-gold-600 transition-colors">
+              Начало
             </Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
             <Link to="/services" className="text-gray-600 hover:text-gold-600 transition-colors">
@@ -311,7 +310,7 @@ export default function ServiceCategoryPage() {
             <span className="text-gold-600 font-medium">{categoryData.name}</span>
           </div>
         </div>
-      </nav>
+      </section>
 
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
