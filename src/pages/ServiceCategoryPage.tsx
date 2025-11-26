@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom';
 import { Eye, Crown, Heart, Sparkles } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import HeroSlider from '../components/HeroSlider';
 
 const categoriesData = {
   lashes: {
@@ -10,26 +9,6 @@ const categoriesData = {
     icon: Eye,
     heroImage: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=compress&cs=tinysrgb&w=1920',
     description: 'Професионални услуги за удължаване, ламиниране и боядисване на мигли',
-    featuredServices: [
-      {
-        name: 'Мигли руски обем',
-        price: '140 лв.',
-        image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?auto=compress&cs=tinysrgb&w=1920',
-        description: 'Максимален обем с множество тънки косъмчета за луксозен и драматичен вид'
-      },
-      {
-        name: 'Удължаване на мигли 3D/4D техника',
-        price: '90 лв.',
-        image: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=compress&cs=tinysrgb&w=1920',
-        description: 'Максимален обем и луксозен вид с 3D/4D техника'
-      },
-      {
-        name: 'Ламиниране + боядисване на мигли',
-        price: '75 лв.',
-        image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?auto=compress&cs=tinysrgb&w=1920',
-        description: 'Повдигане и извивка с дълготраен цвят'
-      }
-    ],
     services: [
       {
         name: 'Удължаване на мигли косъм по косъм',
@@ -150,14 +129,6 @@ const categoriesData = {
     icon: Crown,
     heroImage: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=compress&cs=tinysrgb&w=1920',
     description: 'Експертни услуги за оформяне, боядисване и микроблейдинг на вежди',
-    featuredServices: [
-      {
-        name: 'Микроблейдинг на вежди',
-        price: '200 лв.',
-        image: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=compress&cs=tinysrgb&w=1920',
-        description: 'Полу-перманентна техника за перфектно естествени вежди'
-      }
-    ],
     services: [
       {
         name: 'Боядисване на вежди',
@@ -187,7 +158,6 @@ const categoriesData = {
     icon: Heart,
     heroImage: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=compress&cs=tinysrgb&w=1920',
     description: 'Релаксиращи и възстановяващи процедури за лице',
-    featuredServices: [],
     services: [
       {
         name: 'Почистване на лице',
@@ -241,59 +211,36 @@ export default function ServiceCategoryPage() {
     <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
       <Header />
 
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {categoryData.featuredServices && categoryData.featuredServices.length > 0 ? (
-          <>
-            <HeroSlider featuredServices={categoryData.featuredServices} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-5xl mx-auto px-6 text-center w-full pointer-events-none">
-              <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
-                <Icon className="w-4 h-4 text-gold-400 animate-pulse" />
-                <span className="text-sm text-gold-400 font-medium tracking-wide">Професионални услуги</span>
-              </div>
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={categoryData.heroImage}
+            alt={categoryData.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
+        </div>
 
-              <h1 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
-                {categoryData.name}
-              </h1>
-              <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
 
-              <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-                {categoryData.description}
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0">
-              <img
-                src={categoryData.heroImage}
-                alt={categoryData.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
-            </div>
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
+          <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
+            <Icon className="w-4 h-4 text-gold-400 animate-pulse" />
+            <span className="text-sm text-gold-400 font-medium tracking-wide">Професионални услуги</span>
+          </div>
 
-            <div className="absolute inset-0">
-              <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            </div>
+          <h1 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
+            {categoryData.name}
+          </h1>
+          <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-              <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
-                <Icon className="w-4 h-4 text-gold-400 animate-pulse" />
-                <span className="text-sm text-gold-400 font-medium tracking-wide">Професионални услуги</span>
-              </div>
-
-              <h1 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
-                {categoryData.name}
-              </h1>
-              <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
-
-              <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-                {categoryData.description}
-              </p>
-            </div>
-          </>
-        )}
+          <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
+            {categoryData.description}
+          </p>
+        </div>
       </section>
 
       <section className="py-24">

@@ -1,28 +1,6 @@
 import { Eye, Palette, TrendingUp, Sparkles, Crown, Scissors, Heart } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import HeroSlider from '../components/HeroSlider';
-
-const featuredServices = [
-  {
-    name: 'Мигли руски обем',
-    price: '140 лв.',
-    image: 'https://images.unsplash.com/photo-1674049406467-824ea37c7184?auto=compress&cs=tinysrgb&w=1920',
-    description: 'Максимален обем с множество тънки косъмчета за луксозен и драматичен вид'
-  },
-  {
-    name: 'Микроблейдинг на вежди',
-    price: '200 лв.',
-    image: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=compress&cs=tinysrgb&w=1920',
-    description: 'Полу-перманентна техника за перфектно естествени вежди'
-  },
-  {
-    name: 'Удължаване на мигли 3D/4D техника',
-    price: '90 лв.',
-    image: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=compress&cs=tinysrgb&w=1920',
-    description: 'Максимален обем и луксозен вид с 3D/4D техника'
-  }
-];
 
 const categories = [
   {
@@ -208,67 +186,40 @@ export default function ServicesPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {featuredServices.length > 0 ? (
-          <>
-            <HeroSlider featuredServices={featuredServices} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-5xl mx-auto px-6 text-center w-full pointer-events-none">
-              <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
-                <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
-                <span className="text-sm text-gold-400 font-medium tracking-wide">Премиум Beauty Studio</span>
-              </div>
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=compress&cs=tinysrgb&w=1920"
+            alt="Beauty services"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
+        </div>
 
-              <h1 className="font-serif text-6xl lg:text-7xl text-white mb-6 leading-none tracking-tight">
-                Нашите
-              </h1>
-              <h2 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
-                Услуги
-              </h2>
-              <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
 
-              <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-                Открийте нашата пълна селекция от специализирани услуги за мигли, вежди и лице.
-                Всяка процедура е изпълнена с внимание към детайла и използване на премиум продукти.
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0">
-              <img
-                src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=compress&cs=tinysrgb&w=1920"
-                alt="Beauty services"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
-            </div>
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
+          <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
+            <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
+            <span className="text-sm text-gold-400 font-medium tracking-wide">Премиум Beauty Studio</span>
+          </div>
 
-            <div className="absolute inset-0">
-              <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            </div>
+          <h1 className="font-serif text-6xl lg:text-7xl text-white mb-6 leading-none tracking-tight">
+            Нашите
+          </h1>
+          <h2 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
+            Услуги
+          </h2>
+          <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-              <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
-                <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
-                <span className="text-sm text-gold-400 font-medium tracking-wide">Премиум Beauty Studio</span>
-              </div>
-
-              <h1 className="font-serif text-6xl lg:text-7xl text-white mb-6 leading-none tracking-tight">
-                Нашите
-              </h1>
-              <h2 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer">
-                Услуги
-              </h2>
-              <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
-
-              <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
-                Открийте нашата пълна селекция от специализирани услуги за мигли, вежди и лице.
-                Всяка процедура е изпълнена с внимание към детайла и използване на премиум продукти.
-              </p>
-            </div>
-          </>
-        )}
+          <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
+            Открийте нашата пълна селекция от специализирани услуги за мигли, вежди и лице.
+            Всяка процедура е изпълнена с внимание към детайла и използване на премиум продукти.
+          </p>
+        </div>
       </section>
 
       {/* Services by Category */}
