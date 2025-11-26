@@ -1,19 +1,34 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LucideIcon } from 'lucide-react';
 
 interface FeaturedService {
   name: string;
   price: string;
   image: string;
   description: string;
+  badge?: {
+    icon: LucideIcon;
+    text: string;
+  };
+  title?: string;
+  subtitle?: string;
+  heroText?: string;
 }
 
 interface HeroSliderProps {
   featuredServices: FeaturedService[];
+  title?: string;
+  subtitle?: string;
+  badge?: {
+    icon: LucideIcon;
+    text: string;
+  };
+  heroText?: string;
 }
 
-export default function HeroSlider({ featuredServices }: HeroSliderProps) {
+export default function HeroSlider({ featuredServices, title, subtitle, badge, heroText }: HeroSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentService = featuredServices[currentIndex];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,6 +47,11 @@ export default function HeroSlider({ featuredServices }: HeroSliderProps) {
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % featuredServices.length);
   };
+
+  const displayBadge = currentService.badge || badge;
+  const displayTitle = currentService.title || title;
+  const displaySubtitle = currentService.subtitle || subtitle;
+  const displayHeroText = currentService.heroText || heroText;
 
   return (
     <div className="relative w-full h-full">
@@ -88,24 +108,53 @@ export default function HeroSlider({ featuredServices }: HeroSliderProps) {
         ))}
       </div>
 
-      <div className="absolute bottom-16 left-8 right-8 z-20 text-left">
-        <div className="max-w-2xl">
-          <h3 className="font-serif text-3xl lg:text-4xl text-white mb-2 leading-tight">
-            {featuredServices[currentIndex].name}
-          </h3>
-          <p className="text-lg text-gray-300 mb-4 leading-relaxed">
-            {featuredServices[currentIndex].description}
-          </p>
-          <div className="flex items-center gap-4">
-            <span className="text-2xl font-serif text-gold-400 font-semibold">
-              {featuredServices[currentIndex].price}
-            </span>
-            <a
-              href="#contact"
-              className="px-6 py-2.5 bg-gold-500 hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
-            >
-              Запази час
-            </a>
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6">
+        <div className="max-w-5xl mx-auto text-center w-full">
+          {displayBadge && (
+            <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8 transition-all duration-500">
+              <displayBadge.icon className="w-4 h-4 text-gold-400 animate-pulse" />
+              <span className="text-sm text-gold-400 font-medium tracking-wide">{displayBadge.text}</span>
+            </div>
+          )}
+
+          {displayTitle && (
+            <h1 className="font-serif text-6xl lg:text-7xl text-white mb-6 leading-none tracking-tight transition-all duration-500">
+              {displayTitle}
+            </h1>
+          )}
+
+          {displaySubtitle && (
+            <h2 className="font-serif text-6xl lg:text-7xl bg-gold-shimmer bg-clip-text text-transparent mb-8 leading-none tracking-tight animate-shimmer transition-all duration-500">
+              {displaySubtitle}
+            </h2>
+          )}
+
+          <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+
+          {displayHeroText && (
+            <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light mb-12 transition-all duration-500">
+              {displayHeroText}
+            </p>
+          )}
+
+          <div className="bg-charcoal-600/70 backdrop-blur-md rounded-3xl p-8 max-w-2xl mx-auto border border-gold-500/20 transition-all duration-500">
+            <h3 className="font-serif text-3xl lg:text-4xl text-white mb-3 leading-tight">
+              {currentService.name}
+            </h3>
+            <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+              {currentService.description}
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-3xl font-serif text-gold-400 font-semibold">
+                {currentService.price}
+              </span>
+              <a
+                href="#contact"
+                className="px-8 py-3 bg-gold-500 hover:bg-gold-600 text-white rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+              >
+                Запази час
+              </a>
+            </div>
           </div>
         </div>
       </div>
