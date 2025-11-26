@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 
 interface Promotion {
   id: string;
+  slug: string;
   service_name: string;
   old_price: string;
   new_price: string;
@@ -40,6 +41,18 @@ export default function PromotionsPage() {
 
     loadPromotions();
   }, []);
+
+  useEffect(() => {
+    if (promotions.length > 0 && window.location.hash) {
+      const slug = window.location.hash.substring(1);
+      const element = document.getElementById(slug);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+  }, [promotions]);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return null;
@@ -105,7 +118,8 @@ export default function PromotionsPage() {
               {promotions.map((promotion) => (
                 <div
                   key={promotion.id}
-                  className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
+                  id={promotion.slug}
+                  className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 scroll-mt-24"
                 >
                   <div className="grid lg:grid-cols-5 gap-0">
                     <div className="lg:col-span-2 relative h-80 lg:h-auto overflow-hidden">
