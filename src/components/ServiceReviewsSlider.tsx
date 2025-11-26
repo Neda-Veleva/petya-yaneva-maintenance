@@ -7,6 +7,7 @@ interface Review {
   rating: number;
   review_text: string;
   review_date: string;
+  avatar_url?: string;
 }
 
 interface ServiceReviewsSliderProps {
@@ -48,16 +49,8 @@ export default function ServiceReviewsSlider({ reviews }: ServiceReviewsSliderPr
   };
 
   const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
-
-  const visibleReviews = reviews.length >= 3
-    ? [
-        reviews[currentIndex],
-        reviews[(currentIndex + 1) % reviews.length],
-        reviews[(currentIndex + 2) % reviews.length],
-      ]
-    : reviews.length === 2
-    ? [reviews[currentIndex], reviews[(currentIndex + 1) % reviews.length]]
-    : [reviews[0]];
+  const currentReview = reviews[currentIndex];
+  const nextReviewItem = reviews[(currentIndex + 1) % reviews.length];
 
   return (
     <section id="reviews" className="py-24 bg-white">
@@ -73,45 +66,79 @@ export default function ServiceReviewsSlider({ reviews }: ServiceReviewsSliderPr
           </p>
         </div>
 
-        <div className="relative">
-          <div className={`grid ${reviews.length === 1 ? 'md:grid-cols-1 max-w-2xl mx-auto' : reviews.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-8`}>
-            {visibleReviews.map((review, index) => (
-              <div
-                key={`${review.id}-${index}`}
-                className="bg-gradient-to-br from-nude-50 via-white to-nude-50 rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-4">
+        <div className="relative max-w-6xl mx-auto">
+          <div className="flex items-center gap-4 overflow-hidden">
+            <div className="flex-1 bg-gradient-to-br from-nude-50 via-white to-nude-50 rounded-3xl p-8 shadow-lg transition-all duration-500">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  {currentReview.avatar_url ? (
+                    <img
+                      src={currentReview.avatar_url}
+                      alt={currentReview.client_name}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-gold-400"
+                    />
+                  ) : (
                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center text-white font-serif text-xl">
-                      {review.client_name.charAt(0)}
+                      {currentReview.client_name.charAt(0)}
                     </div>
-                    <div>
-                      <h3 className="font-serif text-lg text-gray-900">{review.client_name}</h3>
-                      <p className="text-xs text-gray-500">{formatDate(review.review_date)}</p>
-                    </div>
+                  )}
+                  <div>
+                    <h3 className="font-serif text-lg text-gray-900">{currentReview.client_name}</h3>
+                    <p className="text-xs text-gray-500">{formatDate(currentReview.review_date)}</p>
                   </div>
-                  <Quote className="w-8 h-8 text-gold-400/30" />
                 </div>
+                <Quote className="w-8 h-8 text-gold-400/30" />
+              </div>
 
-                <div className="flex items-center gap-1 mb-4">
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-5 h-5 ${
+                      i < currentReview.rating
+                        ? 'fill-gold-500 text-gold-500'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <p className="text-gray-700 leading-relaxed">{currentReview.review_text}</p>
+            </div>
+
+            {reviews.length > 1 && (
+              <div className="w-32 hidden lg:block bg-gradient-to-br from-nude-50 via-white to-nude-50 rounded-3xl p-6 shadow-lg opacity-40 scale-95 transition-all duration-500">
+                <div className="flex items-center gap-3 mb-4">
+                  {nextReviewItem.avatar_url ? (
+                    <img
+                      src={nextReviewItem.avatar_url}
+                      alt={nextReviewItem.client_name}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-gold-400"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center text-white font-serif text-sm">
+                      {nextReviewItem.client_name.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 mb-2">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < review.rating
+                      className={`w-3 h-3 ${
+                        i < nextReviewItem.rating
                           ? 'fill-gold-500 text-gold-500'
                           : 'text-gray-300'
                       }`}
                     />
                   ))}
                 </div>
-
-                <p className="text-gray-700 leading-relaxed">{review.review_text}</p>
+                <p className="text-gray-700 text-xs leading-relaxed line-clamp-3">{nextReviewItem.review_text}</p>
               </div>
-            ))}
+            )}
           </div>
 
-          {reviews.length > 3 && (
+          {reviews.length > 1 && (
             <>
               <button
                 onClick={prevReview}
@@ -129,7 +156,7 @@ export default function ServiceReviewsSlider({ reviews }: ServiceReviewsSliderPr
           )}
         </div>
 
-        {reviews.length > 3 && (
+        {reviews.length > 1 && (
           <div className="flex justify-center gap-3 mt-12">
             {reviews.map((_, index) => (
               <button

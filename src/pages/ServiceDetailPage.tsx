@@ -36,6 +36,7 @@ interface Review {
   rating: number;
   review_text: string;
   review_date: string;
+  avatar_url?: string;
 }
 
 export default function ServiceDetailPage() {
