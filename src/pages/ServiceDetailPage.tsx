@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, Tag, CheckCircle, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ServiceReviewsSlider from '../components/ServiceReviewsSlider';
 import { supabase } from '../lib/supabase';
 
 interface Service {
@@ -29,10 +30,19 @@ interface ServiceCategory {
   name: string;
 }
 
+interface Review {
+  id: string;
+  client_name: string;
+  rating: number;
+  review_text: string;
+  review_date: string;
+}
+
 export default function ServiceDetailPage() {
   const { serviceSlug } = useParams<{ serviceSlug: string }>();
   const [service, setService] = useState<Service | null>(null);
   const [category, setCategory] = useState<ServiceCategory | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -63,6 +73,16 @@ export default function ServiceDetailPage() {
 
         if (!categoryError && categoryData) {
           setCategory(categoryData);
+        }
+
+        const { data: reviewsData } = await supabase
+          .from('service_reviews')
+          .select('*')
+          .eq('service_id', serviceData.id)
+          .order('order_position', { ascending: true });
+
+        if (reviewsData) {
+          setReviews(reviewsData);
         }
       }
 
@@ -325,6 +345,8 @@ export default function ServiceDetailPage() {
           </div>
         </div>
       </section>
+
+      {reviews.length > 0 && <ServiceReviewsSlider reviews={reviews} />}
 
       <Footer />
     </div>
