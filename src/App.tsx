@@ -7,6 +7,7 @@ import ServiceDetailPage from './pages/ServiceDetailPage';
 import PromotionsPage from './pages/PromotionsPage';
 import BlogListPage from './pages/BlogListPage';
 import BlogPostPage from './pages/BlogPostPage';
+import TeamMemberPage from './pages/TeamMemberPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/promotions" element={<PromotionsPage />} />
         <Route path="/blog" element={<BlogListPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/team/:slug" element={<TeamMemberPage />} />
       </Routes>
     </Router>
   );

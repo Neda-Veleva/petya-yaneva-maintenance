@@ -13,6 +13,7 @@ const slides = [
     image: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
     thumbnail: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
     stat: { value: '500+', label: 'Доволни клиенти' },
+    slug: 'petya-yaneva',
   },
   {
     id: 2,
@@ -24,6 +25,7 @@ const slides = [
     image: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=1080',
     thumbnail: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=300',
     stat: { value: '300+', label: 'Доволни клиенти' },
+    slug: 'maria-georgieva',
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ const slides = [
     titleGold: 'Livon',
     badge: 'Премиум Beauty Studio',
     description: 'Луксозно студио в сърцето на София, оборудвано с най-модерните технологии и висококачествени продукти за перфектни резултати.',
+    slug: 'salon-livon',
     imageSlides: [
       [
         'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=1080',
@@ -113,10 +116,10 @@ export default function Hero() {
 
             <div className="flex flex-wrap gap-4 pt-4">
               <a
-                href="#services"
+                href={`/team/${slide.slug}`}
                 className="group px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-semibold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 flex items-center gap-2"
               >
-                <span>Виж услугите</span>
+                <span>Прочети още</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </a>
               <a
