@@ -101,50 +101,56 @@ export default function BlogListPage() {
 
       {/* Featured Post Section */}
       {featuredPost && (
-        <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <span className="inline-block px-4 py-2 bg-gold-50 text-gold-600 rounded-full font-medium text-sm mb-4">
+        <section className="relative py-32 overflow-hidden bg-gradient-to-br from-charcoal-600 via-charcoal-500 to-charcoal-600">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold-400 rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="relative max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <span className="inline-block px-6 py-2 bg-gold-500/20 text-gold-300 rounded-full font-medium text-sm mb-4 backdrop-blur-sm border border-gold-500/30">
                 Топ статия
               </span>
-              <h2 className="font-serif text-4xl text-gray-900">Препоръчана статия</h2>
+              <h2 className="font-serif text-5xl text-white mb-4">Препоръчана статия</h2>
+              <div className="h-1 w-24 bg-gold-shimmer animate-shimmer mx-auto"></div>
             </div>
 
             <Link
               to={`/blog/${featuredPost.slug}`}
-              className="group block bg-gradient-to-br from-nude-50 to-white rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500"
+              className="group block bg-white/5 backdrop-blur-md rounded-3xl overflow-hidden border border-white/10 hover:border-gold-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-500/20"
             >
-              <div className="grid lg:grid-cols-2 gap-0">
-                <div className="relative h-96 lg:h-full overflow-hidden">
+              <div className="grid lg:grid-cols-5 gap-0">
+                <div className="relative h-96 lg:h-full lg:col-span-3 overflow-hidden">
                   <img
                     src={featuredPost.image_url}
                     alt={featuredPost.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 group-hover:to-black/30 transition-colors duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-charcoal-600/40"></div>
                 </div>
 
-                <div className="p-12 flex flex-col justify-center">
-                  <div className="flex items-center gap-4 mb-6">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-gold-100 text-gold-700 rounded-full font-medium text-sm">
+                <div className="lg:col-span-2 p-10 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-white/10 to-white/5">
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-gold-500/20 text-gold-300 rounded-full font-medium text-sm backdrop-blur-sm border border-gold-500/30">
                       <Tag className="w-4 h-4" />
                       {featuredPost.category}
                     </span>
-                    <span className="inline-flex items-center gap-2 text-gray-500 text-sm">
+                    <span className="inline-flex items-center gap-2 text-gray-300 text-sm">
                       <Calendar className="w-4 h-4" />
                       {formatDate(featuredPost.published_at)}
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-4xl text-gray-900 mb-6 leading-tight group-hover:text-gold-600 transition-colors duration-300">
+                  <h3 className="font-serif text-3xl lg:text-4xl text-white mb-6 leading-tight group-hover:text-gold-300 transition-colors duration-300">
                     {featuredPost.title}
                   </h3>
 
-                  <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                  <p className="text-base lg:text-lg text-gray-300 mb-8 leading-relaxed">
                     {featuredPost.excerpt}
                   </p>
 
-                  <span className="inline-flex items-center gap-2 text-gold-600 font-semibold text-lg group-hover:gap-4 transition-all duration-300">
+                  <span className="inline-flex items-center gap-2 text-gold-400 font-semibold text-lg group-hover:gap-4 transition-all duration-300">
                     Прочети цялата статия
                     <ArrowRight className="w-5 h-5" />
                   </span>
@@ -152,11 +158,16 @@ export default function BlogListPage() {
               </div>
             </Link>
           </div>
+
+          <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-gold-500/20"></div>
+          <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-gold-500/20"></div>
+          <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-gold-500/20"></div>
+          <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-gold-500/20"></div>
         </section>
       )}
 
       {/* Main Content */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-br from-nude-50 via-white to-nude-100">
         <div className="max-w-7xl mx-auto px-6">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
@@ -169,15 +180,15 @@ export default function BlogListPage() {
           </nav>
 
           {/* Category Filters */}
-          <div className="mb-12">
-            <h2 className="font-serif text-2xl text-gray-900 mb-6">Филтрирай по категория</h2>
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="mb-12 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-nude-200">
+            <h2 className="font-serif text-3xl text-gray-900 mb-6 text-center">Филтрирай по категория</h2>
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <button
                 onClick={() => setSelectedCategory('all')}
                 className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                   selectedCategory === 'all'
-                    ? 'bg-gold-500 text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-700 hover:bg-gold-50 shadow-md'
+                    ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-lg shadow-gold-500/30 scale-105'
+                    : 'bg-white text-gray-700 hover:bg-gold-50 shadow-md border border-gray-200'
                 }`}
               >
                 Всички
@@ -188,8 +199,8 @@ export default function BlogListPage() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                     selectedCategory === category
-                      ? 'bg-gold-500 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 hover:bg-gold-50 shadow-md'
+                      ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-lg shadow-gold-500/30 scale-105'
+                      : 'bg-white text-gray-700 hover:bg-gold-50 shadow-md border border-gray-200'
                   }`}
                 >
                   {category}
