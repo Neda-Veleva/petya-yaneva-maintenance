@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Award, Calendar, MapPin, ArrowLeft, Sparkles } from 'lucide-react';
+import { Award, Calendar, MapPin, Sparkles, Home, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -109,7 +109,7 @@ export default function TeamMemberPage() {
             to="/"
             className="inline-flex items-center gap-2 px-6 py-3 bg-gold-500 text-white rounded-full hover:bg-gold-600 transition-colors duration-300"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <Home className="w-4 h-4" />
             Към началото
           </Link>
         </div>
@@ -136,14 +136,6 @@ export default function TeamMemberPage() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-gold-300 hover:text-gold-400 font-medium mb-8 transition-colors duration-300"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Назад към началото
-          </Link>
-
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-block px-4 py-2 bg-gold-500/20 text-gold-300 rounded-full font-medium text-sm mb-6 backdrop-blur-sm border border-gold-500/30">
@@ -212,6 +204,16 @@ export default function TeamMemberPage() {
       {/* Bio Section */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-6">
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+            <Link to="/" className="hover:text-gold-600 transition-colors duration-300 flex items-center gap-1">
+              <Home className="w-4 h-4" />
+              Начало
+            </Link>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-gold-600 font-medium">{displayName}</span>
+          </nav>
+
           <h2 className="font-serif text-4xl text-gray-900 mb-8">
             {member.type === 'person' ? 'За мен' : 'За салона'}
           </h2>
