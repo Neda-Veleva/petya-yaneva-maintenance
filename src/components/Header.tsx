@@ -14,7 +14,7 @@ export default function Header() {
   const menuItems = [
     { label: 'Ценоразпис', href: '#prices' },
     { label: 'Отзиви', href: '#reviews' },
-    { label: 'Блог', href: '#blog' },
+    { label: 'Блог', href: '/blog' },
     { label: 'Промоции', href: '/promotions' },
     { label: 'Галерия', href: '#gallery' },
     { label: 'Контакти', href: '#contact' }
