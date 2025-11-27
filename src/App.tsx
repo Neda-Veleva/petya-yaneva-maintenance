@@ -5,6 +5,8 @@ import ServicesPage from './pages/ServicesPage';
 import ServiceCategoryPage from './pages/ServiceCategoryPage';
 import ServiceDetailPage from './pages/ServiceDetailPage';
 import PromotionsPage from './pages/PromotionsPage';
+import BlogListPage from './pages/BlogListPage';
+import BlogPostPage from './pages/BlogPostPage';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/services/:category" element={<ServiceCategoryPage />} />
         <Route path="/services/:category/:serviceSlug" element={<ServiceDetailPage />} />
         <Route path="/promotions" element={<PromotionsPage />} />
+        <Route path="/blog" element={<BlogListPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
       </Routes>
     </Router>
   );
