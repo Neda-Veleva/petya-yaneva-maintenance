@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CallToAction from '../components/CallToAction';
+import PriceList from '../components/PriceList';
 
 interface TeamMember {
   id: string;
@@ -224,8 +225,8 @@ export default function TeamMemberPage() {
         </div>
       </section>
 
-      {/* Certificates Section */}
-      {certificates.length > 0 && (
+      {/* Certificates Section - Only for people */}
+      {member.type === 'person' && certificates.length > 0 && (
         <section className="py-20 bg-gradient-to-br from-nude-50 to-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-12">
@@ -263,6 +264,9 @@ export default function TeamMemberPage() {
           </div>
         </section>
       )}
+
+      {/* Price List Section - Only for salon */}
+      {member.type === 'salon' && <PriceList />}
 
       {/* Gallery Section - Only for people */}
       {member.type === 'person' && gallery.length > 0 && (
