@@ -5,11 +5,15 @@ import { supabase } from '../../lib/supabase';
 interface Review {
   id: string;
   service_id: string;
-  author_name: string;
-  author_avatar: string;
+  client_name: string;
+  avatar_url?: string;
   rating: number;
-  comment: string;
+  review_text: string;
+  review_date: string;
+  is_featured: boolean;
+  order_position: number;
   created_at: string;
+  updated_at: string;
   services: {
     name: string;
   };
@@ -20,8 +24,13 @@ export default function ReviewsManager() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
+    client_name: '',
+    avatar_url: '',
     rating: 5,
-    comment: '',
+    review_text: '',
+    review_date: '',
+    is_featured: false,
+    order_position: 0,
   });
 
   useEffect(() => {
@@ -32,10 +41,11 @@ export default function ReviewsManager() {
     const { data, error } = await supabase
       .from('service_reviews')
       .select('*, services(name)')
-      .order('created_at', { ascending: false });
+      .order('order_position', { ascending: true });
 
     if (error) {
       console.error('Error fetching reviews:', error);
+      alert('Грешка при зареждане на отзивите: ' + error.message);
     } else {
       setReviews(data || []);
     }
@@ -43,19 +53,36 @@ export default function ReviewsManager() {
   }
 
   async function handleSave() {
-    if (!editingId) return;
+    if (!formData.client_name || !formData.review_text) {
+      alert('Моля, попълнете всички задължителни полета');
+      return;
+    }
 
-    const { error } = await supabase
-      .from('service_reviews')
-      .update({
-        rating: formData.rating,
-        comment: formData.comment,
-      })
-      .eq('id', editingId);
+    const reviewData = {
+      client_name: formData.client_name,
+      avatar_url: formData.avatar_url || null,
+      rating: formData.rating,
+      review_text: formData.review_text,
+      review_date: formData.review_date || new Date().toISOString().split('T')[0],
+      is_featured: formData.is_featured,
+      order_position: formData.order_position,
+      updated_at: new Date().toISOString(),
+    };
 
-    if (error) {
-      console.error('Error updating review:', error);
-      alert('Грешка при актуализация');
+    if (editingId) {
+      const { error } = await supabase
+        .from('service_reviews')
+        .update(reviewData)
+        .eq('id', editingId);
+
+      if (error) {
+        console.error('Error updating review:', error);
+        alert('Грешка при актуализация: ' + error.message);
+        return;
+      }
+    } else {
+      // For new reviews, we need service_id
+      alert('Моля, изберете услуга за отзива');
       return;
     }
 
@@ -80,16 +107,26 @@ export default function ReviewsManager() {
   function handleEdit(review: Review) {
     setEditingId(review.id);
     setFormData({
+      client_name: review.client_name,
+      avatar_url: review.avatar_url || '',
       rating: review.rating,
-      comment: review.comment,
+      review_text: review.review_text,
+      review_date: review.review_date,
+      is_featured: review.is_featured,
+      order_position: review.order_position,
     });
   }
 
   function handleCancel() {
     setEditingId(null);
     setFormData({
+      client_name: '',
+      avatar_url: '',
       rating: 5,
-      comment: '',
+      review_text: '',
+      review_date: '',
+      is_featured: false,
+      order_position: 0,
     });
   }
 
@@ -109,8 +146,32 @@ export default function ReviewsManager() {
           <div key={review.id} className="bg-white rounded-xl shadow-lg p-6">
             {editingId === review.id ? (
               <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Име на клиента <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.client_name}
+                      onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL на аватар
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.avatar_url}
+                      onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    />
+                  </div>
+                </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600">Рейтинг:</label>
+                  <label className="text-sm font-medium text-gray-700">Рейтинг:</label>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -125,12 +186,53 @@ export default function ReviewsManager() {
                     ))}
                   </div>
                 </div>
-                <textarea
-                  value={formData.comment}
-                  onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  rows={4}
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Текст на отзива <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={formData.review_text}
+                    onChange={(e) => setFormData({ ...formData, review_text: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    rows={4}
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Дата на отзива
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.review_date}
+                      onChange={(e) => setFormData({ ...formData, review_date: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ред на показване
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.order_position}
+                      onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 pt-6">
+                    <input
+                      type="checkbox"
+                      id="is_featured"
+                      checked={formData.is_featured}
+                      onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                      className="w-4 h-4"
+                    />
+                    <label htmlFor="is_featured" className="text-sm font-medium text-gray-700">
+                      Топ отзив
+                    </label>
+                  </div>
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={handleSave}
@@ -152,13 +254,26 @@ export default function ReviewsManager() {
               <>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img
-                      src={review.author_avatar}
-                      alt={review.author_name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                    {review.avatar_url ? (
+                      <img
+                        src={review.avatar_url}
+                        alt={review.client_name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 font-semibold">
+                        {review.client_name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                     <div>
-                      <h3 className="font-medium text-charcoal-600">{review.author_name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-charcoal-600">{review.client_name}</h3>
+                        {review.is_featured && (
+                          <span className="px-2 py-0.5 bg-gold-100 text-gold-600 text-xs rounded-full">
+                            Топ
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">{review.services.name}</p>
                       <div className="flex gap-1 mt-1">
                         {[...Array(5)].map((_, i) => (
@@ -189,10 +304,15 @@ export default function ReviewsManager() {
                     </button>
                   </div>
                 </div>
-                <p className="text-gray-700">{review.comment}</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  {new Date(review.created_at).toLocaleDateString('bg-BG')}
-                </p>
+                <p className="text-gray-700">{review.review_text}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm text-gray-500">
+                    Дата: {new Date(review.review_date || review.created_at).toLocaleDateString('bg-BG')}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Ред: {review.order_position}
+                  </p>
+                </div>
               </>
             )}
           </div>

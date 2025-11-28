@@ -1,17 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface Promotion {
   id: string;
-  title: string;
-  slug: string;
+  slug?: string;
+  service_name: string;
+  old_price: string;
+  new_price: string;
   description: string;
-  discount_text: string;
+  long_description?: string;
+  terms?: string;
   image_url: string;
-  valid_from: string;
-  valid_until: string;
+  valid_from?: string;
+  valid_until?: string;
   is_active: boolean;
+  order_position: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export default function PromotionsManager() {
@@ -19,15 +25,20 @@ export default function PromotionsManager() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [slugEditable, setSlugEditable] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
     slug: '',
+    service_name: '',
+    old_price: '',
+    new_price: '',
     description: '',
-    discount_text: '',
+    long_description: '',
+    terms: '',
     image_url: '',
     valid_from: '',
     valid_until: '',
     is_active: true,
+    order_position: 0,
   });
 
   useEffect(() => {
@@ -38,10 +49,11 @@ export default function PromotionsManager() {
     const { data, error } = await supabase
       .from('promotions')
       .select('*')
-      .order('valid_from', { ascending: false });
+      .order('order_position', { ascending: true });
 
     if (error) {
       console.error('Error fetching promotions:', error);
+      alert('Грешка при зареждане на промоциите: ' + error.message);
     } else {
       setPromotions(data || []);
     }
@@ -49,23 +61,38 @@ export default function PromotionsManager() {
   }
 
   async function handleSave() {
+    if (!formData.service_name || !formData.old_price || !formData.new_price || !formData.description || !formData.image_url) {
+      alert('Моля, попълнете всички задължителни полета');
+      return;
+    }
+
+    const promotionData = {
+      ...formData,
+      slug: formData.slug || null,
+      long_description: formData.long_description || null,
+      terms: formData.terms || null,
+      valid_from: formData.valid_from || null,
+      valid_until: formData.valid_until || null,
+      updated_at: new Date().toISOString(),
+    };
+
     if (editingId) {
       const { error } = await supabase
         .from('promotions')
-        .update(formData)
+        .update(promotionData)
         .eq('id', editingId);
 
       if (error) {
         console.error('Error updating promotion:', error);
-        alert('Грешка при актуализация');
+        alert('Грешка при актуализация: ' + error.message);
         return;
       }
     } else {
-      const { error } = await supabase.from('promotions').insert([formData]);
+      const { error } = await supabase.from('promotions').insert([promotionData]);
 
       if (error) {
         console.error('Error creating promotion:', error);
-        alert('Грешка при създаване');
+        alert('Грешка при създаване: ' + error.message);
         return;
       }
     }
@@ -91,30 +118,40 @@ export default function PromotionsManager() {
   function handleEdit(promotion: Promotion) {
     setEditingId(promotion.id);
     setShowAddForm(true);
+    setSlugEditable(false);
     setFormData({
-      title: promotion.title,
-      slug: promotion.slug,
+      slug: promotion.slug || '',
+      service_name: promotion.service_name,
+      old_price: promotion.old_price,
+      new_price: promotion.new_price,
       description: promotion.description,
-      discount_text: promotion.discount_text,
+      long_description: promotion.long_description || '',
+      terms: promotion.terms || '',
       image_url: promotion.image_url,
-      valid_from: promotion.valid_from,
-      valid_until: promotion.valid_until,
+      valid_from: promotion.valid_from || '',
+      valid_until: promotion.valid_until || '',
       is_active: promotion.is_active,
+      order_position: promotion.order_position,
     });
   }
 
   function handleCancel() {
     setEditingId(null);
     setShowAddForm(false);
+    setSlugEditable(false);
     setFormData({
-      title: '',
       slug: '',
+      service_name: '',
+      old_price: '',
+      new_price: '',
       description: '',
-      discount_text: '',
+      long_description: '',
+      terms: '',
       image_url: '',
       valid_from: '',
       valid_until: '',
       is_active: true,
+      order_position: 0,
     });
   }
 
@@ -141,61 +178,159 @@ export default function PromotionsManager() {
             {editingId ? 'Редактирай промоция' : 'Нова промоция'}
           </h2>
           <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Заглавие"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="Slug (URL)"
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <textarea
-              placeholder="Описание"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              rows={3}
-            />
-            <input
-              type="text"
-              placeholder="Текст на отстъпка (напр. 20% отстъпка)"
-              value={formData.discount_text}
-              onChange={(e) => setFormData({ ...formData, discount_text: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="URL на снимка"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Начало на валидност</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Име на услуга <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Име на услуга"
+                  value={formData.service_name}
+                  onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Slug (URL)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Slug (URL)"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    readOnly={!slugEditable}
+                    className={`flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 ${
+                      !slugEditable ? 'bg-gray-100 cursor-not-allowed' : ''
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSlugEditable(!slugEditable)}
+                    className={`px-4 py-2 border border-gray-300 rounded-lg transition-colors ${
+                      slugEditable
+                        ? 'bg-gold-500 text-white hover:bg-gold-600'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                    title={slugEditable ? 'Запази промените' : 'Редактирай slug'}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Стара цена <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="нпр. 100 лв."
+                  value={formData.old_price}
+                  onChange={(e) => setFormData({ ...formData, old_price: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Нова цена <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="нпр. 80 лв."
+                  value={formData.new_price}
+                  onChange={(e) => setFormData({ ...formData, new_price: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Описание <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                placeholder="Описание"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Пълно описание
+              </label>
+              <textarea
+                placeholder="Пълно описание"
+                value={formData.long_description}
+                onChange={(e) => setFormData({ ...formData, long_description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Условия
+              </label>
+              <textarea
+                placeholder="Условия и правила"
+                value={formData.terms}
+                onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={2}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                URL на снимка <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="URL на снимка"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Начало на валидност</label>
                 <input
                   type="date"
                   value={formData.valid_from}
                   onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Край на валидност</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Край на валидност</label>
                 <input
                   type="date"
                   value={formData.valid_until}
                   onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ред на показване</label>
+                <input
+                  type="number"
+                  value={formData.order_position}
+                  onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
                 />
               </div>
             </div>
+
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -203,7 +338,7 @@ export default function PromotionsManager() {
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                 className="w-4 h-4"
               />
-              <span>Активна</span>
+              <span className="text-sm font-medium text-gray-700">Активна</span>
             </label>
           </div>
           <div className="flex gap-2 mt-4">
@@ -229,49 +364,63 @@ export default function PromotionsManager() {
         <table className="w-full">
           <thead className="bg-charcoal-600 text-white">
             <tr>
-              <th className="px-6 py-3 text-left">Заглавие</th>
-              <th className="px-6 py-3 text-left">Отстъпка</th>
+              <th className="px-6 py-3 text-left">Услуга</th>
+              <th className="px-6 py-3 text-left">Цена</th>
               <th className="px-6 py-3 text-left">Валидност</th>
               <th className="px-6 py-3 text-left">Статус</th>
+              <th className="px-6 py-3 text-left">Ред</th>
               <th className="px-6 py-3 text-right">Действия</th>
             </tr>
           </thead>
           <tbody>
-            {promotions.map((promo) => (
-              <tr key={promo.id} className="border-b border-gray-200">
-                <td className="px-6 py-4 font-medium">{promo.title}</td>
-                <td className="px-6 py-4 text-gray-600">{promo.discount_text}</td>
-                <td className="px-6 py-4 text-gray-600">
-                  {new Date(promo.valid_from).toLocaleDateString()} -{' '}
-                  {new Date(promo.valid_until).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      promo.is_active
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {promo.is_active ? 'Активна' : 'Неактивна'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => handleEdit(promo)}
-                    className="text-gold-500 hover:text-gold-600 mr-2"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(promo.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+            {promotions.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  Няма намерени промоции
                 </td>
               </tr>
-            ))}
+            ) : (
+              promotions.map((promo) => (
+                <tr key={promo.id} className="border-b border-gray-200">
+                  <td className="px-6 py-4 font-medium text-gray-900">{promo.service_name}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    <span className="line-through text-gray-400">{promo.old_price}</span>{' '}
+                    <span className="text-gold-600 font-semibold">{promo.new_price}</span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {promo.valid_from && promo.valid_until
+                      ? `${new Date(promo.valid_from).toLocaleDateString('bg-BG')} - ${new Date(promo.valid_until).toLocaleDateString('bg-BG')}`
+                      : '-'}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        promo.is_active
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {promo.is_active ? 'Активна' : 'Неактивна'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">{promo.order_position}</td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => handleEdit(promo)}
+                      className="text-gold-500 hover:text-gold-600 mr-2"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(promo.id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

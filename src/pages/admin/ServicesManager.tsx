@@ -8,10 +8,19 @@ interface Service {
   name: string;
   slug: string;
   category_id: string;
+  short_description?: string;
+  full_description?: string;
   price: string;
   duration: string;
+  image_url?: string;
+  gallery_images?: string[];
+  benefits?: string[];
+  process_steps?: string[];
+  aftercare_tips?: string[];
   is_featured: boolean;
   order_position: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface Category {
@@ -35,9 +44,18 @@ export default function ServicesManager() {
       supabase.from('service_categories').select('id, name').order('order_position'),
     ]);
 
-    if (servicesRes.data) setServices(servicesRes.data);
-    if (categoriesRes.data) setCategories(categoriesRes.data);
+    if (servicesRes.data) {
+      setServices(servicesRes.data);
+    }
+    if (categoriesRes.data) {
+      setCategories(categoriesRes.data);
+    }
     setLoading(false);
+  }
+
+  function getCategoryName(categoryId: string): string {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category?.name || 'Неизвестна категория';
   }
 
   async function deleteService(id: string) {
@@ -105,59 +123,71 @@ export default function ServicesManager() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Име</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Цена</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Време</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Топ</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Ред</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredServices.map((service) => (
-              <tr key={service.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="font-medium text-gray-900">{service.name}</div>
-                  <div className="text-sm text-gray-500">{service.slug}</div>
-                </td>
-                <td className="px-6 py-4 text-gray-700">{service.price}</td>
-                <td className="px-6 py-4 text-gray-700">{service.duration}</td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => toggleFeatured(service.id, service.is_featured)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      service.is_featured
-                        ? 'bg-gold-100 text-gold-600 hover:bg-gold-200'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                    }`}
-                  >
-                    {service.is_featured ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  </button>
-                </td>
-                <td className="px-6 py-4 text-gray-700">{service.order_position}</td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
-                    <Link
-                      to={`/admin/services/edit/${service.id}`}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Link>
-                    <button
-                      onClick={() => deleteService(service.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Име</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Категория</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Кратко описание</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Цена</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Време</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Топ</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Ред</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Действия</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredServices.map((service) => (
+                <tr key={service.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">{service.name}</div>
+                    <div className="text-sm text-gray-500">{service.slug}</div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">
+                    {getCategoryName(service.category_id)}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700 max-w-xs">
+                    <div className="truncate" title={service.short_description}>
+                      {service.short_description || '-'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{service.price}</td>
+                  <td className="px-6 py-4 text-gray-700">{service.duration}</td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => toggleFeatured(service.id, service.is_featured)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        service.is_featured
+                          ? 'bg-gold-100 text-gold-600 hover:bg-gold-200'
+                          : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                      }`}
+                    >
+                      {service.is_featured ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{service.order_position}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        to={`/admin/services/edit/${service.id}`}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => deleteService(service.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredServices.length === 0 && (
           <div className="text-center py-12 text-gray-500">

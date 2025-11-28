@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOverview from './pages/admin/AdminOverview';
 import ServicesManager from './pages/admin/ServicesManager';
+import ServiceForm from './pages/admin/ServiceForm';
 import CategoriesManager from './pages/admin/CategoriesManager';
 import TopServicesManager from './pages/admin/TopServicesManager';
 import BlogManager from './pages/admin/BlogManager';
@@ -45,6 +46,8 @@ function App() {
             }
           >
             <Route index element={<AdminOverview />} />
+            <Route path="services/new" element={<ServiceForm />} />
+            <Route path="services/edit/:id" element={<ServiceForm />} />
             <Route path="services" element={<ServicesManager />} />
             <Route path="categories" element={<CategoriesManager />} />
             <Route path="top-services" element={<TopServicesManager />} />

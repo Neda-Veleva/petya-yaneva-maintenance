@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[а-я]/g, (char) => {
+      const map: { [key: string]: string } = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f',
+        'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sht', 'ъ': 'a',
+        'ь': 'y', 'ю': 'yu', 'я': 'ya'
+      };
+      return map[char] || char;
+    })
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with -
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
+}
 
 interface BlogPost {
   id: string;
@@ -8,11 +27,14 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   content: string;
-  cover_image: string;
-  published: boolean;
-  published_at: string;
-  author_name: string;
-  read_time: number;
+  image_url: string;
+  category?: string;
+  is_published: boolean;
+  published_at?: string;
+  author_name?: string;
+  read_time?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export default function BlogManager() {
@@ -20,13 +42,15 @@ export default function BlogManager() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [slugEditable, setSlugEditable] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     excerpt: '',
     content: '',
-    cover_image: '',
-    published: false,
+    image_url: '',
+    category: '',
+    is_published: false,
     author_name: '',
     read_time: 5,
   });
@@ -43,16 +67,35 @@ export default function BlogManager() {
 
     if (error) {
       console.error('Error fetching posts:', error);
+      alert('Грешка при зареждане на статиите: ' + error.message);
     } else {
       setPosts(data || []);
     }
     setLoading(false);
   }
 
+  function handleNameChange(title: string) {
+    setFormData({ ...formData, title });
+  }
+
   async function handleSave() {
+    if (!formData.title || !formData.slug || !formData.excerpt || !formData.content || !formData.image_url) {
+      alert('Моля, попълнете всички задължителни полета');
+      return;
+    }
+
     const saveData = {
-      ...formData,
-      published_at: formData.published ? new Date().toISOString() : null,
+      title: formData.title,
+      slug: formData.slug,
+      excerpt: formData.excerpt,
+      content: formData.content,
+      image_url: formData.image_url,
+      category: formData.category || null,
+      is_published: formData.is_published,
+      published_at: formData.is_published ? (formData.published_at || new Date().toISOString()) : null,
+      author_name: formData.author_name || null,
+      read_time: formData.read_time || null,
+      updated_at: new Date().toISOString(),
     };
 
     if (editingId) {
@@ -63,7 +106,7 @@ export default function BlogManager() {
 
       if (error) {
         console.error('Error updating post:', error);
-        alert('Грешка при актуализация');
+        alert('Грешка при актуализация: ' + error.message);
         return;
       }
     } else {
@@ -71,7 +114,7 @@ export default function BlogManager() {
 
       if (error) {
         console.error('Error creating post:', error);
-        alert('Грешка при създаване');
+        alert('Грешка при създаване: ' + error.message);
         return;
       }
     }
@@ -97,28 +140,32 @@ export default function BlogManager() {
   function handleEdit(post: BlogPost) {
     setEditingId(post.id);
     setShowAddForm(true);
+    setSlugEditable(false);
     setFormData({
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
       content: post.content,
-      cover_image: post.cover_image,
-      published: post.published,
-      author_name: post.author_name,
-      read_time: post.read_time,
+      image_url: post.image_url,
+      category: post.category || '',
+      is_published: post.is_published,
+      author_name: post.author_name || '',
+      read_time: post.read_time || 5,
     });
   }
 
   function handleCancel() {
     setEditingId(null);
     setShowAddForm(false);
+    setSlugEditable(false);
     setFormData({
       title: '',
       slug: '',
       excerpt: '',
       content: '',
-      cover_image: '',
-      published: false,
+      image_url: '',
+      category: '',
+      is_published: false,
       author_name: '',
       read_time: 5,
     });
@@ -147,65 +194,123 @@ export default function BlogManager() {
             {editingId ? 'Редактирай статия' : 'Нова статия'}
           </h2>
           <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Заглавие"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="Slug (URL)"
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <textarea
-              placeholder="Кратко описание"
-              value={formData.excerpt}
-              onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              rows={2}
-            />
-            <textarea
-              placeholder="Съдържание"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              rows={10}
-            />
-            <input
-              type="text"
-              placeholder="URL на главна снимка"
-              value={formData.cover_image}
-              onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Заглавие <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
-                placeholder="Име на автор"
-                value={formData.author_name}
-                onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
+                placeholder="Заглавие"
+                value={formData.title}
+                onChange={(e) => handleNameChange(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Slug (URL) <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Slug (URL)"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  readOnly={!slugEditable}
+                  className={`flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 ${
+                    !slugEditable ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setSlugEditable(!slugEditable)}
+                  className={`px-4 py-2 border border-gray-300 rounded-lg transition-colors ${
+                    slugEditable
+                      ? 'bg-gold-500 text-white hover:bg-gold-600'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                  title={slugEditable ? 'Запази промените' : 'Редактирай slug'}
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Кратко описание <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                placeholder="Кратко описание"
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Съдържание <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                placeholder="Съдържание"
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={10}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                URL на главна снимка <span className="text-red-500">*</span>
+              </label>
               <input
-                type="number"
-                placeholder="Време за четене (минути)"
-                value={formData.read_time}
-                onChange={(e) => setFormData({ ...formData, read_time: parseInt(e.target.value) })}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
+                type="text"
+                placeholder="URL на главна снимка"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                <input
+                  type="text"
+                  placeholder="Категория"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Име на автор</label>
+                <input
+                  type="text"
+                  placeholder="Име на автор"
+                  value={formData.author_name}
+                  onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Време за четене (мин.)</label>
+                <input
+                  type="number"
+                  placeholder="Време за четене"
+                  value={formData.read_time}
+                  onChange={(e) => setFormData({ ...formData, read_time: parseInt(e.target.value) || 5 })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+              </div>
             </div>
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={formData.published}
-                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                checked={formData.is_published}
+                onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
                 className="w-4 h-4"
               />
-              <span>Публикувано</span>
+              <span className="text-sm font-medium text-gray-700">Публикувано</span>
             </label>
           </div>
           <div className="flex gap-2 mt-4">
@@ -232,43 +337,62 @@ export default function BlogManager() {
           <thead className="bg-charcoal-600 text-white">
             <tr>
               <th className="px-6 py-3 text-left">Заглавие</th>
+              <th className="px-6 py-3 text-left">Категория</th>
               <th className="px-6 py-3 text-left">Автор</th>
+              <th className="px-6 py-3 text-left">Дата на публикуване</th>
               <th className="px-6 py-3 text-left">Статус</th>
               <th className="px-6 py-3 text-right">Действия</th>
             </tr>
           </thead>
           <tbody>
-            {posts.map((post) => (
-              <tr key={post.id} className="border-b border-gray-200">
-                <td className="px-6 py-4 font-medium">{post.title}</td>
-                <td className="px-6 py-4 text-gray-600">{post.author_name}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      post.published
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {post.published ? 'Публикувано' : 'Чернова'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => handleEdit(post)}
-                    className="text-gold-500 hover:text-gold-600 mr-2"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(post.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+            {posts.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  Няма намерени статии
                 </td>
               </tr>
-            ))}
+            ) : (
+              posts.map((post) => (
+                <tr key={post.id} className="border-b border-gray-200">
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">{post.title}</div>
+                    <div className="text-sm text-gray-500">{post.slug}</div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">{post.category || '-'}</td>
+                  <td className="px-6 py-4 text-gray-600">{post.author_name || '-'}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {post.published_at
+                      ? new Date(post.published_at).toLocaleDateString('bg-BG')
+                      : '-'}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        post.is_published
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {post.is_published ? 'Публикувано' : 'Чернова'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => handleEdit(post)}
+                      className="text-gold-500 hover:text-gold-600 mr-2"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

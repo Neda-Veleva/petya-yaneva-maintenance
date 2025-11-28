@@ -1,13 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface Category {
   id: string;
   name: string;
   slug: string;
+  title?: string;
   description: string;
-  display_order: number;
+  image_url?: string;
+  order_position: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[а-я]/g, (char) => {
+      const map: { [key: string]: string } = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f',
+        'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sht', 'ъ': 'a',
+        'ь': 'y', 'ю': 'yu', 'я': 'ya'
+      };
+      return map[char] || char;
+    })
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with -
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
 }
 
 export default function CategoriesManager() {
@@ -15,11 +38,14 @@ export default function CategoriesManager() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [slugEditable, setSlugEditable] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
+    title: '',
     description: '',
-    display_order: 0,
+    image_url: '',
+    order_position: 0,
   });
 
   useEffect(() => {
@@ -30,10 +56,11 @@ export default function CategoriesManager() {
     const { data, error } = await supabase
       .from('service_categories')
       .select('*')
-      .order('display_order', { ascending: true });
+      .order('order_position', { ascending: true });
 
     if (error) {
       console.error('Error fetching categories:', error);
+      alert('Грешка при зареждане на категориите: ' + error.message);
     } else {
       setCategories(data || []);
     }
@@ -41,30 +68,46 @@ export default function CategoriesManager() {
   }
 
   async function handleSave() {
+    if (!formData.name || !formData.slug || !formData.title || !formData.description || !formData.image_url) {
+      alert('Моля, попълнете всички задължителни полета');
+      return;
+    }
+
+    const categoryData = {
+      name: formData.name,
+      slug: formData.slug,
+      title: formData.title,
+      description: formData.description,
+      image_url: formData.image_url,
+      order_position: formData.order_position,
+      updated_at: new Date().toISOString(),
+    };
+
     if (editingId) {
       const { error } = await supabase
         .from('service_categories')
-        .update(formData)
+        .update(categoryData)
         .eq('id', editingId);
 
       if (error) {
         console.error('Error updating category:', error);
-        alert('Грешка при актуализация');
+        alert('Грешка при актуализация: ' + error.message);
         return;
       }
     } else {
-      const { error } = await supabase.from('service_categories').insert([formData]);
+      const { error } = await supabase.from('service_categories').insert([categoryData]);
 
       if (error) {
         console.error('Error creating category:', error);
-        alert('Грешка при създаване');
+        alert('Грешка при създаване: ' + error.message);
         return;
       }
     }
 
     setEditingId(null);
     setShowAddForm(false);
-    setFormData({ name: '', slug: '', description: '', display_order: 0 });
+    setSlugEditable(false);
+    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', order_position: 0 });
     fetchCategories();
   }
 
@@ -84,18 +127,26 @@ export default function CategoriesManager() {
 
   function handleEdit(category: Category) {
     setEditingId(category.id);
+    setSlugEditable(false);
     setFormData({
       name: category.name,
       slug: category.slug,
+      title: category.title || '',
       description: category.description,
-      display_order: category.display_order,
+      image_url: category.image_url || '',
+      order_position: category.order_position,
     });
+  }
+
+  function handleNameChange(name: string) {
+    setFormData({ ...formData, name });
   }
 
   function handleCancel() {
     setEditingId(null);
     setShowAddForm(false);
-    setFormData({ name: '', slug: '', description: '', display_order: 0 });
+    setSlugEditable(false);
+    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', order_position: 0 });
   }
 
   if (loading) {
@@ -117,36 +168,99 @@ export default function CategoriesManager() {
 
       {showAddForm && (
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-serif text-charcoal-600 mb-4">Нова категория</h2>
+          <h2 className="text-xl font-serif text-charcoal-600 mb-4">
+            {editingId ? 'Редактиране на категория' : 'Нова категория'}
+          </h2>
           <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Име"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="Slug (URL)"
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <textarea
-              placeholder="Описание"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="px-4 py-2 border border-gray-300 rounded-lg col-span-2"
-              rows={3}
-            />
-            <input
-              type="number"
-              placeholder="Ред на показване"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Име <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Име"
+                value={formData.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Slug (URL) <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Slug (URL)"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  readOnly={!slugEditable}
+                  className={`flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 ${
+                    !slugEditable ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setSlugEditable(!slugEditable)}
+                  className={`px-4 py-2 border border-gray-300 rounded-lg transition-colors ${
+                    slugEditable
+                      ? 'bg-gold-500 text-white hover:bg-gold-600'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                  title={slugEditable ? 'Запази промените' : 'Редактирай slug'}
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Заглавие <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Заглавие"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                URL на снимка <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="URL на снимка"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Описание <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                placeholder="Описание"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Ред на показване
+              </label>
+              <input
+                type="number"
+                placeholder="Ред на показване"
+                value={formData.order_position}
+                onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) || 0 })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
+            </div>
           </div>
           <div className="flex gap-2 mt-4">
             <button
@@ -173,13 +287,21 @@ export default function CategoriesManager() {
             <tr>
               <th className="px-6 py-3 text-left">Име</th>
               <th className="px-6 py-3 text-left">Slug</th>
+              <th className="px-6 py-3 text-left">Заглавие</th>
               <th className="px-6 py-3 text-left">Описание</th>
               <th className="px-6 py-3 text-left">Ред</th>
               <th className="px-6 py-3 text-right">Действия</th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((category) => (
+            {categories.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  Няма намерени категории
+                </td>
+              </tr>
+            ) : (
+              categories.map((category) => (
               <tr key={category.id} className="border-b border-gray-200">
                 {editingId === category.id ? (
                   <>
@@ -187,16 +309,47 @@ export default function CategoriesManager() {
                       <input
                         type="text"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="px-2 py-1 border border-gray-300 rounded"
+                        onChange={(e) => {
+                          const newName = e.target.value;
+                          setFormData({ ...formData, name: newName });
+                          // Auto-generate slug only if it hasn't been manually edited
+                          if (!slugManuallyEdited) {
+                            setFormData(prev => ({ ...prev, name: newName, slug: generateSlug(newName) }));
+                          }
+                        }}
+                        className="px-2 py-1 border border-gray-300 rounded text-gray-900"
                       />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.slug}
+                          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                          readOnly={!slugEditable}
+                          className={`flex-1 px-2 py-1 border border-gray-300 rounded text-gray-900 ${
+                            !slugEditable ? 'bg-gray-100 cursor-not-allowed' : ''
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setSlugEditable(!slugEditable)}
+                          className={`px-2 py-1 border border-gray-300 rounded transition-colors ${
+                            slugEditable
+                              ? 'bg-gold-500 text-white hover:bg-gold-600'
+                              : 'bg-white text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <Edit className="w-3 h-3" />
+                        </button>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <input
                         type="text"
-                        value={formData.slug}
-                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        className="px-2 py-1 border border-gray-300 rounded"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        className="px-2 py-1 border border-gray-300 rounded text-gray-900"
                       />
                     </td>
                     <td className="px-6 py-4">
@@ -204,15 +357,15 @@ export default function CategoriesManager() {
                         type="text"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="px-2 py-1 border border-gray-300 rounded w-full"
+                        className="px-2 py-1 border border-gray-300 rounded w-full text-gray-900"
                       />
                     </td>
                     <td className="px-6 py-4">
                       <input
                         type="number"
-                        value={formData.display_order}
-                        onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
-                        className="px-2 py-1 border border-gray-300 rounded w-20"
+                        value={formData.order_position}
+                        onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) || 0 })}
+                        className="px-2 py-1 border border-gray-300 rounded w-20 text-gray-900"
                       />
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -229,10 +382,15 @@ export default function CategoriesManager() {
                   </>
                 ) : (
                   <>
-                    <td className="px-6 py-4 font-medium">{category.name}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900">{category.name}</td>
                     <td className="px-6 py-4 text-gray-600">{category.slug}</td>
-                    <td className="px-6 py-4 text-gray-600">{category.description}</td>
-                    <td className="px-6 py-4 text-gray-600">{category.display_order}</td>
+                    <td className="px-6 py-4 text-gray-600">{category.title || '-'}</td>
+                    <td className="px-6 py-4 text-gray-600 max-w-xs">
+                      <div className="truncate" title={category.description}>
+                        {category.description}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">{category.order_position}</td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleEdit(category)}
@@ -250,7 +408,8 @@ export default function CategoriesManager() {
                   </>
                 )}
               </tr>
-            ))}
+            ))
+            )}
           </tbody>
         </table>
       </div>
