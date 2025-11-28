@@ -1,8 +1,30 @@
 # Admin Panel Setup Instructions
 
-## Creating the First Admin User
+## Test Admin User
 
-After deploying the application, you need to create the first admin user manually:
+A test admin user has been created for you:
+
+**Email:** admin@livon.bg
+**Password:** admin123
+
+### Login
+
+1. Go to `/login` on your website
+2. Enter the credentials above
+3. You will be redirected to `/admin`
+
+## Creating Additional Admin Users
+
+You can create additional admin users using the `create-admin` Edge Function:
+
+```bash
+curl -X POST "YOUR_SUPABASE_URL/functions/v1/create-admin" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ANON_KEY" \
+  -d '{"email":"newadmin@example.com","password":"yourpassword","full_name":"Admin Name","role":"super_admin"}'
+```
+
+Or manually through Supabase:
 
 ### Step 1: Create a Supabase Auth User
 
@@ -25,17 +47,6 @@ VALUES (
   true
 );
 ```
-
-Replace:
-- `USER_UUID_HERE` with the UUID from Step 1
-- `admin@example.com` with the admin email
-- `Admin Name` with the admin's full name
-
-### Step 3: Login
-
-1. Go to `/login` on your website
-2. Enter the admin email and password
-3. You should be redirected to `/admin`
 
 ## Admin Panel Features
 
