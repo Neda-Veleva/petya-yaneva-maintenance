@@ -14,6 +14,12 @@ import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOverview from './pages/admin/AdminOverview';
 import ServicesManager from './pages/admin/ServicesManager';
+import CategoriesManager from './pages/admin/CategoriesManager';
+import TopServicesManager from './pages/admin/TopServicesManager';
+import BlogManager from './pages/admin/BlogManager';
+import PromotionsManager from './pages/admin/PromotionsManager';
+import TeamManager from './pages/admin/TeamManager';
+import ReviewsManager from './pages/admin/ReviewsManager';
 
 function App() {
   return (
@@ -40,6 +46,12 @@ function App() {
           >
             <Route index element={<AdminOverview />} />
             <Route path="services" element={<ServicesManager />} />
+            <Route path="categories" element={<CategoriesManager />} />
+            <Route path="top-services" element={<TopServicesManager />} />
+            <Route path="blog" element={<BlogManager />} />
+            <Route path="promotions" element={<PromotionsManager />} />
+            <Route path="team" element={<TeamManager />} />
+            <Route path="reviews" element={<ReviewsManager />} />
           </Route>
         </Routes>
       </AuthProvider>
