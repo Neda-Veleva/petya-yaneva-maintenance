@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X, FileType, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Edit2, Trash2, Save, X, FileType, Eye, EyeOff, Settings } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface PageType {
@@ -30,6 +31,7 @@ const TEMPLATE_OPTIONS = [
 ];
 
 export default function PageTypesManager() {
+  const navigate = useNavigate();
   const [pageTypes, setPageTypes] = useState<PageType[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -301,6 +303,15 @@ export default function PageTypesManager() {
                 </div>
               </div>
               <div className="flex gap-2">
+                {pageType.slug === 'home' && (
+                  <button
+                    onClick={() => navigate(`/admin/page-types/${pageType.id}/edit`)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Редактирай съдържание
+                  </button>
+                )}
                 <button
                   onClick={() => toggleActive(pageType.id, pageType.is_active)}
                   className={`p-2 rounded-lg transition-colors ${
