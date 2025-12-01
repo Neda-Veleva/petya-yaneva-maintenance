@@ -8,7 +8,8 @@ import {
   Users,
   Star,
   LogOut,
-  Sparkles
+  Sparkles,
+  FileType
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Промоции', href: '/admin/promotions', icon: Tag },
   { name: 'Екип', href: '/admin/team', icon: Users },
   { name: 'Отзиви', href: '/admin/reviews', icon: Star },
+  { name: 'Типове страници', href: '/admin/page-types', icon: FileType },
 ];
 
 export default function AdminDashboard() {

@@ -21,6 +21,7 @@ import BlogManager from './pages/admin/BlogManager';
 import PromotionsManager from './pages/admin/PromotionsManager';
 import TeamManager from './pages/admin/TeamManager';
 import ReviewsManager from './pages/admin/ReviewsManager';
+import PageTypesManager from './pages/admin/PageTypesManager';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
             <Route path="promotions" element={<PromotionsManager />} />
             <Route path="team" element={<TeamManager />} />
             <Route path="reviews" element={<ReviewsManager />} />
+            <Route path="page-types" element={<PageTypesManager />} />
           </Route>
         </Routes>
       </AuthProvider>
