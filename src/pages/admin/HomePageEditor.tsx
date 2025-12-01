@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, EyeOff, GripVertical } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, GripVertical } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import BlockEditor from './BlockEditor';
 
 interface PageBlock {
   id: string;
@@ -21,7 +22,6 @@ export default function HomePageEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingBlock, setEditingBlock] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
     fetchBlocks();
@@ -57,31 +57,18 @@ export default function HomePageEditor() {
     fetchBlocks();
   }
 
-  function handleEdit(block: PageBlock) {
-    setEditingBlock(block.id);
-    setFormData({
-      title: block.title,
-      content: JSON.stringify(block.content, null, 2),
-    });
+  function handleEdit(blockId: string) {
+    setEditingBlock(blockId);
   }
 
-  async function handleSave(blockId: string) {
+  async function handleSave(blockId: string, title: string, content: Record<string, any>) {
     setSaving(true);
-
-    let parsedContent = {};
-    try {
-      parsedContent = JSON.parse(formData.content);
-    } catch (e) {
-      alert('Невалиден JSON формат');
-      setSaving(false);
-      return;
-    }
 
     const { error } = await supabase
       .from('page_blocks')
       .update({
-        title: formData.title,
-        content: parsedContent,
+        title,
+        content,
       })
       .eq('id', blockId);
 
@@ -98,7 +85,6 @@ export default function HomePageEditor() {
 
   function handleCancel() {
     setEditingBlock(null);
-    setFormData({});
   }
 
   if (loading) {
@@ -135,56 +121,12 @@ export default function HomePageEditor() {
           >
             <div className="p-6">
               {editingBlock === block.id ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-serif text-charcoal-600">
-                      Редактирай: {block.block_type}
-                    </h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleSave(block.id)}
-                        disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors disabled:bg-gray-300"
-                      >
-                        <Save className="w-4 h-4" />
-                        {saving ? 'Запазване...' : 'Запази'}
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-                      >
-                        Отказ
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Заглавие на блок
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Съдържание (JSON)
-                    </label>
-                    <textarea
-                      value={formData.content}
-                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm"
-                      rows={12}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Редактирайте съдържанието във формат JSON
-                    </p>
-                  </div>
-                </div>
+                <BlockEditor
+                  block={block}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
+                  saving={saving}
+                />
               ) : (
                 <div>
                   <div className="flex items-start justify-between mb-4">
@@ -218,7 +160,7 @@ export default function HomePageEditor() {
                         )}
                       </button>
                       <button
-                        onClick={() => handleEdit(block)}
+                        onClick={() => handleEdit(block.id)}
                         className="px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors"
                       >
                         Редактирай
@@ -230,9 +172,20 @@ export default function HomePageEditor() {
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
                       Текущо съдържание:
                     </h4>
-                    <pre className="text-xs text-gray-600 overflow-x-auto whitespace-pre-wrap">
-                      {JSON.stringify(block.content, null, 2)}
-                    </pre>
+                    <div className="space-y-2">
+                      {Object.entries(block.content).map(([key, value]) => (
+                        <div key={key} className="text-sm">
+                          <span className="font-medium text-gray-600">{key}:</span>{' '}
+                          <span className="text-gray-700">
+                            {Array.isArray(value)
+                              ? `${value.length} елемента`
+                              : typeof value === 'object'
+                              ? JSON.stringify(value)
+                              : String(value)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
