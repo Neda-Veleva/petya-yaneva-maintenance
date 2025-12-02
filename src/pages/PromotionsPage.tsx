@@ -179,9 +179,10 @@ export default function PromotionsPage() {
                             <Info className="w-5 h-5 text-gold-600" />
                             <h4 className="font-semibold">Описание</h4>
                           </div>
-                          <p className="text-gray-600 leading-relaxed pl-7">
-                            {promotion.long_description}
-                          </p>
+                          <div
+                            className="text-gray-600 leading-relaxed pl-7 prose max-w-none"
+                            dangerouslySetInnerHTML={{ __html: promotion.long_description }}
+                          />
                         </div>
                       )}
 
@@ -191,9 +192,10 @@ export default function PromotionsPage() {
                             <AlertCircle className="w-5 h-5 text-gold-600" />
                             <h4 className="font-semibold">Условия</h4>
                           </div>
-                          <p className="text-sm text-gray-600 leading-relaxed pl-7">
-                            {promotion.terms}
-                          </p>
+                          <div
+                            className="text-sm text-gray-600 leading-relaxed pl-7 prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: promotion.terms }}
+                          />
                         </div>
                       )}
                     </div>

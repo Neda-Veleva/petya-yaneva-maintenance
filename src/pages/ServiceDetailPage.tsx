@@ -232,9 +232,10 @@ export default function ServiceDetailPage() {
               {service.full_description && (
                 <div>
                   <h2 className="font-serif text-3xl text-charcoal-600 mb-6">За услугата</h2>
-                  <p className="text-gray-700 leading-relaxed text-lg">
-                    {service.full_description}
-                  </p>
+                  <div
+                    className="text-gray-700 leading-relaxed text-lg prose prose-lg max-w-none"
+                    dangerouslySetInnerHTML={{ __html: service.full_description }}
+                  />
                 </div>
               )}
 

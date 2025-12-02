@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
+import RichTextEditor from '../../components/RichTextEditor';
 
 interface TeamMember {
   id: string;
@@ -321,12 +322,11 @@ export default function TeamManager() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Биография <span className="text-red-500">*</span>
               </label>
-              <textarea
-                placeholder="Биография"
+              <RichTextEditor
                 value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                rows={4}
+                onChange={(value) => setFormData({ ...formData, bio: value })}
+                placeholder="Биография"
+                minHeight="150px"
               />
             </div>
 

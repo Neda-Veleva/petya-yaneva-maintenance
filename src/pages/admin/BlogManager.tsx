@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
+import RichTextEditor from '../../components/RichTextEditor';
 
 function generateSlug(text: string): string {
   return text
@@ -257,12 +258,11 @@ export default function BlogManager() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Съдържание <span className="text-red-500">*</span>
               </label>
-              <textarea
-                placeholder="Съдържание"
+              <RichTextEditor
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                rows={10}
+                onChange={(value) => setFormData({ ...formData, content: value })}
+                placeholder="Съдържание"
+                minHeight="300px"
               />
             </div>
             <div>

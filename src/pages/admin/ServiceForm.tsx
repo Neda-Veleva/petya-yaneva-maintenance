@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Plus, Trash2, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
+import RichTextEditor from '../../components/RichTextEditor';
 
 interface Category {
   id: string;
@@ -314,12 +315,11 @@ export default function ServiceForm() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Пълно описание
             </label>
-            <textarea
+            <RichTextEditor
               value={formData.full_description}
-              onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
+              onChange={(value) => setFormData({ ...formData, full_description: value })}
               placeholder="Пълно описание на услугата"
-              rows={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-transparent text-gray-900"
+              minHeight="200px"
             />
           </div>
 

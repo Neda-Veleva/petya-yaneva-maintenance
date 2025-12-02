@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
+import RichTextEditor from '../../components/RichTextEditor';
 
 interface Promotion {
   id: string;
@@ -271,12 +272,11 @@ export default function PromotionsManager() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Пълно описание
               </label>
-              <textarea
-                placeholder="Пълно описание"
+              <RichTextEditor
                 value={formData.long_description}
-                onChange={(e) => setFormData({ ...formData, long_description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                rows={3}
+                onChange={(value) => setFormData({ ...formData, long_description: value })}
+                placeholder="Пълно описание"
+                minHeight="150px"
               />
             </div>
 
@@ -284,12 +284,11 @@ export default function PromotionsManager() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Условия
               </label>
-              <textarea
-                placeholder="Условия и правила"
+              <RichTextEditor
                 value={formData.terms}
-                onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                rows={2}
+                onChange={(value) => setFormData({ ...formData, terms: value })}
+                placeholder="Условия и правила"
+                minHeight="150px"
               />
             </div>
 

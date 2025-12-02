@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Edit2, Trash2, Save, X, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
+import RichTextEditor from '../../components/RichTextEditor';
 
 interface Review {
   id: string;
@@ -188,11 +189,11 @@ export default function ReviewsManager() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Текст на отзива <span className="text-red-500">*</span>
                   </label>
-                  <textarea
+                  <RichTextEditor
                     value={formData.review_text}
-                    onChange={(e) => setFormData({ ...formData, review_text: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                    rows={4}
+                    onChange={(value) => setFormData({ ...formData, review_text: value })}
+                    placeholder="Текст на отзива"
+                    minHeight="150px"
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
