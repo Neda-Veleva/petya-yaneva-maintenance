@@ -40,13 +40,8 @@ export default function MediaLibrary({ isOpen, onClose, onSelect, mediaType = 'a
     const query = supabase
       .from('media_library')
       .select('*')
+      .eq('type', activeTab)
       .order('created_at', { ascending: false });
-
-    if (mediaType !== 'all') {
-      query.eq('type', mediaType);
-    } else {
-      query.eq('type', activeTab);
-    }
 
     const { data, error } = await query;
 
