@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { Play } from 'lucide-react';
+
 interface MediaRenderProps {
   src: string;
   alt?: string;
@@ -15,6 +18,8 @@ export default function MediaRender({
   videoProps = {},
   imageProps = {}
 }: MediaRenderProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
   function detectMediaType(url: string): 'image' | 'video' {
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi'];
     const videoHosts = ['youtube.com', 'youtu.be', 'vimeo.com'];
@@ -32,23 +37,57 @@ export default function MediaRender({
     return 'image';
   }
 
-  function getYouTubeEmbedUrl(url: string): string | null {
+  function getYouTubeVideoId(url: string): string | null {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
-    const videoId = (match && match[7].length === 11) ? match[7] : null;
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    return (match && match[7].length === 11) ? match[7] : null;
+  }
+
+  function getYouTubeEmbedUrl(url: string): string | null {
+    const videoId = getYouTubeVideoId(url);
+    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : null;
+  }
+
+  function getYouTubeThumbnail(url: string): string | null {
+    const videoId = getYouTubeVideoId(url);
+    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+  }
+
+  function getVimeoVideoId(url: string): string | null {
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    return match ? match[1] : null;
   }
 
   function getVimeoEmbedUrl(url: string): string | null {
-    const videoId = url.split('/').pop();
-    return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    const videoId = getVimeoVideoId(url);
+    return videoId ? `https://player.vimeo.com/video/${videoId}?autoplay=1` : null;
   }
 
   const mediaType = type === 'auto' ? detectMediaType(src) : type;
 
   if (mediaType === 'video') {
     if (src.includes('youtube.com') || src.includes('youtu.be')) {
+      const thumbnailUrl = getYouTubeThumbnail(src);
       const embedUrl = getYouTubeEmbedUrl(src);
+
+      if (!isPlaying && thumbnailUrl) {
+        return (
+          <div className={`relative ${className} cursor-pointer group`} onClick={() => setIsPlaying(true)}>
+            <img
+              src={thumbnailUrl}
+              alt={alt}
+              className="w-full h-full object-cover"
+              {...imageProps}
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
+                <Play className="w-10 h-10 text-white ml-1" fill="white" />
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       if (embedUrl) {
         return (
           <iframe
@@ -56,7 +95,7 @@ export default function MediaRender({
             className={className}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            {...videoProps}
+            style={{ border: 'none' }}
           />
         );
       }
@@ -64,6 +103,29 @@ export default function MediaRender({
 
     if (src.includes('vimeo.com')) {
       const embedUrl = getVimeoEmbedUrl(src);
+
+      if (!isPlaying) {
+        return (
+          <div className={`relative ${className} cursor-pointer group`} onClick={() => setIsPlaying(true)}>
+            <img
+              src={`https://vumbnail.com/${getVimeoVideoId(src)}.jpg`}
+              alt={alt}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+              {...imageProps}
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
+                <Play className="w-10 h-10 text-white ml-1" fill="white" />
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       if (embedUrl) {
         return (
           <iframe
@@ -71,7 +133,7 @@ export default function MediaRender({
             className={className}
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
-            {...videoProps}
+            style={{ border: 'none' }}
           />
         );
       }
