@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Tag } from 'lucide-react';
+import MediaRender from './MediaRender';
 
 interface TopService {
   id: string;
@@ -57,7 +58,7 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
             isTransitioning ? 'opacity-0 scale-110' : 'opacity-30 scale-100'
           }`}
         >
-          <img
+          <MediaRender
             src={currentImage}
             alt="Background"
             className="w-full h-full object-cover"

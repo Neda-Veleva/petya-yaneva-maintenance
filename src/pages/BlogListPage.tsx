@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CallToAction from '../components/CallToAction';
+import MediaRender from '../components/MediaRender';
 
 interface BlogPost {
   id: string;
@@ -79,10 +80,11 @@ export default function BlogListPage() {
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <MediaRender
             src="https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=1920"
             alt="Блог"
             className="w-full h-full object-cover"
+            videoProps={{ muted: true, loop: true, autoPlay: true }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/80 via-charcoal-600/60 to-charcoal-600/80"></div>
         </div>
@@ -122,7 +124,7 @@ export default function BlogListPage() {
             >
               <div className="grid lg:grid-cols-5 gap-0">
                 <div className="relative h-96 lg:h-full lg:col-span-3 overflow-hidden">
-                  <img
+                  <MediaRender
                     src={featuredPost.image_url}
                     alt={featuredPost.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -228,7 +230,7 @@ export default function BlogListPage() {
                     className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
                     <div className="relative h-64 overflow-hidden">
-                      <img
+                      <MediaRender
                         src={post.image_url}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

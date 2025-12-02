@@ -4,6 +4,7 @@ import { Eye, Crown, Heart, Sparkles, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TopServiceSlider from '../components/TopServiceSlider';
+import MediaRender from '../components/MediaRender';
 import { getTopServices, getCategoryBySlug, TopService, supabase } from '../lib/supabase';
 
 interface DbService {
@@ -265,10 +266,11 @@ export default function ServiceCategoryPage() {
       ) : (
         <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0">
-            <img
+            <MediaRender
               src={categoryData.heroImage}
               alt={categoryData.name}
               className="w-full h-full object-cover"
+              videoProps={{ muted: true, loop: true, autoPlay: true }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
           </div>
@@ -323,7 +325,7 @@ export default function ServiceCategoryPage() {
                   className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                 >
                   <div className="relative h-56 overflow-hidden">
-                    <img
+                    <MediaRender
                       src={service.image_url}
                       alt={service.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -353,7 +355,7 @@ export default function ServiceCategoryPage() {
                   className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                 >
                   <div className="relative h-56 overflow-hidden">
-                    <img
+                    <MediaRender
                       src={service.image}
                       alt={service.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

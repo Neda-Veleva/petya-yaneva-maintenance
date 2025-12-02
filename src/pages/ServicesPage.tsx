@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Eye, Sparkles, Crown, Heart } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MediaRender from '../components/MediaRender';
 import { supabase } from '../lib/supabase';
 
 interface DbService {
@@ -90,10 +91,11 @@ export default function ServicesPage() {
 
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <MediaRender
             src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=compress&cs=tinysrgb&w=1920"
             alt="Beauty services"
             className="w-full h-full object-cover"
+            videoProps={{ muted: true, loop: true, autoPlay: true }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
         </div>
@@ -144,7 +146,7 @@ export default function ServicesPage() {
                     className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
                     <div className="relative h-56 overflow-hidden">
-                      <img
+                      <MediaRender
                         src={service.image_url}
                         alt={service.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

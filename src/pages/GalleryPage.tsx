@@ -3,6 +3,7 @@ import { X, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MediaRender from '../components/MediaRender';
 
 const galleryImages = [
   {
@@ -56,7 +57,7 @@ export default function GalleryPage() {
         {/* Hero Section */}
         <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0">
-            <img
+            <MediaRender
               src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=compress&cs=tinysrgb&w=1920"
               alt="Beauty studio"
               className="w-full h-full object-cover"
@@ -96,7 +97,7 @@ export default function GalleryPage() {
                   onClick={() => openLightbox(image.src)}
                   className="group relative aspect-[3/4] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
                 >
-                  <img
+                  <MediaRender
                     src={image.src}
                     alt={image.alt}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -127,7 +128,7 @@ export default function GalleryPage() {
             className="relative max-w-5xl max-h-[90vh] animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <MediaRender
               src={selectedImage}
               alt="Gallery image"
               className="w-full h-full object-contain rounded-2xl shadow-2xl"

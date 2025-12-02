@@ -4,6 +4,7 @@ import { Clock, Tag, CheckCircle, Sparkles, ChevronLeft, ChevronRight, ChevronRi
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ServiceReviewsSlider from '../components/ServiceReviewsSlider';
+import MediaRender from '../components/MediaRender';
 import { supabase } from '../lib/supabase';
 
 interface Service {
@@ -158,10 +159,11 @@ export default function ServiceDetailPage() {
 
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <MediaRender
             src={service.image_url}
             alt={service.name}
             className="w-full h-full object-cover"
+            videoProps={{ muted: true, loop: true, autoPlay: true }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/85 to-charcoal-600/90"></div>
         </div>
@@ -284,7 +286,7 @@ export default function ServiceDetailPage() {
             <div className="lg:sticky lg:top-24 space-y-8">
               <div className="relative group">
                 <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-                  <img
+                  <MediaRender
                     src={allImages[currentImageIndex]}
                     alt={`${service.name} - изображение ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover"

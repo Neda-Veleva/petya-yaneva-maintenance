@@ -4,6 +4,7 @@ import { Calendar, Tag, ArrowLeft, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MediaRender from '../components/MediaRender';
 
 interface BlogPost {
   id: string;
@@ -111,7 +112,7 @@ export default function BlogPostPage() {
 
           <div className="bg-white rounded-3xl overflow-hidden shadow-xl mb-12">
             <div className="relative h-96 overflow-hidden">
-              <img
+              <MediaRender
                 src={post.image_url}
                 alt={post.title}
                 className="w-full h-full object-cover"
@@ -157,7 +158,7 @@ export default function BlogPostPage() {
                     className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   >
                     <div className="relative h-48 overflow-hidden">
-                      <img
+                      <MediaRender
                         src={relatedPost.image_url}
                         alt={relatedPost.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
