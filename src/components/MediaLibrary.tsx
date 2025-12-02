@@ -214,32 +214,30 @@ export default function MediaLibrary({ isOpen, onClose, onSelect, mediaType = 'a
           </button>
         </div>
 
-        {mediaType === 'all' && (
-          <div className="flex gap-2 p-4 border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab('image')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                activeTab === 'image'
-                  ? 'bg-gold-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <ImageIcon className="w-4 h-4" />
-              Изображения
-            </button>
-            <button
-              onClick={() => setActiveTab('video')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                activeTab === 'video'
-                  ? 'bg-gold-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <VideoIcon className="w-4 h-4" />
-              Видеа
-            </button>
-          </div>
-        )}
+        <div className="flex gap-2 p-4 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('image')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'image'
+                ? 'bg-gold-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <ImageIcon className="w-4 h-4" />
+            Изображения
+          </button>
+          <button
+            onClick={() => setActiveTab('video')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'video'
+                ? 'bg-gold-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <VideoIcon className="w-4 h-4" />
+            Видеа
+          </button>
+        </div>
 
         <div className="p-4 border-b border-gray-200 space-y-4">
           <div className="relative">
