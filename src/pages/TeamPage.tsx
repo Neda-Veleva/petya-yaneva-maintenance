@@ -28,7 +28,7 @@ export default function TeamPage() {
         .from('team_members')
         .select('*')
         .eq('is_active', true)
-        .order('order_position', { ascending: true });
+        .order('display_order', { ascending: true });
 
       if (data) {
         setMembers(data);
