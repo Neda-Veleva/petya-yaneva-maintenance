@@ -21,7 +21,7 @@ export default function Blog() {
     async function loadPosts() {
       const { data } = await supabase
         .from('blog_posts')
-        .select('id, slug, title, excerpt, image_url, category')
+        .select('id, slug, title, excerpt, image_url, thumbnail_url, category')
         .eq('is_published', true)
         .order('published_at', { ascending: false })
         .limit(3);

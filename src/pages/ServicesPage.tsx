@@ -52,7 +52,7 @@ export default function ServicesPage() {
         categoriesData.map(async (category) => {
           const { data: servicesData } = await supabase
             .from('services')
-            .select('id, slug, name, short_description, duration, price, image_url')
+            .select('id, slug, name, short_description, duration, price, image_url, thumbnail_url')
             .eq('category_id', category.id)
             .order('order_position', { ascending: true });
 
