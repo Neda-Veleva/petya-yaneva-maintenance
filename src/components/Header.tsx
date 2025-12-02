@@ -16,6 +16,7 @@ export default function Header() {
     { label: 'Отзиви', href: '#reviews' },
     { label: 'Блог', href: '/blog' },
     { label: 'Промоции', href: '/promotions' },
+    { label: 'Екип', href: '/team' },
     { label: 'Галерия', href: '#gallery' },
     { label: 'Контакти', href: '#contact' }
   ];

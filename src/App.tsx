@@ -9,6 +9,7 @@ import ServiceDetailPage from './pages/ServiceDetailPage';
 import PromotionsPage from './pages/PromotionsPage';
 import BlogListPage from './pages/BlogListPage';
 import BlogPostPage from './pages/BlogPostPage';
+import TeamPage from './pages/TeamPage';
 import TeamMemberPage from './pages/TeamMemberPage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/promotions" element={<PromotionsPage />} />
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/team" element={<TeamPage />} />
           <Route path="/team/:slug" element={<TeamMemberPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
