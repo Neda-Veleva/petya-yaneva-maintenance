@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Save, X, Plus, Trash2 } from 'lucide-react';
+import MediaSelector from '../../components/MediaSelector';
 
 interface BlockEditorProps {
   block: {
@@ -42,7 +43,31 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
     await onSave(block.id, title, content);
   }
 
+  function isMediaField(key: string): 'image' | 'video' | null {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey.includes('image') || lowerKey.includes('img') || lowerKey.includes('photo') || lowerKey.includes('picture') || lowerKey.includes('thumbnail')) {
+      return 'image';
+    }
+    if (lowerKey.includes('video')) {
+      return 'video';
+    }
+    return null;
+  }
+
   function renderField(key: string, value: any): JSX.Element {
+    const mediaType = isMediaField(key);
+
+    if (mediaType && typeof value === 'string') {
+      return (
+        <MediaSelector
+          value={value}
+          onChange={(url) => updateField(key, url)}
+          type={mediaType}
+          label={key}
+        />
+      );
+    }
+
     if (Array.isArray(value)) {
       return (
         <div className="space-y-2">
@@ -68,26 +93,43 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
                 </button>
               </div>
               {typeof item === 'object' && item !== null ? (
-                Object.entries(item).map(([itemKey, itemValue]) => (
-                  <div key={itemKey}>
-                    <label className="block text-xs text-gray-600 mb-1">{itemKey}</label>
-                    {typeof itemValue === 'string' && itemValue.length > 100 ? (
-                      <textarea
-                        value={itemValue as string}
-                        onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                        rows={3}
-                      />
-                    ) : (
-                      <input
-                        type="text"
-                        value={itemValue as string}
-                        onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                      />
-                    )}
-                  </div>
-                ))
+                Object.entries(item).map(([itemKey, itemValue]) => {
+                  const itemMediaType = isMediaField(itemKey);
+
+                  if (itemMediaType && typeof itemValue === 'string') {
+                    return (
+                      <div key={itemKey}>
+                        <MediaSelector
+                          value={itemValue}
+                          onChange={(url) => updateItem(key, index, itemKey, url)}
+                          type={itemMediaType}
+                          label={itemKey}
+                        />
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={itemKey}>
+                      <label className="block text-xs text-gray-600 mb-1">{itemKey}</label>
+                      {typeof itemValue === 'string' && itemValue.length > 100 ? (
+                        <textarea
+                          value={itemValue as string}
+                          onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                          rows={3}
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value={itemValue as string}
+                          onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                        />
+                      )}
+                    </div>
+                  );
+                })
               ) : (
                 <input
                   type="text"
