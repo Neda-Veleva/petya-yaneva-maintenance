@@ -137,7 +137,7 @@ export default function MediaLibrary({ isOpen, onClose, onSelect, mediaType = 'a
 
     if (error) {
       console.error('Error adding video:', error);
-      alert('Грешка при добавяне на видео');
+      alert(`Грешка при добавяне на видео: ${error.message}`);
     } else {
       setVideoUrl('');
       setVideoTitle('');
