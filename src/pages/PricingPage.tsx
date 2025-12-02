@@ -13,8 +13,8 @@ interface Category {
 
 interface Service {
   id: string;
-  title: string;
-  price: number;
+  name: string;
+  price: string;
   duration: string;
   category_id: string;
 }
@@ -31,8 +31,8 @@ export default function PricingPage() {
 
   async function loadData() {
     const [categoriesRes, servicesRes] = await Promise.all([
-      supabase.from('categories').select('*').order('display_order'),
-      supabase.from('services').select('*').eq('is_active', true).order('title'),
+      supabase.from('service_categories').select('*').order('order_position'),
+      supabase.from('services').select('*').order('name'),
     ]);
 
     if (categoriesRes.data) {
@@ -121,12 +121,11 @@ export default function PricingPage() {
 
                   <div className="relative">
                     <h3 className="font-serif text-2xl text-white mb-4 leading-tight">
-                      {service.title}
+                      {service.name}
                     </h3>
 
                     <div className="flex items-baseline gap-2 mb-4">
                       <span className="text-4xl font-bold text-gold-400">{service.price}</span>
-                      <span className="text-gray-400 text-lg">лв</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-gray-300 text-sm">

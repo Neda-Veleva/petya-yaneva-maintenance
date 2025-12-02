@@ -6,12 +6,11 @@ import Footer from '../components/Footer';
 
 interface Review {
   id: string;
-  author_name: string;
-  author_title: string;
+  client_name: string;
   avatar_url: string | null;
-  content: string;
+  review_text: string;
   rating: number;
-  created_at: string;
+  review_date: string;
 }
 
 export default function ReviewsPage() {
@@ -24,10 +23,9 @@ export default function ReviewsPage() {
 
   async function loadReviews() {
     const { data } = await supabase
-      .from('reviews')
+      .from('service_reviews')
       .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
+      .order('review_date', { ascending: false });
 
     if (data) {
       setReviews(data);
@@ -102,36 +100,33 @@ export default function ReviewsPage() {
                       {review.avatar_url ? (
                         <img
                           src={review.avatar_url}
-                          alt={review.author_name}
+                          alt={review.client_name}
                           className="w-16 h-16 rounded-full object-cover border-2 border-gold-500/30"
                         />
                       ) : (
                         <div className="w-16 h-16 rounded-full bg-gold-500/20 flex items-center justify-center border-2 border-gold-500/30">
                           <span className="text-2xl font-bold text-gold-400">
-                            {review.author_name.charAt(0)}
+                            {review.client_name.charAt(0)}
                           </span>
                         </div>
                       )}
 
                       <div>
                         <h3 className="text-white font-semibold text-lg">
-                          {review.author_name}
+                          {review.client_name}
                         </h3>
-                        {review.author_title && (
-                          <p className="text-gold-400 text-sm">{review.author_title}</p>
-                        )}
                       </div>
                     </div>
 
                     <div className="flex gap-1 mb-4">{renderStars(review.rating)}</div>
 
                     <p className="text-gray-300 leading-relaxed text-sm line-clamp-6">
-                      {review.content}
+                      {review.review_text}
                     </p>
 
                     <div className="mt-6 pt-6 border-t border-gold-500/10">
                       <p className="text-xs text-gray-500">
-                        {new Date(review.created_at).toLocaleDateString('bg-BG', {
+                        {new Date(review.review_date).toLocaleDateString('bg-BG', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
