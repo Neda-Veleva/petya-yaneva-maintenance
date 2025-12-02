@@ -13,6 +13,7 @@ interface Promotion {
   long_description?: string;
   terms?: string;
   image_url: string;
+  thumbnail_url?: string;
   valid_from?: string;
   valid_until?: string;
   is_active: boolean;
@@ -36,6 +37,7 @@ export default function PromotionsManager() {
     long_description: '',
     terms: '',
     image_url: '',
+    thumbnail_url: '',
     valid_from: '',
     valid_until: '',
     is_active: true,
@@ -129,6 +131,7 @@ export default function PromotionsManager() {
       long_description: promotion.long_description || '',
       terms: promotion.terms || '',
       image_url: promotion.image_url,
+      thumbnail_url: promotion.thumbnail_url || '',
       valid_from: promotion.valid_from || '',
       valid_until: promotion.valid_until || '',
       is_active: promotion.is_active,
@@ -149,6 +152,7 @@ export default function PromotionsManager() {
       long_description: '',
       terms: '',
       image_url: '',
+      thumbnail_url: '',
       valid_from: '',
       valid_until: '',
       is_active: true,
@@ -296,6 +300,16 @@ export default function PromotionsManager() {
                 type="image"
                 label="Снимка на промоцията *"
               />
+            </div>
+
+            <div>
+              <MediaSelector
+                value={formData.thumbnail_url}
+                onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                type="image"
+                label="Тъмбнейл за карти (опционално)"
+              />
+              <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
             </div>
 
             <div className="grid grid-cols-3 gap-4">

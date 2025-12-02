@@ -16,6 +16,7 @@ interface Promotion {
   long_description: string | null;
   terms: string | null;
   image_url: string;
+  thumbnail_url?: string;
   is_active: boolean;
   order_position: number;
   valid_from: string | null;
@@ -126,7 +127,7 @@ export default function PromotionsPage() {
                   <div className="grid lg:grid-cols-5 gap-0">
                     <div className="lg:col-span-2 relative h-80 lg:h-auto overflow-hidden">
                       <MediaRender
-                        src={promotion.image_url}
+                        src={promotion.thumbnail_url || promotion.image_url}
                         alt={promotion.service_name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />

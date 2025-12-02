@@ -15,6 +15,7 @@ interface TopService {
   description?: string;
   price?: string;
   image_url: string;
+  thumbnail_url?: string;
   cta_text: string;
   order_position: number;
   is_active: boolean;
@@ -37,6 +38,7 @@ export default function TopServicesManager() {
     description: '',
     price: '',
     image_url: '',
+    thumbnail_url: '',
     cta_text: 'Запази час',
     order_position: 0,
     is_active: true,
@@ -120,6 +122,7 @@ export default function TopServicesManager() {
       description: service.description || '',
       price: service.price || '',
       image_url: service.image_url,
+      thumbnail_url: service.thumbnail_url || '',
       cta_text: service.cta_text,
       order_position: service.order_position,
       is_active: service.is_active,
@@ -135,6 +138,7 @@ export default function TopServicesManager() {
       description: '',
       price: '',
       image_url: '',
+      thumbnail_url: '',
       cta_text: 'Запази час',
       order_position: 0,
       is_active: true,
@@ -272,6 +276,16 @@ export default function TopServicesManager() {
                 type="image"
                 label="Снимка на услугата *"
               />
+            </div>
+
+            <div>
+              <MediaSelector
+                value={formData.thumbnail_url}
+                onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                type="image"
+                label="Тъмбнейл за карти (опционално)"
+              />
+              <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
             </div>
 
             <label className="flex items-center gap-2">

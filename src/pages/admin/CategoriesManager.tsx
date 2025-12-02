@@ -10,6 +10,7 @@ interface Category {
   title?: string;
   description: string;
   image_url?: string;
+  thumbnail_url?: string;
   order_position: number;
   created_at?: string;
   updated_at?: string;
@@ -46,6 +47,7 @@ export default function CategoriesManager() {
     title: '',
     description: '',
     image_url: '',
+    thumbnail_url: '',
     order_position: 0,
   });
 
@@ -80,6 +82,7 @@ export default function CategoriesManager() {
       title: formData.title,
       description: formData.description,
       image_url: formData.image_url,
+      thumbnail_url: formData.thumbnail_url,
       order_position: formData.order_position,
       updated_at: new Date().toISOString(),
     };
@@ -108,7 +111,7 @@ export default function CategoriesManager() {
     setEditingId(null);
     setShowAddForm(false);
     setSlugEditable(false);
-    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', order_position: 0 });
+    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', thumbnail_url: '', order_position: 0 });
     fetchCategories();
   }
 
@@ -135,6 +138,7 @@ export default function CategoriesManager() {
       title: category.title || '',
       description: category.description,
       image_url: category.image_url || '',
+      thumbnail_url: category.thumbnail_url || '',
       order_position: category.order_position,
     });
   }
@@ -147,7 +151,7 @@ export default function CategoriesManager() {
     setEditingId(null);
     setShowAddForm(false);
     setSlugEditable(false);
-    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', order_position: 0 });
+    setFormData({ name: '', slug: '', title: '', description: '', image_url: '', thumbnail_url: '', order_position: 0 });
   }
 
   if (loading) {
@@ -233,6 +237,15 @@ export default function CategoriesManager() {
                 type="image"
                 label="Снимка на категорията *"
               />
+            </div>
+            <div>
+              <MediaSelector
+                value={formData.thumbnail_url}
+                onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                type="image"
+                label="Тъмбнейл за карти (опционално)"
+              />
+              <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
             </div>
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">

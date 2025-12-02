@@ -15,6 +15,7 @@ interface TeamMember {
   description: string;
   bio: string;
   image_url: string;
+  thumbnail_url?: string;
   stat_value: string;
   stat_label: string;
   location?: string;
@@ -41,6 +42,7 @@ export default function TeamManager() {
     description: '',
     bio: '',
     image_url: '',
+    thumbnail_url: '',
     stat_value: '',
     stat_label: '',
     location: '',
@@ -132,6 +134,7 @@ export default function TeamManager() {
       description: member.description,
       bio: member.bio,
       image_url: member.image_url,
+      thumbnail_url: member.thumbnail_url || '',
       stat_value: member.stat_value,
       stat_label: member.stat_label,
       location: member.location || '',
@@ -155,6 +158,7 @@ export default function TeamManager() {
       description: '',
       bio: '',
       image_url: '',
+      thumbnail_url: '',
       stat_value: '',
       stat_label: '',
       location: '',
@@ -333,6 +337,16 @@ export default function TeamManager() {
                 type="image"
                 label="Снимка на член на екипа *"
               />
+            </div>
+
+            <div>
+              <MediaSelector
+                value={formData.thumbnail_url}
+                onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                type="image"
+                label="Тъмбнейл за карти (опционално)"
+              />
+              <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

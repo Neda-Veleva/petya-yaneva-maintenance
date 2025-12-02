@@ -18,6 +18,7 @@ interface ServiceFormData {
   duration: string;
   price: string;
   image_url: string;
+  thumbnail_url: string;
   gallery_images: string[];
   benefits: string[];
   process_steps: string[];
@@ -63,6 +64,7 @@ export default function ServiceForm() {
     duration: '',
     price: '',
     image_url: '',
+    thumbnail_url: '',
     gallery_images: [],
     benefits: [],
     process_steps: [],
@@ -366,6 +368,16 @@ export default function ServiceForm() {
               type="image"
               label="Главна снимка *"
             />
+          </div>
+
+          <div>
+            <MediaSelector
+              value={formData.thumbnail_url}
+              onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+              type="image"
+              label="Тъмбнейл за карти (опционално)"
+            />
+            <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
           </div>
 
           <div className="flex items-center gap-2">

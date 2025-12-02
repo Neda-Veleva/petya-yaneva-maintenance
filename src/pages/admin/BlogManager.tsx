@@ -29,6 +29,7 @@ interface BlogPost {
   excerpt: string;
   content: string;
   image_url: string;
+  thumbnail_url?: string;
   category?: string;
   is_published: boolean;
   published_at?: string;
@@ -50,6 +51,7 @@ export default function BlogManager() {
     excerpt: '',
     content: '',
     image_url: '',
+    thumbnail_url: '',
     category: '',
     is_published: false,
     author_name: '',
@@ -91,6 +93,7 @@ export default function BlogManager() {
       excerpt: formData.excerpt,
       content: formData.content,
       image_url: formData.image_url,
+      thumbnail_url: formData.thumbnail_url,
       category: formData.category || null,
       is_published: formData.is_published,
       published_at: formData.is_published ? (formData.published_at || new Date().toISOString()) : null,
@@ -148,6 +151,7 @@ export default function BlogManager() {
       excerpt: post.excerpt,
       content: post.content,
       image_url: post.image_url,
+      thumbnail_url: post.thumbnail_url || '',
       category: post.category || '',
       is_published: post.is_published,
       author_name: post.author_name || '',
@@ -165,6 +169,7 @@ export default function BlogManager() {
       excerpt: '',
       content: '',
       image_url: '',
+      thumbnail_url: '',
       category: '',
       is_published: false,
       author_name: '',
@@ -267,6 +272,15 @@ export default function BlogManager() {
                 type="image"
                 label="Главна снимка *"
               />
+            </div>
+            <div>
+              <MediaSelector
+                value={formData.thumbnail_url}
+                onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                type="image"
+                label="Тъмбнейл за карти (опционално)"
+              />
+              <p className="text-sm text-gray-500 mt-1">Ако не е зададено, ще се използва главната снимка</p>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>

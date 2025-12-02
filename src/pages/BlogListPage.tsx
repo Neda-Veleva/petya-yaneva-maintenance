@@ -13,6 +13,7 @@ interface BlogPost {
   title: string;
   excerpt: string;
   image_url: string;
+  thumbnail_url?: string;
   category: string;
   published_at: string;
 }
@@ -231,7 +232,7 @@ export default function BlogListPage() {
                   >
                     <div className="relative h-64 overflow-hidden">
                       <MediaRender
-                        src={post.image_url}
+                        src={post.thumbnail_url || post.image_url}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />

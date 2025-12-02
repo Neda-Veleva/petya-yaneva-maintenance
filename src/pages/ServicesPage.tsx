@@ -14,6 +14,7 @@ interface DbService {
   duration: string;
   price: string;
   image_url: string;
+  thumbnail_url?: string;
 }
 
 interface ServiceCategory {
@@ -147,7 +148,7 @@ export default function ServicesPage() {
                   >
                     <div className="relative h-56 overflow-hidden">
                       <MediaRender
-                        src={service.image_url}
+                        src={service.thumbnail_url || service.image_url}
                         alt={service.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
