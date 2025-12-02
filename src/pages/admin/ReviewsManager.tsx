@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Edit2, Trash2, Save, X, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import MediaSelector from '../../components/MediaSelector';
 
 interface Review {
   id: string;
@@ -159,14 +160,11 @@ export default function ReviewsManager() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      URL на аватар
-                    </label>
-                    <input
-                      type="text"
+                    <MediaSelector
                       value={formData.avatar_url}
-                      onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                      onChange={(url) => setFormData({ ...formData, avatar_url: url })}
+                      type="image"
+                      label="Аватар на клиент"
                     />
                   </div>
                 </div>

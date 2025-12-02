@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import MediaSelector from '../../components/MediaSelector';
 
 function generateSlug(text: string): string {
   return text
@@ -260,15 +261,11 @@ export default function BlogManager() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL на главна снимка <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="URL на главна снимка"
+              <MediaSelector
                 value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                onChange={(url) => setFormData({ ...formData, image_url: url })}
+                type="image"
+                label="Главна снимка *"
               />
             </div>
             <div className="grid grid-cols-3 gap-4">

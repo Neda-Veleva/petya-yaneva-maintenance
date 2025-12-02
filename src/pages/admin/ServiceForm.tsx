@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Plus, Trash2, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import MediaSelector from '../../components/MediaSelector';
 
 interface Category {
   id: string;
@@ -359,15 +360,11 @@ export default function ServiceForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL на главна снимка <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
+            <MediaSelector
               value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="https://..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-transparent text-gray-900"
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              type="image"
+              label="Главна снимка *"
             />
           </div>
 
@@ -399,18 +396,19 @@ export default function ServiceForm() {
             </button>
           </div>
           {formData.gallery_images.map((image, index) => (
-            <div key={index} className="flex gap-2">
-              <input
-                type="text"
-                value={image}
-                onChange={(e) => updateArrayItem('gallery_images', index, e.target.value)}
-                placeholder="URL на снимка"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-transparent text-gray-900"
-              />
+            <div key={index} className="flex gap-2 items-start">
+              <div className="flex-1">
+                <MediaSelector
+                  value={image}
+                  onChange={(url) => updateArrayItem('gallery_images', index, url)}
+                  type="image"
+                  label={`Снимка ${index + 1}`}
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => removeArrayItem('gallery_images', index)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="mt-8 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
