@@ -335,12 +335,33 @@ export default function MediaLibrary({ isOpen, onClose, onSelect, mediaType = 'a
                   className="group relative bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-gold-500 transition-all"
                   onClick={() => onSelect(item)}
                 >
-                  <div className="aspect-square">
-                    <img
-                      src={item.thumbnail_url || item.url}
-                      alt={item.alt_text || item.title}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="aspect-square relative">
+                    {item.type === 'video' ? (
+                      <>
+                        {item.thumbnail_url ? (
+                          <img
+                            src={item.thumbnail_url}
+                            alt={item.alt_text || item.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <video
+                            src={item.url}
+                            className="w-full h-full object-cover"
+                            preload="metadata"
+                          />
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <VideoIcon className="w-12 h-12 text-white" />
+                        </div>
+                      </>
+                    ) : (
+                      <img
+                        src={item.thumbnail_url || item.url}
+                        alt={item.alt_text || item.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center">
                     <button

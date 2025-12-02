@@ -48,9 +48,11 @@ export default function MediaSelector({ value, onChange, type = 'image', label }
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <VideoIcon className="w-12 h-12 text-gray-400" />
-              </div>
+              <video
+                src={value}
+                controls
+                className="w-full h-full object-cover"
+              />
             )}
           </div>
           <button
