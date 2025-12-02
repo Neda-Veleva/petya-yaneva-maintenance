@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
 import ImageGrid from './ImageGrid';
+import MediaRender from './MediaRender';
 
 const slides = [
   {
@@ -159,7 +160,7 @@ export default function Hero() {
               </div>
             ) : (
               <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
-                <img
+                <MediaRender
                   src={slide.image}
                   alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title}
                   className="w-full h-full object-cover brightness-110 transition-all duration-500"
@@ -202,10 +203,11 @@ export default function Hero() {
                       : 'opacity-50 hover:opacity-100 hover:scale-105'
                   }`}
                 >
-                  <img
+                  <MediaRender
                     src={s.thumbnail}
                     alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
                     className="w-full h-full object-cover"
+                    videoProps={{ muted: true, loop: true }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/80 to-transparent"></div>
                 </button>

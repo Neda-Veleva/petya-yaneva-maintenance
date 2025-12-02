@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ChevronDown, Tag, ArrowRight } from 'lucide-react';
 import ParallaxBackground from './ParallaxBackground';
+import MediaRender from './MediaRender';
 
 const slides = [
   {
@@ -80,19 +81,21 @@ export default function IntroHero() {
                   : 'opacity-0 scale-110'
               }`}
             >
-              <img
+              <MediaRender
                 src={s.image}
                 alt="Luxury lashes"
                 className="w-full h-full object-cover"
+                videoProps={{ muted: true, loop: true, autoPlay: true }}
               />
             </div>
           ))
         ) : (
           <div className="absolute inset-0">
-            <img
+            <MediaRender
               src={slide.image}
               alt="Luxury lashes"
               className="w-full h-full object-cover opacity-50"
+              videoProps={{ muted: true, loop: true, autoPlay: true }}
             />
           </div>
         )}
