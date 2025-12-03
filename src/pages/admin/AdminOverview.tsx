@@ -73,8 +73,8 @@ export default function AdminOverview() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="font-serif text-4xl text-gray-900 mb-2">Добре дошли в Admin Panel</h1>
-        <p className="text-gray-600">Преглед на съдържанието на сайта</p>
+        <h1 className="font-serif text-4xl text-white mb-2">Добре дошли в Admin Panel</h1>
+        <p className="text-white">Преглед на съдържанието на сайта</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

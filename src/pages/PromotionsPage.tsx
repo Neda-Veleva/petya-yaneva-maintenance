@@ -180,7 +180,7 @@ export default function PromotionsPage() {
                             <h4 className="font-semibold">Описание</h4>
                           </div>
                           <div
-                            className="text-gray-600 leading-relaxed pl-7 prose max-w-none"
+                            className="rich-content text-gray-600 leading-relaxed pl-7 prose max-w-none"
                             dangerouslySetInnerHTML={{ __html: promotion.long_description }}
                           />
                         </div>
@@ -193,7 +193,7 @@ export default function PromotionsPage() {
                             <h4 className="font-semibold">Условия</h4>
                           </div>
                           <div
-                            className="text-sm text-gray-600 leading-relaxed pl-7 prose prose-sm max-w-none"
+                            className="rich-content text-sm text-gray-600 leading-relaxed pl-7 prose prose-sm max-w-none"
                             dangerouslySetInnerHTML={{ __html: promotion.terms }}
                           />
                         </div>

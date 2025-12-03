@@ -161,8 +161,8 @@ export default function Hero() {
             ) : (
               <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
                 <MediaRender
-                  src={slide.image}
-                  alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title}
+                  src={slide.image || ''}
+                  alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title || ''}
                   className="w-full h-full object-cover brightness-110 transition-all duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>

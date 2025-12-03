@@ -10,7 +10,8 @@ import {
   LogOut,
   Sparkles,
   FileType,
-  Menu
+  Menu,
+  Phone
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Екип', href: '/admin/team', icon: Users },
   { name: 'Отзиви', href: '/admin/reviews', icon: Star },
   { name: 'Конфигурация Header', href: '/admin/header-config', icon: Menu },
+  { name: 'Конфигурация Контакти', href: '/admin/contact-config', icon: Phone },
   { name: 'Типове страници', href: '/admin/page-types', icon: FileType },
 ];
 

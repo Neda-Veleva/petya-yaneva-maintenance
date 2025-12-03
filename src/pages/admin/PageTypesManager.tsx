@@ -169,8 +169,8 @@ export default function PageTypesManager() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-serif text-charcoal-600">Типове страници</h1>
-          <p className="text-gray-600 mt-1">Управление на шаблони и структура на страници</p>
+          <h1 className="text-3xl font-serif text-white">Типове страници</h1>
+          <p className="text-white mt-1">Управление на шаблони и структура на страници</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -183,7 +183,7 @@ export default function PageTypesManager() {
 
       {showAddForm && (
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-serif text-charcoal-600 mb-4">
+          <h2 className="text-xl font-serif text-white mb-4">
             {editingId ? 'Редактирай тип страница' : 'Нов тип страница'}
           </h2>
           <div className="space-y-4">
@@ -193,27 +193,27 @@ export default function PageTypesManager() {
                 placeholder="Име"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               />
               <input
                 type="text"
                 placeholder="Slug (URL идентификатор)"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               />
             </div>
             <textarea
               placeholder="Описание"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               rows={2}
             />
             <select
               value={formData.template}
               onChange={(e) => setFormData({ ...formData, template: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
             >
               {TEMPLATE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>

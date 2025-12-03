@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Edit2, Trash2, Save, X, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Edit2, Trash2, Star, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import MediaSelector from '../../components/MediaSelector';
-import RichTextEditor from '../../components/RichTextEditor';
 
 interface Review {
   id: string;
@@ -24,16 +23,6 @@ interface Review {
 export default function ReviewsManager() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    client_name: '',
-    avatar_url: '',
-    rating: 5,
-    review_text: '',
-    review_date: '',
-    is_featured: false,
-    order_position: 0,
-  });
 
   useEffect(() => {
     fetchReviews();
@@ -54,43 +43,6 @@ export default function ReviewsManager() {
     setLoading(false);
   }
 
-  async function handleSave() {
-    if (!formData.client_name || !formData.review_text) {
-      alert('Моля, попълнете всички задължителни полета');
-      return;
-    }
-
-    const reviewData = {
-      client_name: formData.client_name,
-      avatar_url: formData.avatar_url || null,
-      rating: formData.rating,
-      review_text: formData.review_text,
-      review_date: formData.review_date || new Date().toISOString().split('T')[0],
-      is_featured: formData.is_featured,
-      order_position: formData.order_position,
-      updated_at: new Date().toISOString(),
-    };
-
-    if (editingId) {
-      const { error } = await supabase
-        .from('service_reviews')
-        .update(reviewData)
-        .eq('id', editingId);
-
-      if (error) {
-        console.error('Error updating review:', error);
-        alert('Грешка при актуализация: ' + error.message);
-        return;
-      }
-    } else {
-      // For new reviews, we need service_id
-      alert('Моля, изберете услуга за отзива');
-      return;
-    }
-
-    handleCancel();
-    fetchReviews();
-  }
 
   async function handleDelete(id: string) {
     if (!confirm('Сигурни ли сте?')) return;
@@ -106,31 +58,6 @@ export default function ReviewsManager() {
     fetchReviews();
   }
 
-  function handleEdit(review: Review) {
-    setEditingId(review.id);
-    setFormData({
-      client_name: review.client_name,
-      avatar_url: review.avatar_url || '',
-      rating: review.rating,
-      review_text: review.review_text,
-      review_date: review.review_date,
-      is_featured: review.is_featured,
-      order_position: review.order_position,
-    });
-  }
-
-  function handleCancel() {
-    setEditingId(null);
-    setFormData({
-      client_name: '',
-      avatar_url: '',
-      rating: 5,
-      review_text: '',
-      review_date: '',
-      is_featured: false,
-      order_position: 0,
-    });
-  }
 
   if (loading) {
     return <div className="text-center py-8">Зареждане...</div>;
@@ -138,182 +65,84 @@ export default function ReviewsManager() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-serif text-charcoal-600 mb-2">Отзиви</h1>
-        <p className="text-gray-600">Управление на потребителски отзиви</p>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-serif text-white mb-2">Отзиви</h1>
+          <p className="text-white">Управление на потребителски отзиви</p>
+        </div>
+        <Link
+          to="/admin/reviews/new"
+          className="flex items-center gap-2 px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          Нов отзив
+        </Link>
       </div>
 
       <div className="space-y-4">
         {reviews.map((review) => (
           <div key={review.id} className="bg-white rounded-xl shadow-lg p-6">
-            {editingId === review.id ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Име на клиента <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.client_name}
-                      onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                    />
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-4">
+                {review.avatar_url ? (
+                  <img
+                    src={review.avatar_url}
+                    alt={review.client_name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 font-semibold">
+                    {review.client_name.charAt(0).toUpperCase()}
                   </div>
-                  <div>
-                    <MediaSelector
-                      value={formData.avatar_url}
-                      onChange={(url) => setFormData({ ...formData, avatar_url: url })}
-                      type="image"
-                      label="Аватар на клиент"
-                    />
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-charcoal-600">{review.client_name}</h3>
+                    {review.is_featured && (
+                      <span className="px-2 py-0.5 bg-gold-100 text-gold-600 text-xs rounded-full">
+                        Топ
+                      </span>
+                    )}
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-gray-700">Рейтинг:</label>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => setFormData({ ...formData, rating: star })}
-                        className={`${
-                          star <= formData.rating ? 'text-gold-500' : 'text-gray-300'
+                  <p className="text-sm text-gray-600">{review.services.name}</p>
+                  <div className="flex gap-1 mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < review.rating
+                            ? 'text-gold-500 fill-current'
+                            : 'text-gray-300'
                         }`}
-                      >
-                        <Star className="w-6 h-6 fill-current" />
-                      </button>
+                      />
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Текст на отзива <span className="text-red-500">*</span>
-                  </label>
-                  <RichTextEditor
-                    value={formData.review_text}
-                    onChange={(value) => setFormData({ ...formData, review_text: value })}
-                    placeholder="Текст на отзива"
-                    minHeight="150px"
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Дата на отзива
-                    </label>
-                    <input
-                      type="date"
-                      value={formData.review_date}
-                      onChange={(e) => setFormData({ ...formData, review_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ред на показване
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.order_position}
-                      onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) || 0 })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2 pt-6">
-                    <input
-                      type="checkbox"
-                      id="is_featured"
-                      checked={formData.is_featured}
-                      onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
-                      className="w-4 h-4"
-                    />
-                    <label htmlFor="is_featured" className="text-sm font-medium text-gray-700">
-                      Топ отзив
-                    </label>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center gap-2 px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600"
-                  >
-                    <Save className="w-4 h-4" />
-                    Запази
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-                  >
-                    <X className="w-4 h-4" />
-                    Отказ
-                  </button>
-                </div>
               </div>
-            ) : (
-              <>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    {review.avatar_url ? (
-                      <img
-                        src={review.avatar_url}
-                        alt={review.client_name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 font-semibold">
-                        {review.client_name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-charcoal-600">{review.client_name}</h3>
-                        {review.is_featured && (
-                          <span className="px-2 py-0.5 bg-gold-100 text-gold-600 text-xs rounded-full">
-                            Топ
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600">{review.services.name}</p>
-                      <div className="flex gap-1 mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < review.rating
-                                ? 'text-gold-500 fill-current'
-                                : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(review)}
-                      className="text-gold-500 hover:text-gold-600"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(review.id)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                <p className="text-gray-700">{review.review_text}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm text-gray-500">
-                    Дата: {new Date(review.review_date || review.created_at).toLocaleDateString('bg-BG')}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Ред: {review.order_position}
-                  </p>
-                </div>
-              </>
-            )}
+              <div className="flex gap-2">
+                <Link
+                  to={`/admin/reviews/edit/${review.id}`}
+                  className="text-gold-500 hover:text-gold-600"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => handleDelete(review.id)}
+                  className="text-red-500 hover:text-red-600"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <p className="text-gray-700">{review.review_text}</p>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-sm text-gray-500">
+                Дата: {new Date(review.review_date || review.created_at).toLocaleDateString('bg-BG')}
+              </p>
+              <p className="text-sm text-gray-500">
+                Ред: {review.order_position}
+              </p>
+            </div>
           </div>
         ))}
         {reviews.length === 0 && (

@@ -28,25 +28,6 @@ interface ServiceFormData {
   order_position: number;
 }
 
-function generateSlug(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[а-я]/g, (char) => {
-      const map: { [key: string]: string } = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
-        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
-        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f',
-        'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sht', 'ъ': 'a',
-        'ь': 'y', 'ю': 'yu', 'я': 'ya'
-      };
-      return map[char] || char;
-    })
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with -
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
-}
-
 export default function ServiceForm() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -224,18 +205,18 @@ export default function ServiceForm() {
           <h1 className="font-serif text-4xl text-gray-900 mb-2">
             {isEditing ? 'Редактиране на услуга' : 'Нова услуга'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-700">
             {isEditing ? 'Редактирайте информацията за услугата' : 'Създайте нова услуга'}
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+      <div className="bg-white rounded-xl shadow-lg p-4 space-y-4">
         {/* Основна информация */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-serif text-gray-900 border-b pb-2">Основна информация</h2>
+        <div className="space-y-3">
+          <h2 className="text-2xl font-serif text-gray-900 border-b border-gray-300 pb-2">Основна информация</h2>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Категория <span className="text-red-500">*</span>
@@ -323,7 +304,7 @@ export default function ServiceForm() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Продължителност <span className="text-red-500">*</span>
@@ -397,7 +378,7 @@ export default function ServiceForm() {
         </div>
 
         {/* Галерия снимки */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between border-b pb-2">
             <h2 className="text-2xl font-serif text-gray-900">Галерия снимки</h2>
             <button
@@ -431,7 +412,7 @@ export default function ServiceForm() {
         </div>
 
         {/* Предимства */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between border-b pb-2">
             <h2 className="text-2xl font-serif text-gray-900">Предимства</h2>
             <button
@@ -464,7 +445,7 @@ export default function ServiceForm() {
         </div>
 
         {/* Стъпки на процеса */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between border-b pb-2">
             <h2 className="text-2xl font-serif text-gray-900">Стъпки на процеса</h2>
             <button
@@ -497,7 +478,7 @@ export default function ServiceForm() {
         </div>
 
         {/* Съвети за грижа */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between border-b pb-2">
             <h2 className="text-2xl font-serif text-gray-900">Съвети за грижа</h2>
             <button
@@ -530,7 +511,7 @@ export default function ServiceForm() {
         </div>
 
         {/* Бутони за действие */}
-        <div className="flex gap-4 pt-6 border-t">
+        <div className="flex gap-3 pt-4 border-t">
           <button
             onClick={handleSave}
             disabled={saving}

@@ -8,10 +8,12 @@ import { Users } from 'lucide-react';
 interface TeamMember {
   id: string;
   slug: string;
-  first_name: string;
-  last_name: string;
-  title: string;
-  bio: string;
+  type: 'person' | 'salon';
+  first_name?: string;
+  last_name?: string;
+  title?: string;
+  title_gold?: string;
+  bio?: string;
   image_url: string;
   thumbnail_url?: string;
   instagram_url?: string;
@@ -76,45 +78,106 @@ export default function TeamPage() {
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500"></div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {members.map((member) => (
-                <Link
-                  key={member.id}
-                  to={`/team/${member.slug}`}
-                  className="group relative bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gold-500/10"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="space-y-12">
+              {/* Лица - по 2 на ред */}
+              {members.filter(m => m.type === 'person').length > 0 && (
+                <div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {members
+                      .filter(member => member.type === 'person')
+                      .map((member) => (
+                        <Link
+                          key={member.id}
+                          to={`/team/${member.slug}`}
+                          className="group relative bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gold-500/10"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                  <div className="relative h-96 overflow-hidden">
-                    <img
-                      src={member.thumbnail_url || member.image_url}
-                      alt={`${member.first_name} ${member.last_name}`}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600 via-charcoal-600/50 to-transparent"></div>
+                          <div className="relative h-96 overflow-hidden">
+                            <img
+                              src={member.thumbnail_url || member.image_url}
+                              alt={member.first_name && member.last_name ? `${member.first_name} ${member.last_name}` : member.title || 'Team member'}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600 via-charcoal-600/50 to-transparent"></div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="font-serif text-2xl text-white mb-2">
-                        {member.first_name} {member.last_name}
-                      </h3>
-                      <p className="text-gold-400 text-sm font-medium tracking-wide mb-3">
-                        {member.title}
-                      </p>
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                              <h3 className="font-serif text-2xl text-white mb-2">
+                                {member.first_name && member.last_name 
+                                  ? `${member.first_name} ${member.last_name}`
+                                  : member.title || 'Team member'}
+                              </h3>
+                              {member.title && (
+                                <p className="text-gold-400 text-sm font-medium tracking-wide mb-3">
+                                  {member.title}
+                                </p>
+                              )}
 
-                      {member.bio && (
-                        <div
-                          className="text-gray-300 text-sm leading-relaxed line-clamp-3"
-                          dangerouslySetInnerHTML={{ __html: member.bio }}
-                        />
-                      )}
-                    </div>
+                              {member.bio && (
+                                <div
+                                  className="rich-content text-gray-300 text-sm leading-relaxed line-clamp-3"
+                                  dangerouslySetInnerHTML={{ __html: member.bio }}
+                                />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="absolute top-4 right-4 w-12 h-12 bg-charcoal-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500/20 group-hover:bg-gold-500/20 transition-colors duration-300">
+                            <Users className="w-5 h-5 text-gold-400" />
+                          </div>
+                        </Link>
+                      ))}
                   </div>
+                </div>
+              )}
 
-                  <div className="absolute top-4 right-4 w-12 h-12 bg-charcoal-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500/20 group-hover:bg-gold-500/20 transition-colors duration-300">
-                    <Users className="w-5 h-5 text-gold-400" />
-                  </div>
-                </Link>
-              ))}
+              {/* Салони - едно на ред */}
+              {members.filter(m => m.type === 'salon').length > 0 && (
+                <div className="space-y-8">
+                  {members
+                    .filter(member => member.type === 'salon')
+                    .map((member) => (
+                      <Link
+                        key={member.id}
+                        to={`/team/${member.slug}`}
+                        className="group relative block bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gold-500/10"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                        <div className="relative h-[500px] overflow-hidden">
+                          <img
+                            src={member.thumbnail_url || member.image_url}
+                            alt={member.title || 'Salon'}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600 via-charcoal-600/50 to-transparent"></div>
+
+                          <div className="absolute bottom-0 left-0 right-0 p-8">
+                            <h3 className="font-serif text-3xl text-white mb-2">
+                              {member.title || 'Salon'}
+                            </h3>
+                            {member.title_gold && (
+                              <p className="text-gold-400 text-xl font-medium tracking-wide mb-3">
+                                {member.title_gold}
+                              </p>
+                            )}
+
+                            {member.bio && (
+                              <div
+                                className="rich-content text-gray-300 text-base leading-relaxed line-clamp-4 max-w-3xl"
+                                dangerouslySetInnerHTML={{ __html: member.bio }}
+                              />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="absolute top-6 right-6 w-14 h-14 bg-charcoal-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500/20 group-hover:bg-gold-500/20 transition-colors duration-300">
+                          <Users className="w-6 h-6 text-gold-400" />
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              )}
             </div>
           )}
 

@@ -1,7 +1,34 @@
-import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Instagram, Facebook, Twitter, Youtube, Linkedin, Music } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { supabase } from '../lib/supabase';
+
+interface ContactConfig {
+  address: string;
+  google_maps_link: string | null;
+  phone: string;
+  email: string | null;
+  working_hours: {
+    monday_friday?: string;
+    saturday?: string;
+    sunday?: string;
+  };
+  social_links: Array<{
+    platform: string;
+    url: string;
+  }>;
+}
+
+const SOCIAL_ICONS: Record<string, any> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  youtube: Youtube,
+  linkedin: Linkedin,
+  pinterest: Instagram, // Fallback to Instagram icon
+  tiktok: Music,
+};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +38,91 @@ export default function ContactPage() {
     message: '',
   });
   const [sending, setSending] = useState(false);
+  const [config, setConfig] = useState<ContactConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadConfig();
+  }, []);
+
+  async function loadConfig() {
+    const { data, error } = await supabase
+      .from('contact_config')
+      .select('*')
+      .single();
+
+    // If table doesn't exist or no data, return early
+    if (error || !data) {
+      setLoading(false);
+      return;
+    }
+
+    if (data) {
+      setConfig({
+        address: data.address,
+        google_maps_link: data.google_maps_link,
+        phone: data.phone,
+        email: data.email,
+        working_hours: data.working_hours || {},
+        social_links: data.social_links || [],
+      });
+    }
+    setLoading(false);
+  }
+
+  function getGoogleMapsEmbedUrl(link: string | null): string | null {
+    if (!link || !link.trim()) return null;
+    
+    const trimmedLink = link.trim();
+    
+    // If it's already an embed URL, return as is
+    if (trimmedLink.includes('/embed') || trimmedLink.includes('iframe')) {
+      // Extract embed URL from iframe src if needed
+      const iframeMatch = trimmedLink.match(/src=["']([^"']+)["']/);
+      if (iframeMatch) return iframeMatch[1];
+      // If it's a full iframe tag, extract src
+      const iframeSrcMatch = trimmedLink.match(/<iframe[^>]+src=["']([^"']+)["']/);
+      if (iframeSrcMatch) return iframeSrcMatch[1];
+      return trimmedLink;
+    }
+    
+    // If it's a share link with coordinates (@lat,lng)
+    const coordMatch = trimmedLink.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if (coordMatch) {
+      const lat = coordMatch[1];
+      const lng = coordMatch[2];
+      // Use simple embed format with coordinates
+      return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${lat}%2C${lng}!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus`;
+    }
+    
+    // If it's a share link with place ID (place/...)
+    const placeMatch = trimmedLink.match(/place\/([^\/\?&]+)/);
+    if (placeMatch) {
+      const placeId = placeMatch[1];
+      // Convert place share link to embed format
+      return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z0%2C0!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus&q=place_id:${encodeURIComponent(placeId)}`;
+    }
+    
+    // If it's a maps.google.com or maps.app.goo.gl link, try to extract and convert
+    if (trimmedLink.includes('maps.google.com') || trimmedLink.includes('goo.gl/maps') || trimmedLink.includes('maps.app.goo.gl')) {
+      // Try to extract address or place name from query parameter
+      const urlMatch = trimmedLink.match(/[?&]q=([^&]+)/);
+      if (urlMatch) {
+        const query = decodeURIComponent(urlMatch[1]);
+        // Use the query directly in embed format
+        return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+      }
+      // If no q parameter, try to use the full URL
+      return `https://www.google.com/maps?q=${encodeURIComponent(trimmedLink)}&output=embed`;
+    }
+    
+    // If it looks like a valid URL but not recognized format, return as is (might be embed URL)
+    if (trimmedLink.startsWith('http://') || trimmedLink.startsWith('https://')) {
+      return trimmedLink;
+    }
+    
+    return null;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,80 +169,114 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="space-y-8">
-              <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-xl mb-2">Адрес</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      ул. Примерна 123
-                      <br />
-                      София 1000, България
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-xl mb-2">Телефон</h3>
-                    <a
-                      href="tel:+359888123456"
-                      className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
-                    >
-                      +359 888 123 456
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-xl mb-2">Email</h3>
-                    <a
-                      href="mailto:info@example.com"
-                      className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
-                    >
-                      info@example.com
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-xl mb-3">Работно време</h3>
-                    <div className="space-y-2 text-gray-300">
-                      <div className="flex justify-between">
-                        <span>Понеделник - Петък</span>
-                        <span className="text-gold-400 font-medium">09:00 - 19:00</span>
+              {config && (
+                <>
+                  <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                    <div className="flex items-start gap-6">
+                      <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-8 h-8 text-gold-400" />
                       </div>
-                      <div className="flex justify-between">
-                        <span>Събота</span>
-                        <span className="text-gold-400 font-medium">10:00 - 18:00</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Неделя</span>
-                        <span className="text-gray-500 font-medium">Почивен ден</span>
+                      <div>
+                        <h3 className="text-white font-semibold text-xl mb-2">Адрес</h3>
+                        <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                          {config.address}
+                        </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
+
+                  <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                    <div className="flex items-start gap-6">
+                      <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-8 h-8 text-gold-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold text-xl mb-2">Телефон</h3>
+                        <a
+                          href={`tel:${config.phone}`}
+                          className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
+                        >
+                          {config.phone}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {config.email && (
+                    <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                      <div className="flex items-start gap-6">
+                        <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                          <Mail className="w-8 h-8 text-gold-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-white font-semibold text-xl mb-2">Email</h3>
+                          <a
+                            href={`mailto:${config.email}`}
+                            className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
+                          >
+                            {config.email}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                    <div className="flex items-start gap-6">
+                      <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-8 h-8 text-gold-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold text-xl mb-3">Работно време</h3>
+                        <div className="space-y-2 text-gray-300">
+                          {config.working_hours.monday_friday && (
+                            <div className="flex justify-between">
+                              <span>Понеделник - Петък</span>
+                              <span className="text-gold-400 font-medium">{config.working_hours.monday_friday}</span>
+                            </div>
+                          )}
+                          {config.working_hours.saturday && (
+                            <div className="flex justify-between">
+                              <span>Събота</span>
+                              <span className="text-gold-400 font-medium">{config.working_hours.saturday}</span>
+                            </div>
+                          )}
+                          {config.working_hours.sunday && (
+                            <div className="flex justify-between">
+                              <span>Неделя</span>
+                              <span className="text-gray-500 font-medium">{config.working_hours.sunday}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {config.social_links.length > 0 && (
+                    <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                      <div className="flex items-start gap-6">
+                        <div className="flex flex-wrap gap-3">
+                          {config.social_links.map((link, index) => {
+                            const Icon = SOCIAL_ICONS[link.platform] || Instagram;
+                            return (
+                              <a
+                                key={index}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center hover:bg-gold-500/20 transition-colors"
+                                title={link.platform}
+                              >
+                                <Icon className="w-8 h-8 text-gold-400" />
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             <div>
@@ -207,21 +353,37 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="py-20 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden border border-gold-500/10 shadow-2xl">
-            <div className="aspect-[21/9] bg-charcoal-700/50 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-gold-400/50 mx-auto mb-4" />
-                <p className="text-gray-400">Карта на локацията</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Интеграция с Google Maps може да бъде добавена тук
-                </p>
-              </div>
+      {config && (
+        <section className="py-20 relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden border border-gold-500/10 shadow-2xl">
+              {getGoogleMapsEmbedUrl(config.google_maps_link) ? (
+                <div className="aspect-[21/9]">
+                  <iframe
+                    src={getGoogleMapsEmbedUrl(config.google_maps_link) || ''}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[21/9] bg-charcoal-700/50 flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="w-16 h-16 text-gold-400/50 mx-auto mb-4" />
+                    <p className="text-gray-400">Карта на локацията</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Добавете Google Maps линк в администрацията за да се покаже картата
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <Footer />
     </div>

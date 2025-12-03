@@ -106,8 +106,8 @@ export default function HomePageEditor() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-serif text-charcoal-600">Редактирай Home Page</h1>
-          <p className="text-gray-600 mt-1">Управление на блокове и съдържание</p>
+          <h1 className="text-3xl font-serif text-white">Редактирай Home Page</h1>
+          <p className="text-white mt-1">Управление на блокове и съдържание</p>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export default function HomePageEditor() {
                         <GripVertical className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-serif text-charcoal-600">
+                        <h3 className="text-xl font-serif text-white">
                           {block.title}
                         </h3>
                         <p className="text-sm text-gray-500">

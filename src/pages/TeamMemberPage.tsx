@@ -203,7 +203,7 @@ export default function TeamMemberPage() {
       </section>
 
       {/* Bio Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white text-gray-900">
         <div className="max-w-4xl mx-auto px-6">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
@@ -219,7 +219,7 @@ export default function TeamMemberPage() {
             {member.type === 'person' ? 'За мен' : 'За салона'}
           </h2>
           <div
-            className="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed"
+            className="rich-content prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: member.bio }}
           />
         </div>

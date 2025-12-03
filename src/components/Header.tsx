@@ -56,16 +56,6 @@ export default function Header() {
     return navItems.filter((item) => item.parent_id === parentId);
   }
 
-  function toggleDropdown(itemId: string) {
-    const newDropdowns = new Set(openDropdowns);
-    if (newDropdowns.has(itemId)) {
-      newDropdowns.delete(itemId);
-    } else {
-      newDropdowns.add(itemId);
-    }
-    setOpenDropdowns(newDropdowns);
-  }
-
   return (
     <header className="sticky top-0 left-0 right-0 z-50 bg-gradient-to-b from-charcoal-600/98 via-charcoal-600/95 to-charcoal-600/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-b border-gold-500/10">
       <div className="max-w-7xl mx-auto px-6">
@@ -105,32 +95,34 @@ export default function Header() {
               const hasChildren = children.length > 0;
 
               return (
-                <div key={item.id} className="relative group">
+                <div
+                  key={item.id}
+                  className="relative group"
+                  onMouseEnter={() => hasChildren && setOpenDropdowns(new Set([...openDropdowns, item.id]))}
+                  onMouseLeave={() => hasChildren && setOpenDropdowns(new Set([...openDropdowns].filter(id => id !== item.id)))}
+                >
                   <a
                     href={item.url}
                     className="text-gold-400 hover:text-white transition-colors duration-300 font-medium text-sm flex items-center gap-1"
-                    onMouseEnter={() => hasChildren && toggleDropdown(item.id)}
                   >
                     {item.label}
                     {hasChildren && <ChevronDown className="w-4 h-4" />}
                   </a>
 
                   {hasChildren && openDropdowns.has(item.id) && (
-                    <div
-                      className="absolute top-full left-0 mt-2 w-56 bg-charcoal-600/98 backdrop-blur-md rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden"
-                      onMouseEnter={() => toggleDropdown(item.id)}
-                      onMouseLeave={() => toggleDropdown(item.id)}
-                    >
-                      <div className="py-2">
-                        {children.map((child) => (
-                          <a
-                            key={child.id}
-                            href={child.url}
-                            className="block px-6 py-3 text-gold-400 hover:text-white hover:bg-gold-500/10 transition-all duration-300 text-sm font-medium"
-                          >
-                            {child.label}
-                          </a>
-                        ))}
+                    <div className="absolute top-full left-0 pt-2 w-56">
+                      <div className="bg-charcoal-600/98 backdrop-blur-md rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden">
+                        <div className="py-2">
+                          {children.map((child) => (
+                            <a
+                              key={child.id}
+                              href={child.url}
+                              className="block px-6 py-3 text-gold-400 hover:text-white hover:bg-gold-500/10 transition-all duration-300 text-sm font-medium"
+                            >
+                              {child.label}
+                            </a>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}

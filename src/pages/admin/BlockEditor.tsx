@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, X, Plus, Trash2 } from 'lucide-react';
 import MediaSelector from '../../components/MediaSelector';
+import { supabase } from '../../lib/supabase';
 
 interface BlockEditorProps {
   block: {
@@ -17,6 +18,27 @@ interface BlockEditorProps {
 export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEditorProps) {
   const [title, setTitle] = useState(block.title);
   const [content, setContent] = useState({ ...block.content });
+  const [services, setServices] = useState<Array<{ id: string; name: string }>>([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+
+  useEffect(() => {
+    if (block.block_type === 'services') {
+      loadServices();
+    }
+  }, [block.block_type]);
+
+  async function loadServices() {
+    setLoadingServices(true);
+    const { data, error } = await supabase
+      .from('services')
+      .select('id, name')
+      .order('name', { ascending: true });
+
+    if (!error && data) {
+      setServices(data);
+    }
+    setLoadingServices(false);
+  }
 
   function updateField(field: string, value: any) {
     setContent({ ...content, [field]: value });
@@ -52,6 +74,266 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
       return 'video';
     }
     return null;
+  }
+
+  interface ReviewsBlockContent {
+    title?: string;
+    subtitle?: string;
+    stats?: Array<{ label: string; value: string }>;
+    reviews_count?: number;
+    button_text?: string;
+    button_url?: string;
+    final_rating_text?: string;
+    final_opinion_text?: string;
+  }
+
+  interface ServicesBlockContent {
+    title?: string;
+    subtitle?: string;
+    service_ids?: string[];
+    button_text?: string;
+    button_url?: string;
+  }
+
+  function renderReviewsBlockEditor() {
+    const reviewsContent = content as ReviewsBlockContent;
+    
+    return (
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Заглавие</label>
+          <input
+            type="text"
+            value={reviewsContent.title || ''}
+            onChange={(e) => updateField('title', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            placeholder="Отзиви от клиенти"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Подзаглавие</label>
+          <textarea
+            value={reviewsContent.subtitle || ''}
+            onChange={(e) => updateField('subtitle', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            rows={2}
+            placeholder="Вижте какво споделят нашите клиенти за техния опит с нас"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Статистики</label>
+          <div className="space-y-2">
+            {(reviewsContent.stats || []).map((stat, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  value={stat.label}
+                  onChange={(e) => {
+                    const newStats = [...(reviewsContent.stats || [])];
+                    newStats[index] = { ...newStats[index], label: e.target.value };
+                    updateField('stats', newStats);
+                  }}
+                  placeholder="Етикет"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+                <input
+                  type="text"
+                  value={stat.value}
+                  onChange={(e) => {
+                    const newStats = [...(reviewsContent.stats || [])];
+                    newStats[index] = { ...newStats[index], value: e.target.value };
+                    updateField('stats', newStats);
+                  }}
+                  placeholder="Стойност"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                />
+                <button
+                  onClick={() => {
+                    const newStats = (reviewsContent.stats || []).filter((_, i) => i !== index);
+                    updateField('stats', newStats);
+                  }}
+                  className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() => {
+                const newStats = [...(reviewsContent.stats || []), { label: '', value: '' }];
+                updateField('stats', newStats);
+              }}
+              className="flex items-center gap-1 px-3 py-1 text-sm bg-gold-500 text-white rounded hover:bg-gold-600"
+            >
+              <Plus className="w-3 h-3" />
+              Добави статистика
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Брой отзиви за показване</label>
+          <input
+            type="number"
+            value={reviewsContent.reviews_count || 6}
+            onChange={(e) => updateField('reviews_count', parseInt(e.target.value) || 6)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            min="1"
+            max="20"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Текст на бутона</label>
+            <input
+              type="text"
+              value={reviewsContent.button_text || ''}
+              onChange={(e) => updateField('button_text', e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              placeholder="Виж всички"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">URL на бутона</label>
+            <input
+              type="text"
+              value={reviewsContent.button_url || ''}
+              onChange={(e) => updateField('button_url', e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              placeholder="/reviews"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Текст под рейтинга</label>
+          <input
+            type="text"
+            value={reviewsContent.final_rating_text || ''}
+            onChange={(e) => updateField('final_rating_text', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            placeholder="Базирано на 500+ отзива"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Текст за мнение</label>
+          <textarea
+            value={reviewsContent.final_opinion_text || ''}
+            onChange={(e) => updateField('final_opinion_text', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            rows={3}
+            placeholder="Вашето мнение е важно за нас! Споделете вашия опит и помогнете на други клиенти да направят избор."
+          />
+        </div>
+      </div>
+    );
+  }
+
+  function renderServicesBlockEditor() {
+    const servicesContent = content as ServicesBlockContent;
+    const selectedServiceIds = servicesContent.service_ids || [];
+
+    function updateServiceId(index: number, serviceId: string) {
+      const newServiceIds = [...selectedServiceIds];
+      if (serviceId) {
+        newServiceIds[index] = serviceId;
+      } else {
+        newServiceIds.splice(index, 1);
+      }
+      updateField('service_ids', newServiceIds.filter(id => id && id.trim() !== ''));
+    }
+
+    function removeService(index: number) {
+      const newServiceIds = selectedServiceIds.filter((_, i) => i !== index);
+      updateField('service_ids', newServiceIds);
+    }
+
+    return (
+      <div className="space-y-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Заглавие</label>
+          <input
+            type="text"
+            value={servicesContent.title || ''}
+            onChange={(e) => updateField('title', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            placeholder="Нашите услуги"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Подзаглавие</label>
+          <textarea
+            value={servicesContent.subtitle || ''}
+            onChange={(e) => updateField('subtitle', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+            rows={2}
+            placeholder="Открийте селекцията ни от прецизно изпълнени терапии"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Избрани услуги (максимум 3)</label>
+          {loadingServices ? (
+            <p className="text-sm text-gray-500">Зареждане на услуги...</p>
+          ) : (
+            <div className="space-y-2">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="flex gap-2">
+                  <select
+                    value={selectedServiceIds[index] || ''}
+                    onChange={(e) => updateServiceId(index, e.target.value)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                  >
+                    <option value="">Изберете услуга</option>
+                    {services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedServiceIds[index] && (
+                    <button
+                      onClick={() => removeService(index)}
+                      className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Текст на бутона</label>
+            <input
+              type="text"
+              value={servicesContent.button_text || ''}
+              onChange={(e) => updateField('button_text', e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              placeholder="Виж всички услуги"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">URL на бутона</label>
+            <input
+              type="text"
+              value={servicesContent.button_url || ''}
+              onChange={(e) => updateField('button_url', e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              placeholder="/services"
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   function renderField(key: string, value: any): JSX.Element {
@@ -116,7 +398,7 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
                         <textarea
                           value={itemValue as string}
                           onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900"
                           rows={3}
                         />
                       ) : (
@@ -124,7 +406,7 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
                           type="text"
                           value={itemValue as string}
                           onChange={(e) => updateItem(key, index, itemKey, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900"
                         />
                       )}
                     </div>
@@ -155,7 +437,7 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
             <textarea
               value={value}
               onChange={(e) => updateField(key, e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
               rows={4}
             />
           </div>
@@ -225,7 +507,7 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-serif text-charcoal-600">
+        <h3 className="text-xl font-serif text-white">
           Редактирай: {block.block_type}
         </h3>
         <div className="flex gap-2">
@@ -259,11 +541,21 @@ export default function BlockEditor({ block, onSave, onCancel, saving }: BlockEd
         />
       </div>
 
-      <div className="space-y-4 pt-4 border-t border-gray-200">
-        {Object.entries(content).map(([key, value]) => (
-          <div key={key}>{renderField(key, value)}</div>
-        ))}
-      </div>
+      {block.block_type === 'reviews' ? (
+        <div className="space-y-3 pt-4 border-t border-gray-200">
+          {renderReviewsBlockEditor()}
+        </div>
+      ) : block.block_type === 'services' ? (
+        <div className="space-y-3 pt-4 border-t border-gray-200">
+          {renderServicesBlockEditor()}
+        </div>
+      ) : (
+        <div className="space-y-3 pt-4 border-t border-gray-200">
+          {Object.entries(content).map(([key, value]) => (
+            <div key={key}>{renderField(key, value)}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

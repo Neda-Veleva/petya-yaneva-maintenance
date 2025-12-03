@@ -11,7 +11,7 @@ interface BlogPost {
   slug: string;
   title: string;
   excerpt: string;
-  content: string;
+  content?: string;
   image_url: string;
   category: string;
   published_at: string;
@@ -110,7 +110,7 @@ export default function BlogPostPage() {
             Назад към блога
           </Link>
 
-          <div className="bg-white rounded-3xl overflow-hidden shadow-xl mb-12">
+          <div className="bg-white rounded-3xl overflow-hidden shadow-xl mb-12 text-gray-900">
             <div className="relative h-96 overflow-hidden">
               <MediaRender
                 src={post.image_url}
@@ -140,10 +140,12 @@ export default function BlogPostPage() {
                 {post.excerpt}
               </p>
 
-              <div
-                className="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-gold-600 prose-a:no-underline hover:prose-a:text-gold-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+              {post.content && (
+                <div
+                  className="rich-content prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              )}
             </div>
           </div>
 

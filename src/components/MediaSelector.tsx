@@ -39,8 +39,8 @@ export default function MediaSelector({ value, onChange, type = 'image', label }
       )}
 
       {value ? (
-        <div className="relative bg-gray-100 rounded-lg overflow-hidden">
-          <div className="aspect-video">
+        <div className="relative bg-gray-100 rounded-lg overflow-hidden inline-block">
+          <div className="w-48 h-32">
             {type === 'image' ? (
               <img
                 src={value}
@@ -57,13 +57,13 @@ export default function MediaSelector({ value, onChange, type = 'image', label }
           </div>
           <button
             onClick={handleRemove}
-            className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-lg"
+            className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors shadow-lg"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3 h-3" />
           </button>
           <button
             onClick={() => setShowLibrary(true)}
-            className="absolute bottom-2 left-2 px-3 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors shadow-lg text-sm"
+            className="absolute bottom-1 left-1 px-2 py-1 bg-white text-gray-700 rounded hover:bg-gray-100 transition-colors shadow-lg text-xs"
           >
             Промени
           </button>
@@ -71,14 +71,14 @@ export default function MediaSelector({ value, onChange, type = 'image', label }
       ) : (
         <button
           onClick={() => setShowLibrary(true)}
-          className="w-full aspect-video border-2 border-dashed border-gray-300 rounded-lg hover:border-gold-500 transition-colors flex flex-col items-center justify-center gap-2 text-gray-500 hover:text-gold-600"
+          className="w-48 h-32 border-2 border-dashed border-gray-300 rounded-lg hover:border-gold-500 transition-colors flex flex-col items-center justify-center gap-2 text-gray-500 hover:text-gold-600"
         >
           {type === 'image' ? (
-            <ImageIcon className="w-12 h-12" />
+            <ImageIcon className="w-8 h-8" />
           ) : (
-            <VideoIcon className="w-12 h-12" />
+            <VideoIcon className="w-8 h-8" />
           )}
-          <span className="text-sm font-medium">
+          <span className="text-xs font-medium">
             Избери {type === 'image' ? 'изображение' : 'видео'}
           </span>
         </button>

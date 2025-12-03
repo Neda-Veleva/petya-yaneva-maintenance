@@ -95,8 +95,8 @@ export default function ServicesManager() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-serif text-4xl text-gray-900 mb-2">Управление на услуги</h1>
-          <p className="text-gray-600">Създавайте, редактирайте и изтривайте услуги</p>
+          <h1 className="font-serif text-4xl text-white mb-2">Управление на услуги</h1>
+          <p className="text-white">Създавайте, редактирайте и изтривайте услуги</p>
         </div>
         <Link
           to="/admin/services/new"
@@ -111,7 +111,7 @@ export default function ServicesManager() {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+          className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-transparent text-gray-900"
         >
           <option value="all">Всички категории</option>
           {categories.map((cat) => (

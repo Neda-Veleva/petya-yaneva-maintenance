@@ -149,7 +149,7 @@ export default function HeaderConfigManager() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Конфигурация на Header</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Конфигурация на Header</h2>
       </div>
 
       {config && (
