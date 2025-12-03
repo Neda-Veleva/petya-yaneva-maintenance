@@ -34,6 +34,8 @@ import TopServiceForm from './pages/admin/TopServiceForm';
 import PageTypesManager from './pages/admin/PageTypesManager';
 import HomePageEditor from './pages/admin/HomePageEditor';
 import HeaderConfigManager from './pages/admin/HeaderConfigManager';
+import CTABlocksManager from './pages/admin/CTABlocksManager';
+import CTABlockForm from './pages/admin/CTABlockForm';
 import ContactConfigManager from './pages/admin/ContactConfigManager';
 
 function App() {
@@ -87,6 +89,9 @@ function App() {
             <Route path="reviews" element={<ReviewsManager />} />
             <Route path="header-config" element={<HeaderConfigManager />} />
             <Route path="contact-config" element={<ContactConfigManager />} />
+            <Route path="cta-blocks/new" element={<CTABlockForm />} />
+            <Route path="cta-blocks/edit/:id" element={<CTABlockForm />} />
+            <Route path="cta-blocks" element={<CTABlocksManager />} />
             <Route path="page-types" element={<PageTypesManager />} />
             <Route path="page-types/:pageTypeId/edit" element={<HomePageEditor />} />
           </Route>
