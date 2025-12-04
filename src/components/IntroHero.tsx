@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, ChevronDown, Tag, ArrowRight } from 'lucide-react';
 import ParallaxBackground from './ParallaxBackground';
+import MediaRender from './MediaRender';
 
 const slides = [
   {
@@ -18,29 +19,23 @@ const slides = [
   {
     id: 2,
     image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxleWVsYXNoJTIwZXh0ZW5zaW9uc3xlbnwxfHx8fDE3NjMxMzM0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    // title: 'Специална',
-    // titleGold: 'промоция',
-    // subtitle: 'Класически мигли за първи клиенти',
     promotion: {
       service: 'Мигли руски обем',
       oldPrice: '140лв',
       newPrice: '100лв',
       description: 'Само за нови клиенти през този месец',
+      slug: 'migla-ruski-obem',
     },
   },
   {
     id: 3,
     image: 'https://www.chanel.com/puls-img/c_limit,w_1920/q_auto:good,dpr_auto,f_auto/1707155775012-01headerjkd2880x1500jpg.jpg?auto=compress&cs=tinysrgb&w=1080',
-    // title: 'Перфектна',
-    // titleGold: 'очна линия',
-    // title: 'Специална',
-    // titleGold: 'промоция',
-    // subtitle: 'Удължаване на мигли с естествен ефект',
     promotion: {
       service: 'Удължаване на мигли очна линия',
       oldPrice: '100лв',
       newPrice: '80лв',
       description: 'Специална цена за всички клиенти',
+      slug: 'udyljavane-migla-ochna-liniya',
     },
   },
 ];
@@ -86,19 +81,21 @@ export default function IntroHero() {
                   : 'opacity-0 scale-110'
               }`}
             >
-              <img
+              <MediaRender
                 src={s.image}
                 alt="Luxury lashes"
                 className="w-full h-full object-cover"
+                videoProps={{ muted: true, loop: true, autoPlay: true }}
               />
             </div>
           ))
         ) : (
           <div className="absolute inset-0">
-            <img
+            <MediaRender
               src={slide.image}
               alt="Luxury lashes"
               className="w-full h-full object-cover opacity-50"
+              videoProps={{ muted: true, loop: true, autoPlay: true }}
             />
           </div>
         )}
@@ -207,7 +204,7 @@ export default function IntroHero() {
                   </p>
 
                   <a
-                    href="#services"
+                    href={`/promotions#${slide.promotion.slug}`}
                     className="inline-flex items-center gap-2 px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-bold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 group"
                   >
                     <span>Виж повече</span>

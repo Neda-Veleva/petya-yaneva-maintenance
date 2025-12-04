@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { X, ArrowLeft } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MediaRender from '../components/MediaRender';
 
 const galleryImages = [
   {
@@ -50,22 +52,43 @@ export default function GalleryPage() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-nude-50 via-white to-nude-100">
-        <div className="pt-12 pb-24">
-          <div className="max-w-7xl mx-auto px-6">
-            <Link
-              to="/"
-              className="inline-flex items-center space-x-2 text-gold-600 hover:text-gold-700 font-medium transition-colors duration-300 mb-8"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
-            </Link>
+        <Header />
 
-            <div className="text-center mb-16">
-              <h1 className="font-serif text-6xl text-gold-500 mb-4">Gallery</h1>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Discover the artistry of our work through stunning transformations
-              </p>
+        {/* Hero Section */}
+        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0">
+            <MediaRender
+              src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=compress&cs=tinysrgb&w=1920"
+              alt="Beauty studio"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-charcoal-600/90 via-charcoal-600/80 to-charcoal-600/90"></div>
+          </div>
+
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          </div>
+
+          <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
+            <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-charcoal-400/50 backdrop-blur-md rounded-full border border-gold-500/30 shadow-gold-glow mb-8">
+              <Sparkles className="w-4 h-4 text-gold-400 animate-pulse" />
+              <span className="text-sm text-gold-400 font-medium tracking-wide">Нашата работа</span>
             </div>
+
+            <h1 className="font-serif text-6xl lg:text-7xl text-white mb-6 leading-none tracking-tight">
+              Галерия
+            </h1>
+            <div className="h-1 w-32 bg-gold-shimmer animate-shimmer mx-auto mb-8"></div>
+
+            <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
+              Открийте красотата на нашата работа чрез зашеметяващи трансформации
+            </p>
+          </div>
+        </section>
+
+        <div className="py-24">
+          <div className="max-w-7xl mx-auto px-6">
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {galleryImages.map((image) => (
@@ -74,7 +97,7 @@ export default function GalleryPage() {
                   onClick={() => openLightbox(image.src)}
                   className="group relative aspect-[3/4] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
                 >
-                  <img
+                  <MediaRender
                     src={image.src}
                     alt={image.alt}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -105,7 +128,7 @@ export default function GalleryPage() {
             className="relative max-w-5xl max-h-[90vh] animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <MediaRender
               src={selectedImage}
               alt="Gallery image"
               className="w-full h-full object-contain rounded-2xl shadow-2xl"

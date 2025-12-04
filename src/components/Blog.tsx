@@ -1,33 +1,40 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
-const articles = [
-  {
-    id: 1,
-    image: 'https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=800',
-    category: 'Грижа за миглите',
-    title: 'Важни съвети за дълготрайни удължавания на мигли',
-    excerpt: 'Научете най-добрите практики за поддръжка на красивите ви мигли и как да изглеждат свежи седмици наред.',
-    link: '#',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1548902378-2ec44c906391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWUlMjBtYWtldXAlMjBsYXNoZXN8ZW58MXx8fHwxNzYzMTM0MTAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    category: 'Съвети за красота',
-    title: 'Перфектният сутрешен ритуал за здрави мигли',
-    excerpt: 'Разберете как да се грижите за естествените си мигли и да създадете нежен сутрешен режим за растеж и здравина.',
-    link: '#',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1730226995154-efe9e13db300?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxleWVsYXNoJTIwZXh0ZW5zaW9ucyUyMHZvbHVtZXxlbnwxfHx8fDE3NjMxMzQwOTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    category: 'Подготовка',
-    title: 'Как да се подготвите за първата си процедура за мигли',
-    excerpt: 'Всичко, което трябва да знаете преди първата си сесия за удължаване, за да постигнете отлични резултати и преживяване.',
-    link: '#',
-  },
-];
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  image_url: string;
+  thumbnail_url?: string;
+  category: string;
+}
 
 export default function Blog() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadPosts() {
+      const { data } = await supabase
+        .from('blog_posts')
+        .select('id, slug, title, excerpt, image_url, thumbnail_url, category')
+        .eq('is_published', true)
+        .order('published_at', { ascending: false })
+        .limit(3);
+
+      if (data) {
+        setPosts(data);
+      }
+      setLoading(false);
+    }
+
+    loadPosts();
+  }, []);
+
   return (
     <section id="blog" className="py-24 bg-gradient-to-br from-nude-50 via-nude-100 to-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -38,45 +45,53 @@ export default function Blog() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articles.map((article) => (
-            <article
-              key={article.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-            >
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gold-500 border-t-transparent"></div>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-600 text-lg">Няма публикувани статии</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                to={`/blog/${post.slug}`}
+                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={post.thumbnail_url || post.image_url}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
 
-              <div className="p-6">
-                <span className="inline-block px-3 py-1 text-xs font-medium text-gold-600 bg-gold-50 rounded-full mb-3">
-                  {article.category}
-                </span>
+                <div className="p-6">
+                  <span className="inline-block px-3 py-1 text-xs font-medium text-gold-600 bg-gold-50 rounded-full mb-3">
+                    {post.category}
+                  </span>
 
-                <h3 className="font-serif text-2xl text-gray-900 mb-3 group-hover:text-gold-600 transition-colors duration-300">
-                  {article.title}
-                </h3>
+                  <h3 className="font-serif text-2xl text-gray-900 mb-3 group-hover:text-gold-600 transition-colors duration-300">
+                    {post.title}
+                  </h3>
 
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {article.excerpt}
-                </p>
+                  <p className="text-gray-600 mb-4 leading-relaxed">
+                    {post.excerpt}
+                  </p>
 
-                <a
-                  href={article.link}
-                  className="inline-flex items-center space-x-2 text-nude-500 hover:text-gold-600 font-medium transition-colors duration-300 group/link"
-                >
-                  <span>Прочети повече</span>
-                  <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <span className="inline-flex items-center space-x-2 text-nude-500 group-hover:text-gold-600 font-medium transition-colors duration-300 group/link">
+                    <span>Прочети повече</span>
+                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
