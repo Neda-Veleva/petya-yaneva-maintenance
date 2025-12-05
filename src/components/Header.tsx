@@ -111,13 +111,13 @@ export default function Header() {
 
                   {hasChildren && openDropdowns.has(item.id) && (
                     <div className="absolute top-full left-0 pt-2 w-56">
-                      <div className="bg-charcoal-600/98 backdrop-blur-md rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden">
+                      <div className="bg-charcoal-600 rounded-2xl shadow-2xl border border-gold-500/20 overflow-hidden backdrop-blur-md">
                         <div className="py-2">
                           {children.map((child) => (
                             <a
                               key={child.id}
                               href={child.url}
-                              className="block px-6 py-3 text-gold-400 hover:text-white hover:bg-gold-500/10 transition-all duration-300 text-sm font-medium"
+                              className="block px-6 py-3 text-white hover:text-gold-400 hover:bg-gold-500/20 transition-all duration-300 text-sm font-medium"
                             >
                               {child.label}
                             </a>
