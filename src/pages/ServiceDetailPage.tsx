@@ -231,9 +231,9 @@ export default function ServiceDetailPage() {
             <div className="space-y-12">
               {service.full_description && (
                 <div>
-                  <h2 className="font-serif text-3xl text-charcoal-600 mb-6">За услугата</h2>
+                  <h2 className="font-serif text-3xl text-gray-800 mb-6">За услугата</h2>
                   <div
-                    className="rich-content text-gray-700 leading-relaxed text-lg prose prose-lg max-w-none"
+                    className="rich-content text-gray-600 leading-relaxed text-lg prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-strong:text-gray-800 prose-a:text-gold-600"
                     dangerouslySetInnerHTML={{ __html: service.full_description }}
                   />
                 </div>
@@ -241,12 +241,12 @@ export default function ServiceDetailPage() {
 
               {service.benefits && service.benefits.length > 0 && (
                 <div>
-                  <h2 className="font-serif text-3xl text-charcoal-600 mb-6">Предимства</h2>
+                  <h2 className="font-serif text-3xl text-gray-800 mb-6">Предимства</h2>
                   <div className="space-y-4">
                     {service.benefits.map((benefit, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-6 h-6 text-gold-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 text-lg">{benefit}</span>
+                        <span className="text-gray-600 text-lg">{benefit}</span>
                       </div>
                     ))}
                   </div>
@@ -255,14 +255,14 @@ export default function ServiceDetailPage() {
 
               {service.process_steps && service.process_steps.length > 0 && (
                 <div>
-                  <h2 className="font-serif text-3xl text-charcoal-600 mb-6">Как протича процедурата</h2>
+                  <h2 className="font-serif text-3xl text-gray-800 mb-6">Как протича процедурата</h2>
                   <div className="space-y-4">
                     {service.process_steps.map((step, index) => (
                       <div key={index} className="flex gap-4">
-                        <div className="flex-shrink-0 w-10 h-10 bg-gold-shimmer rounded-full flex items-center justify-center text-charcoal-600 font-bold">
+                        <div className="flex-shrink-0 w-10 h-10 bg-gold-shimmer rounded-full flex items-center justify-center text-white font-bold">
                           {index + 1}
                         </div>
-                        <p className="text-gray-700 text-lg pt-1.5">{step}</p>
+                        <p className="text-gray-600 text-lg pt-1.5">{step}</p>
                       </div>
                     ))}
                   </div>
@@ -271,12 +271,12 @@ export default function ServiceDetailPage() {
 
               {service.aftercare_tips && service.aftercare_tips.length > 0 && (
                 <div>
-                  <h2 className="font-serif text-3xl text-charcoal-600 mb-6">Грижа след процедурата</h2>
+                  <h2 className="font-serif text-3xl text-gray-800 mb-6">Грижа след процедурата</h2>
                   <div className="space-y-4">
                     {service.aftercare_tips.map((tip, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-6 h-6 text-gold-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 text-lg">{tip}</span>
+                        <span className="text-gray-600 text-lg">{tip}</span>
                       </div>
                     ))}
                   </div>

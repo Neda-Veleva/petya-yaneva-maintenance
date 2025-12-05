@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Award, Calendar, MapPin, Sparkles, Home, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -6,6 +6,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CallToAction from '../components/CallToAction';
 import PriceList from '../components/PriceList';
+import ImageGrid from '../components/ImageGrid';
+import MediaRender from '../components/MediaRender';
 
 interface TeamMember {
   id: string;
@@ -36,6 +38,7 @@ interface GalleryImage {
   id: string;
   image_url: string;
   caption?: string;
+  gallery_type?: 'main' | 'work';
 }
 
 export default function TeamMemberPage() {
@@ -44,6 +47,8 @@ export default function TeamMemberPage() {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPersonImage, setCurrentPersonImage] = useState(0);
+  const [currentSalonImage, setCurrentSalonImage] = useState(0);
 
   useEffect(() => {
     async function loadMemberData() {
@@ -69,16 +74,16 @@ export default function TeamMemberPage() {
           setCertificates(certsData);
         }
 
-        if (memberData.type === 'person') {
-          const { data: galleryData } = await supabase
-            .from('team_member_gallery')
-            .select('*')
-            .eq('team_member_id', memberData.id)
-            .order('display_order', { ascending: true });
+        // Зареждане на галерията - разделяне на главни снимки и "Моята работа"
+        const { data: galleryData } = await supabase
+          .from('team_member_gallery')
+          .select('*')
+          .eq('team_member_id', memberData.id)
+          .order('display_order', { ascending: true });
 
-          if (galleryData) {
-            setGallery(galleryData);
-          }
+        if (galleryData) {
+          // Запазваме всички снимки в gallery за обратна съвместимост
+          setGallery(galleryData);
         }
       }
 
@@ -87,6 +92,88 @@ export default function TeamMemberPage() {
 
     loadMemberData();
   }, [slug]);
+
+  // Подготовка на снимките за показване - ВСИЧКИ HOOKS ТРЯБВА ДА СА ПРЕДИ РАННИТЕ RETURN-И
+  // Главните снимки (за Hero секцията)
+  const mainImageUrls = useMemo(() => {
+    if (!gallery || gallery.length === 0) return [];
+    return gallery
+      .filter(img => img.gallery_type === 'main' || !img.gallery_type) // Поддръжка за стари записи
+      .map(img => img.image_url)
+      .filter(url => url && url.trim() !== '');
+  }, [gallery]);
+  
+  // Всички снимки за "Моята работа" (с ID за рендериране)
+  const workImages = useMemo(() => {
+    if (!gallery || gallery.length === 0) return [];
+    return gallery.filter(img => {
+      // Включваме снимки с gallery_type = 'work' или без gallery_type (стари записи, които по подразбиране са 'work')
+      const galleryType = img.gallery_type;
+      return galleryType === 'work' || !galleryType || galleryType === null || galleryType === undefined;
+    });
+  }, [gallery]);
+  
+  const allPersonImages = useMemo(() => {
+    if (!member?.image_url) return [];
+    const images = [member.image_url, ...mainImageUrls].filter((img, index, self) => 
+      img && img.trim() !== '' && self.indexOf(img) === index
+    );
+    return images;
+  }, [member?.image_url, mainImageUrls]);
+  
+  const allSalonImages = useMemo(() => {
+    if (!member?.image_url) return [];
+    const images = [member.image_url, ...mainImageUrls].filter((img, index, self) => 
+      img && img.trim() !== '' && self.indexOf(img) === index
+    );
+    return images;
+  }, [member?.image_url, mainImageUrls]);
+
+  // За салони: групиране по 3
+  const salonImageSlides = useMemo(() => {
+    const slides: string[][] = [];
+    if (member?.type === 'salon' && allSalonImages.length > 0) {
+      // Ако има само една снимка, все пак я добавяме като един слайд
+      if (allSalonImages.length === 1) {
+        slides.push(allSalonImages);
+      } else {
+        // Групиране по 3
+        for (let i = 0; i < allSalonImages.length; i += 3) {
+          slides.push(allSalonImages.slice(i, i + 3));
+        }
+      }
+    }
+    return slides;
+  }, [member?.type, allSalonImages]);
+
+  // Автоматично превключване за лица
+  useEffect(() => {
+    if (member?.type === 'person' && allPersonImages.length > 1) {
+      setCurrentPersonImage(0);
+      const interval = setInterval(() => {
+        setCurrentPersonImage((prev) => (prev + 1) % allPersonImages.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    } else {
+      setCurrentPersonImage(0);
+    }
+  }, [member?.type, allPersonImages.length]);
+
+  // Автоматично превключване за салони
+  useEffect(() => {
+    if (member?.type === 'salon' && salonImageSlides.length > 1) {
+      setCurrentSalonImage(0);
+      const interval = setInterval(() => {
+        setCurrentSalonImage((prev) => {
+          if (salonImageSlides.length === 0) return 0;
+          return (prev + 1) % salonImageSlides.length;
+        });
+      }, 4000);
+      return () => clearInterval(interval);
+    } else {
+      setCurrentSalonImage(0);
+    }
+  }, [member?.type, salonImageSlides.length]);
 
   if (loading) {
     return (
@@ -183,14 +270,62 @@ export default function TeamMemberPage() {
             </div>
 
             <div className="relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gold-500/20">
-                <img
-                  src={member.image_url}
-                  alt={displayName}
-                  className="w-full h-[600px] object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/40 to-transparent"></div>
-              </div>
+              {member.type === 'salon' && salonImageSlides.length > 0 && salonImageSlides[currentSalonImage] && salonImageSlides[currentSalonImage].length > 0 ? (
+                <div className="relative">
+                  <ImageGrid
+                    images={salonImageSlides[currentSalonImage]}
+                    slideIndex={currentSalonImage}
+                  />
+                  {salonImageSlides.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
+                      {salonImageSlides.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSalonImage(index)}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            index === currentSalonImage
+                              ? 'bg-gold-500 w-6'
+                              : 'bg-gray-400 hover:bg-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : member.type === 'person' && allPersonImages.length > 1 ? (
+                <div className="relative">
+                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gold-500/20">
+                    <MediaRender
+                      src={allPersonImages[currentPersonImage]}
+                      alt={displayName}
+                      className="w-full h-[600px] object-cover transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/40 to-transparent"></div>
+                  </div>
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
+                    {allPersonImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPersonImage(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentPersonImage
+                            ? 'bg-gold-500 w-6'
+                            : 'bg-gray-400 hover:bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gold-500/20">
+                  <MediaRender
+                    src={member.image_url}
+                    alt={displayName}
+                    className="w-full h-[600px] object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/40 to-transparent"></div>
+                </div>
+              )}
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-gold-500/30 rounded-full blur-sm"></div>
             </div>
           </div>
@@ -268,8 +403,8 @@ export default function TeamMemberPage() {
       {/* Price List Section - Only for salon */}
       {member.type === 'salon' && <PriceList />}
 
-      {/* Gallery Section - Only for people */}
-      {member.type === 'person' && gallery.length > 0 && (
+      {/* Gallery Section - Моята работа (само ако има снимки с gallery_type = 'work') */}
+      {workImages.length > 0 && (
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-12">
@@ -278,7 +413,7 @@ export default function TeamMemberPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {gallery.map((image) => (
+              {workImages.map((image) => (
                 <div
                   key={image.id}
                   className="group relative h-80 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"

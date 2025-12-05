@@ -37,6 +37,7 @@ import HeaderConfigManager from './pages/admin/HeaderConfigManager';
 import CTABlocksManager from './pages/admin/CTABlocksManager';
 import CTABlockForm from './pages/admin/CTABlockForm';
 import ContactConfigManager from './pages/admin/ContactConfigManager';
+import IntegrationsManager from './pages/admin/IntegrationsManager';
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
             <Route path="reviews" element={<ReviewsManager />} />
             <Route path="header-config" element={<HeaderConfigManager />} />
             <Route path="contact-config" element={<ContactConfigManager />} />
+            <Route path="integrations" element={<IntegrationsManager />} />
             <Route path="cta-blocks/new" element={<CTABlockForm />} />
             <Route path="cta-blocks/edit/:id" element={<CTABlockForm />} />
             <Route path="cta-blocks" element={<CTABlocksManager />} />

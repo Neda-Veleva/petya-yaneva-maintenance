@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, X, Edit } from 'lucide-react';
+import { Save, X, Edit, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import MediaSelector from '../../components/MediaSelector';
 import RichTextEditor from '../../components/RichTextEditor';
@@ -52,6 +52,8 @@ export default function TeamMemberForm() {
   const [saving, setSaving] = useState(false);
   const [slugEditable, setSlugEditable] = useState(false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  const [mainImages, setMainImages] = useState<string[]>(['']); // Главни снимки
+  const [workImages, setWorkImages] = useState<string[]>([]); // Снимки за "Моята работа"
   const [formData, setFormData] = useState<TeamMemberFormData>({
     slug: '',
     type: 'person',
@@ -114,17 +116,73 @@ export default function TeamMemberForm() {
         is_active: data.is_active ?? true,
         display_order: data.display_order || 0,
       });
+
+      // Зареждане на галерията - разделяне на главни снимки и "Моята работа"
+      const { data: galleryData } = await supabase
+        .from('team_member_gallery')
+        .select('image_url, gallery_type')
+        .eq('team_member_id', id!)
+        .order('display_order', { ascending: true });
+
+      // Главните снимки - започваме с главната снимка (image_url)
+      const mainImagesList: string[] = [];
+      if (data.image_url) {
+        mainImagesList.push(data.image_url);
+      }
+      
+      // Добавяне на останалите главни снимки от галерията
+      if (galleryData && galleryData.length > 0) {
+        galleryData
+          .filter(item => item.gallery_type === 'main' || !item.gallery_type) // Поддръжка за стари записи без gallery_type
+          .forEach((item) => {
+            if (item.image_url && item.image_url.trim() !== '' && !mainImagesList.includes(item.image_url)) {
+              mainImagesList.push(item.image_url);
+            }
+          });
+      }
+      setMainImages(mainImagesList.length > 0 ? mainImagesList : ['']);
+
+      // Снимки за "Моята работа" - само тези с gallery_type = 'work'
+      const workImagesList: string[] = [];
+      if (galleryData && galleryData.length > 0) {
+        galleryData
+          .filter(item => item.gallery_type === 'work')
+          .forEach((item) => {
+            if (item.image_url && item.image_url.trim() !== '') {
+              workImagesList.push(item.image_url);
+            }
+          });
+      }
+      setWorkImages(workImagesList);
     }
     setLoading(false);
   }
 
   async function handleSave() {
-    if (!formData.slug || !formData.badge || !formData.description || !formData.bio || !formData.image_url || !formData.stat_value || !formData.stat_label) {
-      alert('Моля, попълнете всички задължителни полета');
+    // Филтриране на празните снимки - по-строга валидация
+    const validMainImages = mainImages.filter(img => {
+      return img && typeof img === 'string' && img.trim() !== '' && img.trim().length > 0;
+    });
+    const validWorkImages = workImages.filter(img => {
+      return img && typeof img === 'string' && img.trim() !== '' && img.trim().length > 0;
+    });
+    
+    if (!formData.slug || !formData.badge || !formData.description || !formData.bio || validMainImages.length === 0 || !formData.stat_value || !formData.stat_label) {
+      alert('Моля, попълнете всички задължителни полета (включително поне една главна снимка)');
       return;
     }
 
     setSaving(true);
+
+    // Първата главна снимка е основната
+    const mainImage = validMainImages[0]?.trim();
+    if (!mainImage || mainImage === '') {
+      alert('Моля, добавете поне една валидна главна снимка');
+      setSaving(false);
+      return;
+    }
+    
+    const otherMainImages = validMainImages.slice(1);
 
     const saveData = {
       slug: formData.slug,
@@ -136,8 +194,8 @@ export default function TeamMemberForm() {
       badge: formData.badge,
       description: formData.description,
       bio: formData.bio,
-      image_url: formData.image_url,
-      thumbnail_url: formData.thumbnail_url || null,
+      image_url: mainImage.trim(), // Уверяваме се че няма whitespace
+      thumbnail_url: formData.thumbnail_url?.trim() || null,
       stat_value: formData.stat_value,
       stat_label: formData.stat_label,
       location: formData.location || null,
@@ -145,20 +203,77 @@ export default function TeamMemberForm() {
       display_order: formData.display_order,
       updated_at: new Date().toISOString(),
     };
-
+    
     try {
+      let memberId: string;
+
       if (isEditing) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('team_members')
           .update(saveData)
-          .eq('id', id!);
+          .eq('id', id!)
+          .select()
+          .single();
 
         if (error) throw error;
+        memberId = id!;
       } else {
-        const { error } = await supabase.from('team_members').insert([saveData]);
+        const { data, error } = await supabase.from('team_members').insert([saveData]).select().single();
         if (error) throw error;
+        memberId = data.id;
       }
 
+      // Запазване на галерията - главни снимки и "Моята работа"
+      if (isEditing) {
+        // Изтриване на старата галерия
+        await supabase
+          .from('team_member_gallery')
+          .delete()
+          .eq('team_member_id', memberId);
+      }
+
+      // Подготовка на всички снимки за вмъкване
+      const allGalleryData: Array<{
+        team_member_id: string;
+        image_url: string;
+        display_order: number;
+        gallery_type: 'main' | 'work';
+      }> = [];
+
+      // Добавяне на останалите главни снимки (освен първата която е в image_url)
+      if (otherMainImages.length > 0) {
+        otherMainImages.forEach((imageUrl, index) => {
+          allGalleryData.push({
+            team_member_id: memberId,
+            image_url: imageUrl.trim(),
+            display_order: index,
+            gallery_type: 'main',
+          });
+        });
+      }
+
+      // Добавяне на снимките за "Моята работа"
+      if (validWorkImages.length > 0) {
+        validWorkImages.forEach((imageUrl, index) => {
+          allGalleryData.push({
+            team_member_id: memberId,
+            image_url: imageUrl.trim(),
+            display_order: index,
+            gallery_type: 'work',
+          });
+        });
+      }
+
+      // Вмъкване на всички снимки в галерията
+      if (allGalleryData.length > 0) {
+        const { error: galleryError } = await supabase
+          .from('team_member_gallery')
+          .insert(allGalleryData);
+
+        if (galleryError) throw galleryError;
+      }
+
+      alert('Членът на екипа е запазен успешно!');
       navigate('/admin/team');
     } catch (error: any) {
       console.error('Error saving team member:', error);
@@ -166,6 +281,39 @@ export default function TeamMemberForm() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function addMainImage() {
+    setMainImages([...mainImages, '']);
+  }
+
+  function removeMainImage(index: number) {
+    if (mainImages.length > 1) {
+      setMainImages(mainImages.filter((_, i) => i !== index));
+    }
+  }
+
+  function updateMainImage(index: number, url: string) {
+    if (!url || typeof url !== 'string') {
+      return;
+    }
+    const newImages = [...mainImages];
+    newImages[index] = url.trim();
+    setMainImages(newImages);
+  }
+
+  function addWorkImage() {
+    setWorkImages([...workImages, '']);
+  }
+
+  function removeWorkImage(index: number) {
+    setWorkImages(workImages.filter((_, i) => i !== index));
+  }
+
+  function updateWorkImage(index: number, url: string) {
+    const newImages = [...workImages];
+    newImages[index] = url;
+    setWorkImages(newImages);
   }
 
   function handleBadgeChange(badge: string) {
@@ -326,13 +474,84 @@ export default function TeamMemberForm() {
             />
           </div>
 
-          <div>
-            <MediaSelector
-              value={formData.image_url}
-              onChange={(url) => setFormData({ ...formData, image_url: url })}
-              type="image"
-              label="Снимка на член на екипа *"
-            />
+          <div className="space-y-6">
+            {/* Главни снимки */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b pb-2">
+                <h2 className="text-lg font-semibold text-gray-900">Главни снимки *</h2>
+                <button
+                  type="button"
+                  onClick={addMainImage}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добави снимка
+                </button>
+              </div>
+              {mainImages.map((image, index) => (
+                <div key={index} className="flex gap-2 items-start">
+                  <div className="flex-1">
+                    <MediaSelector
+                      value={image}
+                      onChange={(url) => updateMainImage(index, url)}
+                      type="image"
+                      label={index === 0 ? 'Главна снимка *' : `Главна снимка ${index + 1}`}
+                    />
+                  </div>
+                  {mainImages.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeMainImage(index)}
+                      className="mt-8 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Премахни снимка"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <p className="text-sm text-gray-500">Първата снимка ще бъде използвана като основна. Останалите могат да се използват в Hero секцията.</p>
+            </div>
+
+            {/* Моята работа */}
+            <div className="space-y-3 border-t pt-6">
+              <div className="flex items-center justify-between border-b pb-2">
+                <h2 className="text-lg font-semibold text-gray-900">Моята работа</h2>
+                <button
+                  type="button"
+                  onClick={addWorkImage}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добави снимка
+                </button>
+              </div>
+              {workImages.length > 0 ? (
+                workImages.map((image, index) => (
+                  <div key={index} className="flex gap-2 items-start">
+                    <div className="flex-1">
+                      <MediaSelector
+                        value={image}
+                        onChange={(url) => updateWorkImage(index, url)}
+                        type="image"
+                        label={`Снимка ${index + 1}`}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeWorkImage(index)}
+                      className="mt-8 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Премахни снимка"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 italic">Няма добавени снимки за "Моята работа"</p>
+              )}
+              <p className="text-sm text-gray-500">Тези снимки ще се показват в галерията "Моята работа" на страницата на член на екипа.</p>
+            </div>
           </div>
 
           <div>

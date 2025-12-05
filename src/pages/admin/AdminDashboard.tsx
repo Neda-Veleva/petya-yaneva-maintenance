@@ -12,7 +12,8 @@ import {
   FileType,
   Menu,
   Phone,
-  Megaphone
+  Megaphone,
+  Plug
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -28,6 +29,7 @@ const navigation = [
   { name: 'CTA Блокове', href: '/admin/cta-blocks', icon: Megaphone },
   { name: 'Конфигурация Header', href: '/admin/header-config', icon: Menu },
   { name: 'Конфигурация Контакти', href: '/admin/contact-config', icon: Phone },
+  { name: 'Интеграции', href: '/admin/integrations', icon: Plug },
   { name: 'Типове страници', href: '/admin/page-types', icon: FileType },
 ];
 

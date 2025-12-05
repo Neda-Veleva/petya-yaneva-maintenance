@@ -7,11 +7,10 @@ interface ContactConfig {
   google_maps_link: string | null;
   phone: string;
   email: string | null;
-  working_hours: {
-    monday_friday?: string;
-    saturday?: string;
-    sunday?: string;
-  };
+  working_hours: Array<{
+    day: string;
+    hours: string;
+  }>;
   social_links: Array<{
     platform: string;
     url: string;
@@ -49,12 +48,28 @@ export default function Contact() {
     }
 
     if (data) {
+      // Migrate old format to new format if needed
+      let workingHours = data.working_hours || [];
+      if (!Array.isArray(workingHours) && typeof workingHours === 'object') {
+        const oldHours = workingHours as any;
+        workingHours = [];
+        if (oldHours.monday_friday) {
+          workingHours.push({ day: 'Понеделник - Петък', hours: oldHours.monday_friday });
+        }
+        if (oldHours.saturday) {
+          workingHours.push({ day: 'Събота', hours: oldHours.saturday });
+        }
+        if (oldHours.sunday) {
+          workingHours.push({ day: 'Неделя', hours: oldHours.sunday });
+        }
+      }
+      
       setConfig({
         address: data.address,
         google_maps_link: data.google_maps_link,
         phone: data.phone,
         email: data.email,
-        working_hours: data.working_hours || {},
+        working_hours: workingHours,
         social_links: data.social_links || [],
       });
     }
@@ -177,14 +192,23 @@ export default function Contact() {
                 <div>
                   <h3 className="font-serif text-xl text-gray-900 mb-2">Работно време</h3>
                   <div className="text-gray-600 space-y-1">
-                    {config.working_hours.monday_friday && (
-                      <p>Понеделник - Петък: {config.working_hours.monday_friday}</p>
-                    )}
-                    {config.working_hours.saturday && (
-                      <p>Събота: {config.working_hours.saturday}</p>
-                    )}
-                    {config.working_hours.sunday && (
-                      <p>Неделя: {config.working_hours.sunday}</p>
+                    {Array.isArray(config.working_hours) && config.working_hours.length > 0 ? (
+                      config.working_hours.map((wh, index) => (
+                        <p key={index}>{wh.day}: {wh.hours}</p>
+                      ))
+                    ) : (
+                      // Fallback for old format (migration support)
+                      <>
+                        {(config.working_hours as any)?.monday_friday && (
+                          <p>Понеделник - Петък: {(config.working_hours as any).monday_friday}</p>
+                        )}
+                        {(config.working_hours as any)?.saturday && (
+                          <p>Събота: {(config.working_hours as any).saturday}</p>
+                        )}
+                        {(config.working_hours as any)?.sunday && (
+                          <p>Неделя: {(config.working_hours as any).sunday}</p>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

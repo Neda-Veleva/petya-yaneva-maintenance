@@ -8,11 +8,10 @@ interface ContactConfig {
   google_maps_link: string | null;
   phone: string;
   email: string | null;
-  working_hours: {
-    monday_friday?: string;
-    saturday?: string;
-    sunday?: string;
-  };
+  working_hours: Array<{
+    day: string;
+    hours: string;
+  }>;
   social_links: Array<{
     platform: string;
     url: string;
@@ -49,6 +48,29 @@ export default function ContactConfigManager() {
       console.error('Error loading contact config:', error);
     }
 
+    // Helper function to migrate old format to new format
+    function migrateWorkingHours(oldHours: any): Array<{ day: string; hours: string }> {
+      if (Array.isArray(oldHours)) {
+        return oldHours;
+      }
+      
+      if (typeof oldHours === 'object' && oldHours !== null) {
+        const result: Array<{ day: string; hours: string }> = [];
+        if (oldHours.monday_friday) {
+          result.push({ day: 'Понеделник - Петък', hours: oldHours.monday_friday });
+        }
+        if (oldHours.saturday) {
+          result.push({ day: 'Събота', hours: oldHours.saturday });
+        }
+        if (oldHours.sunday) {
+          result.push({ day: 'Неделя', hours: oldHours.sunday });
+        }
+        return result;
+      }
+      
+      return [];
+    }
+
     // If table doesn't exist (PGRST205), show message
     if (error && error.code === 'PGRST205') {
       console.warn('Contact config table does not exist. Please run the migration.');
@@ -59,11 +81,11 @@ export default function ContactConfigManager() {
         google_maps_link: null,
         phone: '',
         email: null,
-        working_hours: {
-          monday_friday: '09:00 - 19:00',
-          saturday: '10:00 - 18:00',
-          sunday: 'Почивен ден',
-        },
+        working_hours: [
+          { day: 'Понеделник - Петък', hours: '09:00 - 19:00' },
+          { day: 'Събота', hours: 'Почивен ден' },
+          { day: 'Неделя', hours: 'Почивен ден' },
+        ],
         social_links: [],
       };
       setConfig(defaultConfig);
@@ -74,11 +96,7 @@ export default function ContactConfigManager() {
     if (data) {
       setConfig({
         ...data,
-        working_hours: data.working_hours || {
-          monday_friday: '',
-          saturday: '',
-          sunday: '',
-        },
+        working_hours: migrateWorkingHours(data.working_hours),
         social_links: data.social_links || [],
       });
     } else {
@@ -89,11 +107,11 @@ export default function ContactConfigManager() {
         google_maps_link: null,
         phone: '',
         email: null,
-        working_hours: {
-          monday_friday: '09:00 - 19:00',
-          saturday: '10:00 - 18:00',
-          sunday: 'Почивен ден',
-        },
+        working_hours: [
+          { day: 'Понеделник - Петък', hours: '09:00 - 19:00' },
+          { day: 'Събота', hours: 'Почивен ден' },
+          { day: 'Неделя', hours: 'Почивен ден' },
+        ],
         social_links: [],
       };
       setConfig(defaultConfig);
@@ -122,16 +140,20 @@ export default function ContactConfigManager() {
         (link) => link.platform.trim() !== '' && link.url.trim() !== ''
       );
 
+      // Filter out empty working hours entries
+      const validWorkingHours = config.working_hours
+        .filter((wh) => wh.day.trim() !== '' && wh.hours.trim() !== '')
+        .map((wh) => ({
+          day: wh.day.trim(),
+          hours: wh.hours.trim(),
+        }));
+
       const configData = {
         address: config.address.trim(),
         google_maps_link: config.google_maps_link?.trim() || null,
         phone: config.phone.trim(),
         email: config.email?.trim() || null,
-        working_hours: {
-          monday_friday: config.working_hours.monday_friday?.trim() || null,
-          saturday: config.working_hours.saturday?.trim() || null,
-          sunday: config.working_hours.sunday?.trim() || null,
-        },
+        working_hours: validWorkingHours,
         social_links: validSocialLinks,
         updated_at: new Date().toISOString(),
       };
@@ -174,14 +196,33 @@ export default function ContactConfigManager() {
     }
   }
 
-  function updateWorkingHours(field: string, value: string) {
+  function addWorkingHoursRow() {
+    if (!config) return;
+    if (config.working_hours.length >= 7) {
+      alert('Можете да добавите максимум 7 реда за работно време');
+      return;
+    }
+    setConfig({
+      ...config,
+      working_hours: [
+        ...config.working_hours,
+        { day: '', hours: '' },
+      ],
+    });
+  }
+
+  function updateWorkingHoursRow(index: number, field: 'day' | 'hours', value: string) {
+    if (!config) return;
+    const newWorkingHours = [...config.working_hours];
+    newWorkingHours[index] = { ...newWorkingHours[index], [field]: value };
+    setConfig({ ...config, working_hours: newWorkingHours });
+  }
+
+  function removeWorkingHoursRow(index: number) {
     if (!config) return;
     setConfig({
       ...config,
-      working_hours: {
-        ...config.working_hours,
-        [field]: value,
-      },
+      working_hours: config.working_hours.filter((_, i) => i !== index),
     });
   }
 
@@ -300,46 +341,61 @@ export default function ContactConfigManager() {
         </div>
 
         <div className="border-t pt-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Работно време</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-gray-900">Работно време</h3>
+            <button
+              onClick={addWorkingHoursRow}
+              disabled={config.working_hours.length >= 7}
+              className="flex items-center gap-1 px-3 py-1 text-sm bg-gold-500 text-white rounded hover:bg-gold-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-3 h-3" />
+              Добави ред
+            </button>
+          </div>
           <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Понеделник - Петък
-              </label>
-              <input
-                type="text"
-                value={config.working_hours.monday_friday || ''}
-                onChange={(e) => updateWorkingHours('monday_friday', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                placeholder="09:00 - 19:00"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Събота
-              </label>
-              <input
-                type="text"
-                value={config.working_hours.saturday || ''}
-                onChange={(e) => updateWorkingHours('saturday', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                placeholder="10:00 - 18:00"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Неделя
-              </label>
-              <input
-                type="text"
-                value={config.working_hours.sunday || ''}
-                onChange={(e) => updateWorkingHours('sunday', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                placeholder="Почивен ден"
-              />
-            </div>
+            {config.working_hours.map((wh, index) => (
+              <div key={index} className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ден
+                  </label>
+                  <input
+                    type="text"
+                    value={wh.day}
+                    onChange={(e) => updateWorkingHoursRow(index, 'day', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    placeholder="Понеделник - Петък или Понеделник"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Часове
+                  </label>
+                  <input
+                    type="text"
+                    value={wh.hours}
+                    onChange={(e) => updateWorkingHoursRow(index, 'hours', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+                    placeholder="09:00 - 19:00 или Почивен ден"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button
+                    onClick={() => removeWorkingHoursRow(index)}
+                    className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    title="Премахни ред"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {config.working_hours.length === 0 && (
+              <p className="text-sm text-gray-500 italic">Няма добавени редове за работно време</p>
+            )}
+            {config.working_hours.length >= 7 && (
+              <p className="text-sm text-gray-500 italic">Достигнат е максимумът от 7 реда</p>
+            )}
           </div>
         </div>
 

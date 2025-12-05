@@ -2,72 +2,184 @@ import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, MapPin } from 'lucide-react';
 import ImageGrid from './ImageGrid';
 import MediaRender from './MediaRender';
+import { supabase } from '../lib/supabase';
 
-const slides = [
-  {
-    id: 1,
-    type: 'person',
-    firstName: 'Петя',
-    lastName: 'Янева',
-    badge: 'Професионално Поставяне на Мигли',
-    description: 'Основател и водещ специалист с над 5 години опит в удължаване на мигли. Специализирана в класически и обемни техники с внимание към всеки детайл.',
-    image: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
-    thumbnail: 'https://scontent.fsof9-1.fna.fbcdn.net/v/t39.30808-6/571557194_1207174551250893_6556861702637995904_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=jV3T5MIhIXsQ7kNvwGr5jc8&_nc_oc=Adlyta_jvvUyodUTPvYNQqUllguh6H131eMbYGzFZG8f85X_7NLli4Viy-EFshGlhcp6-ODkS5lqk7nz1a5-e4oe&_nc_zt=23&_nc_ht=scontent.fsof9-1.fna&_nc_gid=OSRN6Ohh-rm7zljtk-qEbQ&oh=00_Afgz6Z7kyQsdRNgrtNjlQ-HJWa4cY8gdbSicxYSuDwzZ9A&oe=692BC39E',
-    stat: { value: '500+', label: 'Доволни клиенти' },
-    slug: 'petya-yaneva',
-  },
-  {
-    id: 2,
-    type: 'person',
-    firstName: 'Мария',
-    lastName: 'Георгиева',
-    badge: 'Сертифициран Lash Специалист',
-    description: 'Творчески специалист с 3 години опит в изкуството на удължаването на мигли. Експерт в създаването на естествен и изискан вид с перфектна техника.',
-    image: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=1080',
-    thumbnail: 'https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=300',
-    stat: { value: '300+', label: 'Доволни клиенти' },
-    slug: 'maria-georgieva',
-  },
-  {
-    id: 3,
-    type: 'salon',
-    title: 'Hair & Beauty',
-    titleGold: 'Livon',
-    badge: 'Премиум Beauty Studio',
-    description: 'Луксозно студио в сърцето на София, оборудвано с най-модерните технологии и висококачествени продукти за перфектни резултати.',
-    slug: 'salon-livon',
-    imageSlides: [
-      [
-        'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=1080',
-        'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/53660.jpg?auto=compress&cs=tinysrgb&w=1080',
-        'https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      ],
-      [
-        'https://images.pexels.com/photos/7755472/pexels-photo-7755472.jpeg?auto=compress&cs=tinysrgb&w=1080',
-        'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1080',
-        'https://images.pexels.com/photos/3997983/pexels-photo-3997983.jpeg?auto=compress&cs=tinysrgb&w=1080',
-      ],
-    ],
-    thumbnail: 'https://studio24.bg/pictures/studios/2/2482/thumbs/0x346/26511.jpg?auto=compress&cs=tinysrgb&w=300',
-    stat: { value: 'София', label: 'Централна локация' },
-    icon: MapPin,
-  },
-];
+interface Slide {
+  id: string;
+  type: 'person' | 'salon';
+  firstName?: string;
+  lastName?: string;
+  title?: string;
+  titleGold?: string;
+  badge: string;
+  description: string;
+  image: string;
+  thumbnail: string;
+  stat: { value: string; label: string };
+  slug: string;
+  imageSlides?: string[][]; // За салони: групирани по 3
+  personImages?: string[]; // За лица: масив от отделни снимки
+  icon?: typeof MapPin;
+}
 
 export default function Hero() {
+  const [slides, setSlides] = useState<Slide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentSalonImage, setCurrentSalonImage] = useState(0);
+  const [currentPersonImage, setCurrentPersonImage] = useState(0);
+
+  useEffect(() => {
+    loadTeamMembers();
+  }, []);
+
+  async function loadTeamMembers() {
+    try {
+      // Зареждане на team members
+      const { data: members, error: membersError } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (membersError) {
+        console.error('Error loading team members:', membersError);
+        setLoading(false);
+        return;
+      }
+
+      if (!members || members.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      // Зареждане на галерии за всички members
+      const memberIds = members.map((m) => m.id);
+      const { data: galleries, error: galleriesError } = await supabase
+        .from('team_member_gallery')
+        .select('*')
+        .in('team_member_id', memberIds)
+        .order('display_order', { ascending: true });
+
+      if (galleriesError) {
+        console.error('Error loading galleries:', galleriesError);
+      }
+
+      // Групиране на главните снимки по team_member_id (само gallery_type = 'main' или null за обратна съвместимост)
+      const mainImagesByMember: Record<string, string[]> = {};
+      if (galleries) {
+        galleries.forEach((gallery) => {
+          // Използваме само главните снимки (gallery_type = 'main' или null за стари записи)
+          if (gallery.gallery_type === 'main' || !gallery.gallery_type) {
+            if (!mainImagesByMember[gallery.team_member_id]) {
+              mainImagesByMember[gallery.team_member_id] = [];
+            }
+            mainImagesByMember[gallery.team_member_id].push(gallery.image_url);
+          }
+        });
+      }
+
+      // Конвертиране на members в slides
+      const slidesData: Slide[] = members.map((member) => {
+        const slide: Slide = {
+          id: member.id,
+          type: member.type as 'person' | 'salon',
+          badge: member.badge,
+          description: member.description,
+          image: member.image_url,
+          thumbnail: member.thumbnail_url || member.image_url,
+          stat: {
+            value: member.stat_value,
+            label: member.stat_label,
+          },
+          slug: member.slug,
+        };
+
+        if (member.type === 'person') {
+          slide.firstName = member.first_name || '';
+          slide.lastName = member.last_name || '';
+          
+          // За лица: използваме само главните снимки
+          const mainImages = mainImagesByMember[member.id] || [];
+          const allPersonImages = [member.image_url, ...mainImages];
+          // Премахваме дубликатите и празните стойности
+          const uniqueImages = Array.from(new Set(allPersonImages.filter(img => img && img.trim() !== '')));
+          
+          if (uniqueImages.length > 1) {
+            slide.personImages = uniqueImages;
+          }
+        } else {
+          slide.title = member.title || '';
+          slide.titleGold = member.title_gold || '';
+          slide.icon = MapPin;
+
+          // За салони: използваме само главните снимки, групирани по 3
+          const mainImages = mainImagesByMember[member.id] || [];
+          const allSalonImages = [member.image_url, ...mainImages];
+          const uniqueSalonImages = Array.from(new Set(allSalonImages.filter(img => img && img.trim() !== '')));
+          
+          if (uniqueSalonImages.length > 1) {
+            const imageSlides: string[][] = [];
+            for (let i = 0; i < uniqueSalonImages.length; i += 3) {
+              imageSlides.push(uniqueSalonImages.slice(i, i + 3));
+            }
+            // Ако има поне една група, използваме ги
+            if (imageSlides.length > 0) {
+              slide.imageSlides = imageSlides;
+            }
+          }
+        }
+
+        return slide;
+      });
+
+      setSlides(slidesData);
+    } catch (error) {
+      console.error('Error loading team members:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const slide = slides[currentSlide];
 
   useEffect(() => {
-    if (slide.type === 'salon' && slide.imageSlides && slide.imageSlides.length > 1) {
+    // Автоматично превключване за салони с imageSlides
+    if (slide && slide.type === 'salon' && slide.imageSlides && slide.imageSlides.length > 1) {
       const interval = setInterval(() => {
-        setCurrentSalonImage((prev) => (prev + 1) % slide.imageSlides.length);
+        setCurrentSalonImage((prev) => (prev + 1) % slide.imageSlides!.length);
       }, 4000);
 
       return () => clearInterval(interval);
     }
+    
+    // Автоматично превключване за лица с множество снимки
+    if (slide && slide.type === 'person' && slide.personImages && slide.personImages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentPersonImage((prev) => (prev + 1) % slide.personImages!.length);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+    
+    // Ресетване на индексите при смяна на слайда
+    setCurrentSalonImage(0);
+    setCurrentPersonImage(0);
   }, [currentSlide, slide]);
+
+  if (loading) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-gradient">
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gold-500 border-t-transparent"></div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!slide || slides.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-gradient">
@@ -158,11 +270,40 @@ export default function Hero() {
                   </div>
                 )}
               </div>
+            ) : slide.type === 'person' && slide.personImages && slide.personImages.length > 1 ? (
+              <div className="relative">
+                <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
+                  <MediaRender
+                    src={slide.personImages[currentPersonImage] || ''}
+                    alt={`${slide.firstName || ''} ${slide.lastName || ''}`}
+                    className="w-full h-full object-cover brightness-110 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(194,164,105,0.1)]"></div>
+                </div>
+
+                {/* Person Image Navigation */}
+                {slide.personImages.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-charcoal-400/80 backdrop-blur-md px-4 py-2 rounded-full">
+                    {slide.personImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPersonImage(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentPersonImage
+                            ? 'bg-gold-500 w-6'
+                            : 'bg-gray-400 hover:bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="relative w-full h-[650px] rounded-3xl overflow-hidden shadow-dark-xl border border-gold-500/20">
                 <MediaRender
                   src={slide.image || ''}
-                  alt={slide.type === 'person' ? `${slide.firstName} ${slide.lastName}` : slide.title || ''}
+                  alt={slide.type === 'person' ? `${slide.firstName || ''} ${slide.lastName || ''}` : slide.title || ''}
                   className="w-full h-full object-cover brightness-110 transition-all duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600/60 via-transparent to-transparent"></div>
@@ -205,7 +346,7 @@ export default function Hero() {
                 >
                   <MediaRender
                     src={s.thumbnail}
-                    alt={s.type === 'person' ? `${s.firstName} ${s.lastName}` : s.title}
+                    alt={s.type === 'person' ? `${s.firstName || ''} ${s.lastName || ''}`.trim() : s.title || ''}
                     className="w-full h-full object-cover"
                     videoProps={{ muted: true, loop: true }}
                   />

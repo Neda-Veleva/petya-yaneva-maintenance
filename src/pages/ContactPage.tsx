@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Instagram, Facebook, Twitter, Youtube, Linkedin, Music } from 'lucide-react';
+import { MapPin, Phone, Clock, MessageCircle, Instagram, Facebook, Twitter, Youtube, Linkedin, Music } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
@@ -9,11 +9,10 @@ interface ContactConfig {
   google_maps_link: string | null;
   phone: string;
   email: string | null;
-  working_hours: {
-    monday_friday?: string;
-    saturday?: string;
-    sunday?: string;
-  };
+  working_hours: Array<{
+    day: string;
+    hours: string;
+  }>;
   social_links: Array<{
     platform: string;
     url: string;
@@ -31,13 +30,6 @@ const SOCIAL_ICONS: Record<string, any> = {
 };
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [sending, setSending] = useState(false);
   const [config, setConfig] = useState<ContactConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -58,12 +50,28 @@ export default function ContactPage() {
     }
 
     if (data) {
+      // Migrate old format to new format if needed
+      let workingHours = data.working_hours || [];
+      if (!Array.isArray(workingHours) && typeof workingHours === 'object') {
+        const oldHours = workingHours as any;
+        workingHours = [];
+        if (oldHours.monday_friday) {
+          workingHours.push({ day: 'Понеделник - Петък', hours: oldHours.monday_friday });
+        }
+        if (oldHours.saturday) {
+          workingHours.push({ day: 'Събота', hours: oldHours.saturday });
+        }
+        if (oldHours.sunday) {
+          workingHours.push({ day: 'Неделя', hours: oldHours.sunday });
+        }
+      }
+      
       setConfig({
         address: data.address,
         google_maps_link: data.google_maps_link,
         phone: data.phone,
         email: data.email,
-        working_hours: data.working_hours || {},
+        working_hours: workingHours,
         social_links: data.social_links || [],
       });
     }
@@ -124,16 +132,6 @@ export default function ContactPage() {
     return null;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSending(true);
-
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    alert('Благодарим ви! Вашето съобщение е изпратено успешно. Ще се свържем с вас скоро.');
-    setFormData({ name: '', email: '', phone: '', message: '' });
-    setSending(false);
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-charcoal-600 via-charcoal-500 to-charcoal-600">
@@ -167,94 +165,97 @@ export default function ContactPage() {
 
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12">
+          {config && (
             <div className="space-y-8">
-              {config && (
-                <>
-                  <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                    <div className="flex items-start gap-6">
-                      <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-8 h-8 text-gold-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-semibold text-xl mb-2">Адрес</h3>
-                        <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                          {config.address}
-                        </p>
+              {/* Първи ред: Адрес и Телефон */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-8 h-8 text-gold-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold text-xl mb-2">Адрес</h3>
+                      <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                        {config.address}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-8 h-8 text-gold-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold text-xl mb-2">Телефон</h3>
+                      <a
+                        href={`tel:${config.phone}`}
+                        className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
+                      >
+                        {config.phone}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Втори ред: Работно време и Социални мрежи */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-8 h-8 text-gold-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-semibold text-xl mb-3">Работно време</h3>
+                      <div className="space-y-2 text-gray-300">
+                        {Array.isArray(config.working_hours) && config.working_hours.length > 0 ? (
+                          config.working_hours.map((wh, index) => (
+                            <div key={index} className="flex justify-between">
+                              <span>{wh.day}</span>
+                              <span className={`font-medium ${wh.hours.toLowerCase().includes('почивен') ? 'text-gray-500' : 'text-gold-400'}`}>
+                                {wh.hours}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          // Fallback for old format (migration support)
+                          <>
+                            {(config.working_hours as any)?.monday_friday && (
+                              <div className="flex justify-between">
+                                <span>Понеделник - Петък</span>
+                                <span className="text-gold-400 font-medium">{(config.working_hours as any).monday_friday}</span>
+                              </div>
+                            )}
+                            {(config.working_hours as any)?.saturday && (
+                              <div className="flex justify-between">
+                                <span>Събота</span>
+                                <span className="text-gold-400 font-medium">{(config.working_hours as any).saturday}</span>
+                              </div>
+                            )}
+                            {(config.working_hours as any)?.sunday && (
+                              <div className="flex justify-between">
+                                <span>Неделя</span>
+                                <span className="text-gray-500 font-medium">{(config.working_hours as any).sunday}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
+                </div>
 
+                {config.social_links.length > 0 && (
                   <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
                     <div className="flex items-start gap-6">
                       <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <Phone className="w-8 h-8 text-gold-400" />
+                        <MessageCircle className="w-8 h-8 text-gold-400" />
                       </div>
-                      <div>
-                        <h3 className="text-white font-semibold text-xl mb-2">Телефон</h3>
-                        <a
-                          href={`tel:${config.phone}`}
-                          className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
-                        >
-                          {config.phone}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  {config.email && (
-                    <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                      <div className="flex items-start gap-6">
-                        <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          <Mail className="w-8 h-8 text-gold-400" />
-                        </div>
-                        <div>
-                          <h3 className="text-white font-semibold text-xl mb-2">Email</h3>
-                          <a
-                            href={`mailto:${config.email}`}
-                            className="text-gray-300 hover:text-gold-400 transition-colors text-lg"
-                          >
-                            {config.email}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                    <div className="flex items-start gap-6">
-                      <div className="w-16 h-16 bg-gold-500/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-8 h-8 text-gold-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-semibold text-xl mb-3">Работно време</h3>
-                        <div className="space-y-2 text-gray-300">
-                          {config.working_hours.monday_friday && (
-                            <div className="flex justify-between">
-                              <span>Понеделник - Петък</span>
-                              <span className="text-gold-400 font-medium">{config.working_hours.monday_friday}</span>
-                            </div>
-                          )}
-                          {config.working_hours.saturday && (
-                            <div className="flex justify-between">
-                              <span>Събота</span>
-                              <span className="text-gold-400 font-medium">{config.working_hours.saturday}</span>
-                            </div>
-                          )}
-                          {config.working_hours.sunday && (
-                            <div className="flex justify-between">
-                              <span>Неделя</span>
-                              <span className="text-gray-500 font-medium">{config.working_hours.sunday}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {config.social_links.length > 0 && (
-                    <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 hover:border-gold-500/30 transition-all duration-500">
-                      <div className="flex items-start gap-6">
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold text-xl mb-4">Социални мрежи</h3>
                         <div className="flex flex-wrap gap-3">
                           {config.social_links.map((link, index) => {
                             const Icon = SOCIAL_ICONS[link.platform] || Instagram;
@@ -274,82 +275,11 @@ export default function ContactPage() {
                         </div>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div>
-              <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl p-8 border border-gold-500/10 shadow-2xl">
-                <h2 className="font-serif text-3xl text-white mb-6">Изпратете запитване</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Име *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-charcoal-600/50 border border-gold-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gold-500/50 transition-colors"
-                      placeholder="Вашето име"
-                    />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-charcoal-600/50 border border-gold-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gold-500/50 transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Телефон
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 bg-charcoal-600/50 border border-gold-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gold-500/50 transition-colors"
-                      placeholder="+359 888 123 456"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Съобщение *
-                    </label>
-                    <textarea
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      rows={5}
-                      className="w-full px-4 py-3 bg-charcoal-600/50 border border-gold-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gold-500/50 transition-colors resize-none"
-                      placeholder="Как можем да ви помогнем?"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    <Send className="w-5 h-5" />
-                    {sending ? 'Изпращане...' : 'Изпрати съобщение'}
-                  </button>
-                </form>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
