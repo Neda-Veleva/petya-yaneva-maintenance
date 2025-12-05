@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, Tag } from 'lucide-react';
+import { Sparkles, ArrowRight, Tag, Building2 } from 'lucide-react';
 import MediaRender from './MediaRender';
 
 interface TopService {
@@ -18,16 +18,25 @@ interface IntroSlide {
   image_url: string | null;
 }
 
+interface SalonSlide {
+  slug: string;
+  title: string;
+  title_gold?: string;
+  description: string;
+  image_url: string;
+}
+
 interface TopServiceSliderProps {
   introSlide: IntroSlide;
   topServices: TopService[];
+  salonSlide?: SalonSlide | null;
 }
 
-export default function TopServiceSlider({ introSlide, topServices }: TopServiceSliderProps) {
+export default function TopServiceSlider({ introSlide, topServices, salonSlide }: TopServiceSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const totalSlides = 1 + topServices.length;
+  const totalSlides = 1 + topServices.length + (salonSlide ? 1 : 0);
 
   useEffect(() => {
     if (totalSlides <= 1) return;
@@ -44,10 +53,13 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
   }, [totalSlides]);
 
   const isIntroSlide = currentSlide === 0;
-  const currentService = !isIntroSlide ? topServices[currentSlide - 1] : null;
+  const isSalonSlide = salonSlide && currentSlide === totalSlides - 1;
+  const currentService = !isIntroSlide && !isSalonSlide ? topServices[currentSlide - 1] : null;
 
   const currentImage = isIntroSlide
     ? (introSlide.image_url || 'https://images.pexels.com/photos/5177992/pexels-photo-5177992.jpeg?auto=compress&cs=tinysrgb&w=1920')
+    : isSalonSlide
+    ? salonSlide.image_url
     : currentService?.image_url;
 
   return (
@@ -87,6 +99,8 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
             <div className="absolute inset-0 bg-gold-400/20 rounded-full blur-2xl animate-pulse"></div>
             {isIntroSlide ? (
               <Sparkles className="relative w-16 h-16 text-gold-400 animate-pulse" />
+            ) : isSalonSlide ? (
+              <Building2 className="relative w-16 h-16 text-gold-400 animate-pulse" />
             ) : (
               <Tag className="relative w-16 h-16 text-gold-400 animate-pulse" />
             )}
@@ -117,6 +131,39 @@ export default function TopServiceSlider({ introSlide, topServices }: TopService
                   {introSlide.description}
                 </p>
               )}
+            </>
+          ) : isSalonSlide && salonSlide ? (
+            <>
+              <div className="inline-flex items-center px-4 py-2 bg-gold-500/20 rounded-full border border-gold-400/50">
+                <span className="text-sm font-semibold text-gold-300 tracking-wide uppercase">За салона</span>
+              </div>
+
+              <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-tight tracking-tight">
+                <span className="block bg-gold-shimmer bg-clip-text text-transparent animate-shimmer">
+                  {salonSlide.title}
+                  {salonSlide.title_gold && (
+                    <span className="block text-gold-400 mt-2">{salonSlide.title_gold}</span>
+                  )}
+                </span>
+              </h2>
+
+              <div className="flex justify-center">
+                <div className="h-px w-24 bg-gold-shimmer animate-shimmer"></div>
+              </div>
+
+              <p className="text-lg md:text-xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto">
+                {salonSlide.description}
+              </p>
+
+              <div className="pt-6">
+                <a
+                  href={`/salon/${salonSlide.slug}`}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gold-shimmer text-charcoal-600 rounded-full font-bold transition-all duration-300 shadow-gold-glow hover:shadow-gold-glow-lg hover:scale-105 group"
+                >
+                  <span>Разгледай салона</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
             </>
           ) : currentService && (
             <>

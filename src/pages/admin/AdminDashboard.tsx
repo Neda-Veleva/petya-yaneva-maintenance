@@ -13,7 +13,8 @@ import {
   Menu,
   Phone,
   Megaphone,
-  Plug
+  Plug,
+  Building2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Блог', href: '/admin/blog', icon: FileText },
   { name: 'Промоции', href: '/admin/promotions', icon: Tag },
   { name: 'Екип', href: '/admin/team', icon: Users },
+  { name: 'Салон', href: '/admin/salon', icon: Building2 },
   { name: 'Отзиви', href: '/admin/reviews', icon: Star },
   { name: 'CTA Блокове', href: '/admin/cta-blocks', icon: Megaphone },
   { name: 'Конфигурация Header', href: '/admin/header-config', icon: Menu },

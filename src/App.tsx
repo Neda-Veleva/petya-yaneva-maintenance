@@ -11,6 +11,7 @@ import BlogListPage from './pages/BlogListPage';
 import BlogPostPage from './pages/BlogPostPage';
 import TeamPage from './pages/TeamPage';
 import TeamMemberPage from './pages/TeamMemberPage';
+import SalonPage from './pages/SalonPage';
 import PricingPage from './pages/PricingPage';
 import ReviewsPage from './pages/ReviewsPage';
 import ContactPage from './pages/ContactPage';
@@ -38,6 +39,8 @@ import CTABlocksManager from './pages/admin/CTABlocksManager';
 import CTABlockForm from './pages/admin/CTABlockForm';
 import ContactConfigManager from './pages/admin/ContactConfigManager';
 import IntegrationsManager from './pages/admin/IntegrationsManager';
+import SalonManager from './pages/admin/SalonManager';
+import SalonForm from './pages/admin/SalonForm';
 
 function App() {
   return (
@@ -54,6 +57,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/team/:slug" element={<TeamMemberPage />} />
+          <Route path="/salon/:slug" element={<SalonPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -85,6 +89,9 @@ function App() {
             <Route path="team/new" element={<TeamMemberForm />} />
             <Route path="team/edit/:id" element={<TeamMemberForm />} />
             <Route path="team" element={<TeamManager />} />
+            <Route path="salon/new" element={<SalonForm />} />
+            <Route path="salon/edit/:id" element={<SalonForm />} />
+            <Route path="salon" element={<SalonManager />} />
             <Route path="reviews/new" element={<ReviewForm />} />
             <Route path="reviews/edit/:id" element={<ReviewForm />} />
             <Route path="reviews" element={<ReviewsManager />} />

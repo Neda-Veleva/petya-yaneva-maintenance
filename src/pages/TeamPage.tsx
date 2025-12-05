@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { Users } from 'lucide-react';
+import { Users, Building2 } from 'lucide-react';
 
 interface TeamMember {
   id: string;
@@ -18,27 +18,54 @@ interface TeamMember {
   thumbnail_url?: string;
   instagram_url?: string;
   facebook_url?: string;
+  badge?: string;
+  description?: string;
+}
+
+interface SalonInfo {
+  id: string;
+  slug: string;
+  title: string;
+  title_gold?: string;
+  badge: string;
+  description: string;
+  bio: string;
+  image_url: string;
+  thumbnail_url?: string;
 }
 
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const [salon, setSalon] = useState<SalonInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadMembers() {
-      const { data } = await supabase
+    async function loadData() {
+      const { data: teamData } = await supabase
         .from('team_members')
         .select('*')
+        .eq('type', 'person')
         .eq('is_active', true)
         .order('display_order', { ascending: true });
 
-      if (data) {
-        setMembers(data);
+      if (teamData) {
+        setMembers(teamData);
       }
+
+      const { data: salonData } = await supabase
+        .from('salon_info')
+        .select('*')
+        .eq('is_active', true)
+        .single();
+
+      if (salonData) {
+        setSalon(salonData);
+      }
+
       setLoading(false);
     }
 
-    loadMembers();
+    loadData();
   }, []);
 
   return (
@@ -78,14 +105,14 @@ export default function TeamPage() {
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500"></div>
             </div>
           ) : (
-            <div className="space-y-12">
-              {/* Лица - по 2 на ред */}
-              {members.filter(m => m.type === 'person').length > 0 && (
+            <div className="space-y-20">
+              {/* Team Members */}
+              {members.length > 0 && (
                 <div>
+                  <h2 className="font-serif text-4xl text-white mb-8 text-center">Нашият Екип</h2>
+                  <div className="h-px w-32 bg-gold-400 mx-auto mb-12"></div>
                   <div className="grid md:grid-cols-2 gap-8">
-                    {members
-                      .filter(member => member.type === 'person')
-                      .map((member) => (
+                    {members.map((member) => (
                         <Link
                           key={member.id}
                           to={`/team/${member.slug}`}
@@ -131,51 +158,45 @@ export default function TeamPage() {
                 </div>
               )}
 
-              {/* Салони - едно на ред */}
-              {members.filter(m => m.type === 'salon').length > 0 && (
-                <div className="space-y-8">
-                  {members
-                    .filter(member => member.type === 'salon')
-                    .map((member) => (
-                      <Link
-                        key={member.id}
-                        to={`/team/${member.slug}`}
-                        className="group relative block bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gold-500/10"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* Salon Section */}
+              {salon && (
+                <div>
+                  <h2 className="font-serif text-4xl text-white mb-8 text-center">За Салона</h2>
+                  <div className="h-px w-32 bg-gold-400 mx-auto mb-12"></div>
+                  <Link
+                    to={`/salon/${salon.slug}`}
+                    className="group relative block bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gold-500/10"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                        <div className="relative h-[500px] overflow-hidden">
-                          <img
-                            src={member.thumbnail_url || member.image_url}
-                            alt={member.title || 'Salon'}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600 via-charcoal-600/50 to-transparent"></div>
+                    <div className="relative h-[500px] overflow-hidden">
+                      <img
+                        src={salon.thumbnail_url || salon.image_url}
+                        alt={salon.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-charcoal-600 via-charcoal-600/50 to-transparent"></div>
 
-                          <div className="absolute bottom-0 left-0 right-0 p-8">
-                            <h3 className="font-serif text-3xl text-white mb-2">
-                              {member.title || 'Salon'}
-                            </h3>
-                            {member.title_gold && (
-                              <p className="text-gold-400 text-xl font-medium tracking-wide mb-3">
-                                {member.title_gold}
-                              </p>
-                            )}
+                      <div className="absolute bottom-0 left-0 right-0 p-8">
+                        <h3 className="font-serif text-3xl text-white mb-2">
+                          {salon.title}
+                          {salon.title_gold && (
+                            <span className="text-gold-400 ml-3">{salon.title_gold}</span>
+                          )}
+                        </h3>
+                        <p className="text-gold-400 text-lg font-medium tracking-wide mb-3">
+                          {salon.badge}
+                        </p>
+                        <p className="text-gray-300 text-base leading-relaxed max-w-3xl">
+                          {salon.description}
+                        </p>
+                      </div>
+                    </div>
 
-                            {member.bio && (
-                              <div
-                                className="rich-content text-gray-300 text-base leading-relaxed line-clamp-4 max-w-3xl"
-                                dangerouslySetInnerHTML={{ __html: member.bio }}
-                              />
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="absolute top-6 right-6 w-14 h-14 bg-charcoal-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500/20 group-hover:bg-gold-500/20 transition-colors duration-300">
-                          <Users className="w-6 h-6 text-gold-400" />
-                        </div>
-                      </Link>
-                    ))}
+                    <div className="absolute top-6 right-6 w-14 h-14 bg-charcoal-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500/20 group-hover:bg-gold-500/20 transition-colors duration-300">
+                      <Building2 className="w-6 h-6 text-gold-400" />
+                    </div>
+                  </Link>
                 </div>
               )}
             </div>
