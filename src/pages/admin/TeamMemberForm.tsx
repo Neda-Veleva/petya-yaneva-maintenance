@@ -26,11 +26,8 @@ function generateSlug(text: string): string {
 
 interface TeamMemberFormData {
   slug: string;
-  type: 'person' | 'salon';
   first_name: string;
   last_name: string;
-  title: string;
-  title_gold: string;
   badge: string;
   description: string;
   bio: string;
@@ -38,7 +35,6 @@ interface TeamMemberFormData {
   thumbnail_url: string;
   stat_value: string;
   stat_label: string;
-  location: string;
   is_active: boolean;
   display_order: number;
 }
@@ -56,11 +52,8 @@ export default function TeamMemberForm() {
   const [workImages, setWorkImages] = useState<string[]>([]); // Снимки за "Моята работа"
   const [formData, setFormData] = useState<TeamMemberFormData>({
     slug: '',
-    type: 'person',
     first_name: '',
     last_name: '',
-    title: '',
-    title_gold: '',
     badge: '',
     description: '',
     bio: '',
@@ -68,7 +61,6 @@ export default function TeamMemberForm() {
     thumbnail_url: '',
     stat_value: '',
     stat_label: '',
-    location: '',
     is_active: true,
     display_order: 0,
   });
@@ -100,11 +92,8 @@ export default function TeamMemberForm() {
       setSlugManuallyEdited(true);
       setFormData({
         slug: data.slug || '',
-        type: data.type || 'person',
         first_name: data.first_name || '',
         last_name: data.last_name || '',
-        title: data.title || '',
-        title_gold: data.title_gold || '',
         badge: data.badge || '',
         description: data.description || '',
         bio: data.bio || '',
@@ -112,7 +101,6 @@ export default function TeamMemberForm() {
         thumbnail_url: data.thumbnail_url || '',
         stat_value: data.stat_value || '',
         stat_label: data.stat_label || '',
-        location: data.location || '',
         is_active: data.is_active ?? true,
         display_order: data.display_order || 0,
       });
@@ -186,19 +174,19 @@ export default function TeamMemberForm() {
 
     const saveData = {
       slug: formData.slug,
-      type: formData.type,
+      type: 'person' as const,
       first_name: formData.first_name || null,
       last_name: formData.last_name || null,
-      title: formData.title || null,
-      title_gold: formData.title_gold || null,
+      title: null,
+      title_gold: null,
       badge: formData.badge,
       description: formData.description,
       bio: formData.bio,
-      image_url: mainImage.trim(), // Уверяваме се че няма whitespace
+      image_url: mainImage.trim(),
       thumbnail_url: formData.thumbnail_url?.trim() || null,
       stat_value: formData.stat_value,
       stat_label: formData.stat_label,
-      location: formData.location || null,
+      location: null,
       is_active: formData.is_active,
       display_order: formData.display_order,
       updated_at: new Date().toISOString(),
@@ -340,24 +328,10 @@ export default function TeamMemberForm() {
 
       <div className="bg-white rounded-xl shadow-lg p-4">
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Тип <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'person' | 'salon' })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-              >
-                <option value="person">Лице</option>
-                <option value="salon">Салон</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Slug (URL) <span className="text-red-500">*</span>
-              </label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Slug (URL) <span className="text-red-500">*</span>
+            </label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -386,55 +360,29 @@ export default function TeamMemberForm() {
                 </button>
               </div>
             </div>
-          </div>
 
-          {formData.type === 'person' ? (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Име</label>
-                <input
-                  type="text"
-                  placeholder="Име"
-                  value={formData.first_name}
-                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
-                <input
-                  type="text"
-                  placeholder="Фамилия"
-                  value={formData.last_name}
-                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Име</label>
+              <input
+                type="text"
+                placeholder="Име"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Заглавие</label>
-                <input
-                  type="text"
-                  placeholder="Заглавие"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Златно заглавие</label>
-                <input
-                  type="text"
-                  placeholder="Златно заглавие"
-                  value={formData.title_gold}
-                  onChange={(e) => setFormData({ ...formData, title_gold: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
+              <input
+                type="text"
+                placeholder="Фамилия"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              />
             </div>
-          )}
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -590,19 +538,6 @@ export default function TeamMemberForm() {
               />
             </div>
           </div>
-
-          {formData.type === 'salon' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Локация</label>
-              <input
-                type="text"
-                placeholder="Локация"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
-              />
-            </div>
-          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>

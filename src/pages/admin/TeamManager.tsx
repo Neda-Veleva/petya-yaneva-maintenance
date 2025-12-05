@@ -6,11 +6,9 @@ import { supabase } from '../../lib/supabase';
 interface TeamMember {
   id: string;
   slug: string;
-  type: 'person' | 'salon';
+  type: 'person';
   first_name?: string;
   last_name?: string;
-  title?: string;
-  title_gold?: string;
   badge: string;
   description: string;
   bio: string;
@@ -18,7 +16,6 @@ interface TeamMember {
   thumbnail_url?: string;
   stat_value: string;
   stat_label: string;
-  location?: string;
   is_active: boolean;
   display_order: number;
   created_at?: string;
@@ -37,6 +34,7 @@ export default function TeamManager() {
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
+      .eq('type', 'person')
       .order('display_order', { ascending: true });
 
     if (error) {
@@ -65,11 +63,7 @@ export default function TeamManager() {
 
 
   function getMemberName(member: TeamMember): string {
-    if (member.type === 'person') {
-      return `${member.first_name || ''} ${member.last_name || ''}`.trim() || member.badge;
-    } else {
-      return member.title || member.badge;
-    }
+    return `${member.first_name || ''} ${member.last_name || ''}`.trim() || member.badge;
   }
 
   if (loading) {
