@@ -315,6 +315,14 @@ export default function ContactPage() {
         </section>
       )}
 
+      <section className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-gradient-to-br from-charcoal-500 to-charcoal-600 rounded-3xl overflow-hidden border border-gold-500/10 shadow-2xl p-8 flex items-center justify-center">
+          <iframe src="https://studio24.bg/studios/iframe?t=2CHjygJ77rcMJo9K" width="900px" height="900px"></iframe>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
