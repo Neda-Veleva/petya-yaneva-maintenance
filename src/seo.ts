@@ -25,6 +25,13 @@ export const STUDIO_BOOKING_URL =
 /** Share image for Open Graph, Twitter and JSON-LD */
 export const SEO_SHARE_IMAGE_PATH = '/favicon.png';
 
+/** og:site_name — кратко име за Facebook / Messenger */
+export const SEO_OG_SITE_NAME = 'Lashes by Petya Yaneva Sofia';
+
+/** og:image:alt */
+export const SEO_OG_IMAGE_ALT =
+  'Lashes by Petya Yaneva Sofia — мигли и вежди, Петя Янева';
+
 export function getSiteUrl(): string {
   const env = import.meta.env.VITE_PUBLIC_SITE_URL;
 

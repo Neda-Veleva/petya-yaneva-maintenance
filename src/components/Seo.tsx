@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import {
   SEO_DESCRIPTION,
   SEO_KEYWORDS,
+  SEO_OG_IMAGE_ALT,
+  SEO_OG_SITE_NAME,
   SEO_SHARE_IMAGE_PATH,
   SEO_TITLE,
   absoluteUrl,
@@ -55,11 +57,10 @@ export default function Seo() {
     setMetaProperty('og:title', SEO_TITLE);
     setMetaProperty('og:description', SEO_DESCRIPTION);
     setMetaProperty('og:image', ogImage);
-    setMetaProperty(
-      'og:image:alt',
-      'Lashes by Petya Yaneva Sofia — перфектни мигли и вежди, Петя Янева'
-    );
-    setMetaProperty('og:site_name', 'Lashes by Petya Yaneva Sofia');
+    setMetaProperty('og:image:secure_url', ogImage);
+    setMetaProperty('og:image:type', 'image/png');
+    setMetaProperty('og:image:alt', SEO_OG_IMAGE_ALT);
+    setMetaProperty('og:site_name', SEO_OG_SITE_NAME);
 
     setMetaByName('twitter:card', 'summary_large_image');
     setMetaByName('twitter:title', SEO_TITLE);
