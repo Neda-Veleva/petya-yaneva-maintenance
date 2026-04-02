@@ -34,13 +34,8 @@ export default {
         sans: ['Inter', 'sans-serif'],
       },
       backgroundImage: {
-        'dark-gradient': 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-        'gold-shimmer': 'linear-gradient(135deg, #C2A469 0%, #D4B077 50%, #C2A469 100%)',
-      },
-      boxShadow: {
-        'gold-glow': '0 0 20px rgba(194, 164, 105, 0.3)',
-        'gold-glow-lg': '0 0 40px rgba(194, 164, 105, 0.4)',
-        'dark-xl': '0 20px 50px rgba(0, 0, 0, 0.8)',
+        'gold-shimmer':
+          'linear-gradient(135deg, #C2A469 0%, #D4B077 50%, #C2A469 100%)',
       },
     },
   },
