@@ -23,10 +23,10 @@ export const STUDIO_BOOKING_URL =
   'https://studio24.bg/m/livon-hair-boutique-s2482?m';
 
 /** Share image for Open Graph, Twitter and JSON-LD */
-export const SEO_SHARE_IMAGE_PATH = '/og-share.png';
-export const SEO_SHARE_IMAGE_TYPE = 'image/png';
-export const SEO_SHARE_IMAGE_WIDTH = 280;
-export const SEO_SHARE_IMAGE_HEIGHT = 280;
+export const SEO_SHARE_IMAGE_PATH = '/og-share.jpg';
+export const SEO_SHARE_IMAGE_TYPE = 'image/jpeg';
+export const SEO_SHARE_IMAGE_WIDTH = 1200;
+export const SEO_SHARE_IMAGE_HEIGHT = 630;
 
 /** og:site_name — кратко име за Facebook / Messenger */
 export const SEO_OG_SITE_NAME = 'Lashes by Petya Yaneva Sofia';
