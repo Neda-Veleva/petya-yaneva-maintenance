@@ -1,4 +1,14 @@
-import { MapPin, Phone, Clock, Calendar, Instagram, Facebook, Heart } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ArrowRight,
+  MapPin,
+  Phone,
+  Clock,
+  Calendar,
+  Instagram,
+  Facebook,
+  Heart,
+} from 'lucide-react';
 import { STUDIO_BOOKING_URL } from '../seo';
 
 const FOOTER_SOCIAL = {
@@ -56,6 +66,25 @@ function LogoSvg() {
 }
 
 export default function Home() {
+  const aboutLashesRef = useRef<HTMLElement>(null);
+  const [aboutLashesVisible, setAboutLashesVisible] = useState(false);
+
+  useEffect(() => {
+    const el = aboutLashesRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAboutLashesVisible(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.14, rootMargin: '0px 0px -8% 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-charcoal-600 via-charcoal-500 to-charcoal-600 flex flex-col text-gray-100">
       <header className="fixed left-0 right-0 top-0 z-50 bg-gradient-to-b from-charcoal-600/95 via-charcoal-600/92 to-charcoal-700/90 shadow-[0_4px_24px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.1)] backdrop-blur-lg backdrop-saturate-150">
@@ -68,9 +97,14 @@ export default function Home() {
               href={STUDIO_BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all duration-300 hover:scale-105 hover:bg-gold-600 hover:shadow-lg"
+              className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all duration-300 hover:scale-105 hover:bg-gold-600 hover:shadow-lg"
             >
               Запази час
+              <ArrowRight
+                className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                strokeWidth={1.75}
+                aria-hidden
+              />
             </a>
           </div>
         </div>
@@ -81,7 +115,7 @@ export default function Home() {
           <div className="absolute inset-0">
             <img
               src={HERO_BACKGROUND_IMAGE}
-              alt="Lashes by Petya Yaneva — студио за мигли в София, Петя Янева"
+              alt="удължаване на мигли София Petya Yaneva"
               className="absolute inset-0 h-full w-full object-cover object-[15%] opacity-45 md:object-left"
               loading="eager"
               decoding="async"
@@ -112,12 +146,13 @@ export default function Home() {
 
           <div className="relative z-10 mx-auto w-full max-w-5xl space-y-8 px-6 pb-12 pt-28 text-center md:space-y-10 md:pb-16 md:pt-32">
             <div className="space-y-4 md:space-y-6">
-              <h1 className="font-serif text-5xl leading-tight tracking-tight text-white md:text-7xl lg:text-8xl">
+              <h1 className="sr-only">Удължаване на мигли в София</h1>
+              <h2 className="font-serif text-5xl leading-tight tracking-tight text-white md:text-7xl lg:text-8xl">
                 Lashes by
                 <span className="mt-2 block bg-gold-shimmer bg-clip-text text-transparent animate-shimmer leading-normal">
                   Petya Yaneva
                 </span>
-              </h1>
+              </h2>
 
               <div className="flex justify-center">
                 <div className="h-px w-24 animate-shimmer bg-gold-shimmer" />
@@ -141,6 +176,41 @@ export default function Home() {
           </div>
         </section>
 
+        <section
+          ref={aboutLashesRef}
+          className={`about-lashes-block border-t border-gold-200/40 bg-gradient-to-b from-[#faf8f5] via-white to-[#f3efe8] ${aboutLashesVisible ? 'is-visible' : ''}`}
+          aria-labelledby="about-lashes-heading"
+        >
+          <div className="mx-auto max-w-2xl px-6 py-20 md:max-w-3xl md:px-8 md:py-28">
+            <div className="flex items-stretch gap-6 md:gap-8">
+              <div className="relative w-1 shrink-0 self-stretch overflow-hidden rounded-full" aria-hidden>
+                <div className="about-line-inner absolute inset-0 rounded-full bg-gradient-to-b from-amber-700/50 via-amber-600/35 to-amber-500/15" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2
+                  id="about-lashes-heading"
+                  className="about-title font-serif text-2xl font-normal leading-snug tracking-tight text-stone-800 sm:text-[1.75rem] md:text-3xl"
+                >
+                  Професионално удължаване на мигли в София
+                </h2>
+                <div className="about-body mt-9 max-w-prose space-y-6 text-[1.02rem] font-normal leading-[1.82] text-stone-600 sm:text-[1.05rem] md:mt-11 md:leading-[1.78]">
+                  <p className="text-pretty">
+                    Работим с различни техники като косъм по косъм, 2D, 3D и руски обем, като акцентът е
+                    върху <strong className="font-semibold text-stone-800">UV lashes</strong>, съвременна
+                    технология, достъпна само в ограничен брой салони, която осигурява по-добра фиксация,
+                    повече комфорт и дълготраен резултат.
+                  </p>
+                  <p className="text-pretty text-stone-600">
+                    Петя Янева посреща своите клиенти в Livon Hair Boutique в кв. Надежда, София, където ще
+                    получите спокойна атмосфера и професионална грижа. Независимо дали търсите естествен
+                    ефект или по-драматична визия, ще създадем най-подходящото решение за вас.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="border-y border-gold-200/40 bg-gradient-to-b from-[#faf8f5] via-white to-[#f3efe8]">
           <div className="px-6 pb-20 pt-16 md:pb-24 md:pt-20">
             <div className="mx-auto max-w-4xl text-center">
@@ -152,7 +222,7 @@ export default function Home() {
                   Работим по новия уебсайт
                 </p>
                 <p className="font-serif text-xl text-gold-600 md:text-2xl">
-                  Очаквайте скоро — новото изживяване онлайн предстои.
+                  Очаквайте скоро новата ни визия онлайн.
                 </p>
                 <p className="max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base md:text-lg">
                   Междувременно можете да запазите час онлайн или да се свържете с нас по телефон.
@@ -164,10 +234,15 @@ export default function Home() {
                   href={STUDIO_BOOKING_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-gold-500 px-8 py-4 text-lg font-medium text-charcoal-600 shadow-lg shadow-gold-500/25 transition-all duration-300 hover:bg-gold-400 hover:shadow-xl hover:shadow-gold-400/35 sm:w-auto"
+                  className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-gold-500 px-8 py-4 text-lg font-medium text-charcoal-600 shadow-lg shadow-gold-500/25 transition-all duration-300 hover:bg-gold-400 hover:shadow-xl hover:shadow-gold-400/35 sm:w-auto"
                 >
-                  <Calendar className="w-6 h-6 shrink-0" aria-hidden />
+                  <Calendar className="h-6 w-6 shrink-0" aria-hidden />
                   Запази час онлайн
+                  <ArrowRight
+                    className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
                 </a>
               </div>
             </div>
@@ -239,7 +314,7 @@ export default function Home() {
 
               <div className="min-h-[320px] overflow-hidden rounded-[28px] border-2 border-[#c9a673]/50 bg-[#2c241e] shadow-[0_0_40px_rgba(201,166,115,0.35),0_0_80px_rgba(201,166,115,0.12)] lg:min-h-[360px]">
                 <iframe
-                  title={`${STUDIO_NAME} — локация на картата`}
+                  title="Lashes by Petya Yaneva Sofia location"
                   src={MAP_EMBED_URL}
                   width="100%"
                   height="100%"
