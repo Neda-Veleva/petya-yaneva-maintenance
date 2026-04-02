@@ -6,6 +6,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
 let base = process.env.VITE_PUBLIC_SITE_URL?.trim();
+if (!base && process.env.VERCEL_URL) {
+  base = `https://${process.env.VERCEL_URL}`;
+}
 if (!base) {
   try {
     const env = readFileSync(resolve(root, '.env'), 'utf8');

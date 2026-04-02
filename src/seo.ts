@@ -1,38 +1,41 @@
-/** SEO / споделяне — използва се в index.html и Seo.tsx */
+/** SEO / sharing — used in index.html and Seo.tsx */
 export const SEO_TITLE =
-  'Lashes by Petya Yaneva Sofia | мигли Петя Янева София';
+  'Петя Янева София | Lashes by Petya Yaneva | Удължаване на мигли';
 
-/** Основно описание за meta, Open Graph, Twitter (~120–160 знака е идеално за snippet) */
+/** Main description for meta, Open Graph and Twitter */
 export const SEO_DESCRIPTION =
-  'Открийте света на перфектните мигли и вежди. Запазете час днес и се насладете на луксозна грижа с професионален подход.';
+  'Петя Янева в София предлага професионално удължаване на мигли, UV lashes, 2D, 3D, руски обем и ламиниране с индивидуален подход и професионална грижа.';
 
-/**
- * По-пълно описание за JSON-LD — допълва основното с локация и контакт,
- * без да променя краткия snippet в социалните мрежи.
- */
-export const SEO_STRUCTURED_DESCRIPTION = `${SEO_DESCRIPTION} Студио Livon Hair Boutique, кв. Надежда, ул. „Чудомир“ 5, София. Телефон: +359 888 123 456. Работно време: всеки ден 08:00–21:00. Онлайн запис през Studio24.`;
+/** Extended description for JSON-LD */
+export const SEO_STRUCTURED_DESCRIPTION =
+  'Петя Янева София е бранд за професионално удължаване на мигли с техники косъм по косъм, 2D, 3D, руски обем и UV lashes, съвременна технология, достъпна само в ограничен брой салони. Петя Янева посреща своите клиенти в Livon Hair Boutique, кв. Надежда, ул. „Чудомир“ 5, София. Налични са онлайн записване и контакт по телефон.';
 
+/** Short slogan used in structured data */
+export const SEO_SLOGAN =
+  'Професионално удължаване на мигли в София';
+
+/** Keywords (low SEO weight but fine to keep) */
 export const SEO_KEYWORDS =
-  'Петя Янева, мигли София, вежди София, мигли и вежди, Lashes by Petya Yaneva Sofia, Livon Hair Boutique, студио мигли, мигли Надежда, разширяване мигли, ламиниране вежди, Russian volume, eyelash extensions Sofia, lash artist Sofia';
+  'Петя Янева София, Петя Янева, мигли Петя Янева София, мигли София, удължаване на мигли София, мигли косъм по косъм София, UV lashes София, 2D мигли София, 3D мигли София, руски обем мигли София, ламиниране на мигли София, ламиниране на вежди София, Livon Hair Boutique, eyelash extensions Sofia, lash artist Sofia, Russian volume lashes Sofia';
 
-/** Публичен линк за запис — съвпада с бутона „Запази час“ на сайта */
+/** Public booking link */
 export const STUDIO_BOOKING_URL =
   'https://studio24.bg/m/livon-hair-boutique-s2482?m';
 
-/**
- * Снимка за Open Graph, Twitter и JSON-LD `image` — избраната „fav“ визия (public/favicon.png).
- * Фонът на херо на страницата остава отделен файл — виж Home.tsx.
- */
+/** Share image for Open Graph, Twitter and JSON-LD */
 export const SEO_SHARE_IMAGE_PATH = '/favicon.png';
 
 export function getSiteUrl(): string {
   const env = import.meta.env.VITE_PUBLIC_SITE_URL;
+
   if (env && typeof env === 'string' && env.trim()) {
     return env.replace(/\/$/, '');
   }
+
   if (typeof window !== 'undefined') {
     return window.location.origin;
   }
+
   return '';
 }
 
@@ -51,11 +54,11 @@ export function buildJsonLd(siteUrl: string) {
         name: 'Lashes by Petya Yaneva',
         alternateName: [
           'Lashes by Petya Yaneva Sofia',
-          'Livon Hair Boutique',
-          'Петя Янева мигли',
+          'Петя Янева София',
+          'Петя Янева',
           'мигли Петя Янева София',
         ],
-        slogan: SEO_DESCRIPTION,
+        slogan: SEO_SLOGAN,
         description: SEO_STRUCTURED_DESCRIPTION,
         url: `${siteUrl}/`,
         image: absoluteUrl(SEO_SHARE_IMAGE_PATH, siteUrl),
@@ -66,6 +69,7 @@ export function buildJsonLd(siteUrl: string) {
           streetAddress: 'ул. „Чудомир“ 5',
           addressLocality: 'София',
           addressRegion: 'София',
+          postalCode: '1220',
           addressCountry: 'BG',
         },
         areaServed: {
@@ -81,29 +85,34 @@ export function buildJsonLd(siteUrl: string) {
           latitude: 42.735,
           longitude: 23.305,
         },
-        openingHoursSpecification: {
-          '@type': 'OpeningHoursSpecification',
-          dayOfWeek: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-          ],
-          opens: '08:00',
-          closes: '21:00',
-        },
+        openingHoursSpecification: [
+          {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: [
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+              'Sunday',
+            ],
+            opens: '08:00',
+            closes: '21:00',
+          },
+        ],
         priceRange: '$$',
         knowsAbout: [
-          'разширяване на мигли',
-          'мигли София',
-          'перфектни мигли',
-          'вежди',
-          'грижа за мигли',
-          'lash extensions',
-          'Russian volume lashes',
+          'удължаване на мигли',
+          'мигли косъм по косъм',
+          'UV lashes',
+          '2D мигли',
+          '3D мигли',
+          'руски обем мигли',
+          'ламиниране на мигли',
+          'ламиниране на вежди',
+          'eyelash extensions Sofia',
+          'lash artist Sofia',
         ],
         sameAs: [
           'https://www.instagram.com/petqqneva',
@@ -127,15 +136,29 @@ export function buildJsonLd(siteUrl: string) {
         '@type': 'WebSite',
         '@id': `${siteUrl}/#website`,
         url: `${siteUrl}/`,
-        name: SEO_TITLE,
+        name: 'Lashes by Petya Yaneva',
         alternateName: [
-          'Lashes by Petya Yaneva',
           'Lashes by Petya Yaneva Sofia',
+          'Петя Янева София',
         ],
         description: SEO_DESCRIPTION,
         inLanguage: 'bg-BG',
         publisher: { '@id': `${siteUrl}/#business` },
         about: { '@id': `${siteUrl}/#business` },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${siteUrl}/#webpage`,
+        url: `${siteUrl}/`,
+        name: SEO_TITLE,
+        description: SEO_DESCRIPTION,
+        inLanguage: 'bg-BG',
+        isPartOf: { '@id': `${siteUrl}/#website` },
+        about: { '@id': `${siteUrl}/#business` },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: absoluteUrl(SEO_SHARE_IMAGE_PATH, siteUrl),
+        },
       },
     ],
   };

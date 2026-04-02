@@ -13,3 +13,10 @@ npm run dev
 - При `npm run build` скриптът `prebuild` генерира `public/sitemap.xml` от същата променлива (или от `.env` в корена, или временно `https://example.com` — сменете преди продукция).
 - `public/robots.txt` сочи към sitemap; `public/llms.txt` е кратко резюме за AI crawlers.
 - Вижте също статичните meta тагове в `index.html` (fallback преди хидратация).
+
+## Deploy във Vercel
+
+1. [Импортирайте репото](https://vercel.com/new) в GitHub → Vercel (или `vercel` CLI).
+2. **Framework Preset:** Vite (проектът включва `vercel.json` — build `npm run build`, изход `dist`).
+3. **Environment variables:** добавете **`VITE_PUBLIC_SITE_URL`** = пълният публичен URL на продукцията (напр. `https://твоят-домейн.bg`), **без** краен `/`. Така canonical, Open Graph и sitemap при build сочат към реалния домейн. При preview builds без тази променлива се ползва автоматично `VERCEL_URL` за sitemap.
+4. След deploy проверете `/`, `robots.txt`, `sitemap.xml` и споделяне в социални мрежи (OG meta).
