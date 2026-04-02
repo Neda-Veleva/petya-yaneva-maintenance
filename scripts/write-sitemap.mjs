@@ -6,6 +6,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
 let base = process.env.VITE_PUBLIC_SITE_URL?.trim();
+if (!base && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+  base = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+}
 if (!base && process.env.VERCEL_URL) {
   base = `https://${process.env.VERCEL_URL}`;
 }

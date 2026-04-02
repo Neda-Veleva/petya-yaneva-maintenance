@@ -26,11 +26,13 @@ function escapeAttr(value: string): string {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  /** Production: Vercel задава VERCEL_URL при build — Facebook иска абсолютни og:* URL без ръчно VITE_ */
+  /** Prefer the stable production domain for OG/canonical links on Vercel. */
   const siteUrl = normalizeSiteUrl(
     env.VITE_PUBLIC_SITE_URL ||
     process.env.VITE_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : '') ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : '') ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
   );
 
