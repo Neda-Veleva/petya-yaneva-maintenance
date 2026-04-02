@@ -1,4 +1,6 @@
 /** SEO / sharing — used in index.html and Seo.tsx */
+export const DEFAULT_SITE_URL = 'https://www.petya-yaneva.com';
+
 export const SEO_TITLE =
   'Петя Янева София | Lashes by Petya Yaneva | Удължаване на мигли';
 

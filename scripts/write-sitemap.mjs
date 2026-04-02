@@ -4,8 +4,12 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
+const DEFAULT_SITE_URL = 'https://www.petya-yaneva.com';
 
 let base = process.env.VITE_PUBLIC_SITE_URL?.trim();
+if (!base) {
+  base = DEFAULT_SITE_URL;
+}
 if (!base && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
   base = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
 }
@@ -21,7 +25,6 @@ if (!base) {
     /* no .env */
   }
 }
-if (!base) base = 'https://example.com';
 base = base.replace(/\/$/, '');
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
