@@ -23,7 +23,10 @@ export const STUDIO_BOOKING_URL =
   'https://studio24.bg/m/livon-hair-boutique-s2482?m';
 
 /** Share image for Open Graph, Twitter and JSON-LD */
-export const SEO_SHARE_IMAGE_PATH = '/favicon.png';
+export const SEO_SHARE_IMAGE_PATH = '/og-share.png';
+export const SEO_SHARE_IMAGE_TYPE = 'image/png';
+export const SEO_SHARE_IMAGE_WIDTH = 280;
+export const SEO_SHARE_IMAGE_HEIGHT = 280;
 
 /** og:site_name — кратко име за Facebook / Messenger */
 export const SEO_OG_SITE_NAME = 'Lashes by Petya Yaneva Sofia';
@@ -32,15 +35,33 @@ export const SEO_OG_SITE_NAME = 'Lashes by Petya Yaneva Sofia';
 export const SEO_OG_IMAGE_ALT =
   'Lashes by Petya Yaneva Sofia — мигли и вежди, Петя Янева';
 
-export function getSiteUrl(): string {
-  const env = import.meta.env.VITE_PUBLIC_SITE_URL;
+export function normalizeSiteUrl(value?: string | null): string {
+  return typeof value === 'string' ? value.trim().replace(/\/$/, '') : '';
+}
 
-  if (env && typeof env === 'string' && env.trim()) {
-    return env.replace(/\/$/, '');
+export function getSiteUrl(): string {
+  const env = normalizeSiteUrl(import.meta.env.VITE_PUBLIC_SITE_URL);
+
+  if (env) {
+    return env;
+  }
+
+  if (typeof document !== 'undefined') {
+    const candidates = [
+      document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+      document.querySelector('meta[property="og:url"]')?.getAttribute('content'),
+    ];
+
+    for (const candidate of candidates) {
+      const normalized = normalizeSiteUrl(candidate);
+      if (/^https?:\/\//i.test(normalized)) {
+        return normalized;
+      }
+    }
   }
 
   if (typeof window !== 'undefined') {
-    return window.location.origin;
+    return normalizeSiteUrl(window.location.origin);
   }
 
   return '';

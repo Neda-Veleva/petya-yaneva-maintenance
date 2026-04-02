@@ -20,8 +20,8 @@ const MAP_EMBED_URL = `https://www.google.com/maps?q=${encodeURIComponent(
   'ул. Чудомир 5, Надежда, София'
 )}&output=embed`;
 
-/** Локална снимка за херо — файл: public/hero.png */
-const HERO_BACKGROUND_IMAGE = '/hero.png';
+/** Локална снимка за херо — файл: public/hero.jpg */
+const HERO_BACKGROUND_IMAGE = '/hero.jpg';
 
 /** Име на салона (Studio24 / Google Maps) */
 const STUDIO_NAME = 'Livon Hair Boutique';

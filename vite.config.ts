@@ -5,8 +5,13 @@ import {
   SEO_KEYWORDS,
   SEO_OG_IMAGE_ALT,
   SEO_OG_SITE_NAME,
+  SEO_SHARE_IMAGE_HEIGHT,
   SEO_SHARE_IMAGE_PATH,
+  SEO_SHARE_IMAGE_TYPE,
+  SEO_SHARE_IMAGE_WIDTH,
   SEO_TITLE,
+  absoluteUrl,
+  normalizeSiteUrl,
 } from './src/seo';
 
 /** Escape text за HTML атрибути в кавички */
@@ -22,13 +27,12 @@ function escapeAttr(value: string): string {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   /** Production: Vercel задава VERCEL_URL при build — Facebook иска абсолютни og:* URL без ръчно VITE_ */
-  const siteUrl = (
+  const siteUrl = normalizeSiteUrl(
     env.VITE_PUBLIC_SITE_URL ||
     process.env.VITE_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : '') ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
-  )
-    .trim()
-    .replace(/\/$/, '');
+  );
 
   return {
     plugins: [
@@ -36,9 +40,7 @@ export default defineConfig(({ mode }) => {
       {
         name: 'html-inject-og-urls',
         transformIndexHtml(html) {
-          const imageUrl = siteUrl
-            ? `${siteUrl}${SEO_SHARE_IMAGE_PATH}`
-            : SEO_SHARE_IMAGE_PATH;
+          const imageUrl = absoluteUrl(SEO_SHARE_IMAGE_PATH, siteUrl);
 
           const canonicalBlock = siteUrl
             ? `<link rel="canonical" href="${siteUrl}/" />
@@ -52,6 +54,9 @@ export default defineConfig(({ mode }) => {
             .replaceAll('__SEO_DESCRIPTION__', escapeAttr(SEO_DESCRIPTION))
             .replaceAll('__SEO_KEYWORDS__', escapeAttr(SEO_KEYWORDS))
             .replaceAll('__SEO_OG_SITE_NAME__', escapeAttr(SEO_OG_SITE_NAME))
+            .replaceAll('__SEO_SHARE_IMAGE_TYPE__', SEO_SHARE_IMAGE_TYPE)
+            .replaceAll('__SEO_SHARE_IMAGE_WIDTH__', String(SEO_SHARE_IMAGE_WIDTH))
+            .replaceAll('__SEO_SHARE_IMAGE_HEIGHT__', String(SEO_SHARE_IMAGE_HEIGHT))
             .replaceAll('__SEO_OG_IMAGE_ALT__', escapeAttr(SEO_OG_IMAGE_ALT));
         },
       },
