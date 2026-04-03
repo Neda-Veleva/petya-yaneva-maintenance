@@ -28,8 +28,8 @@ const STUDIO_NAME = 'Livon Hair Boutique';
 
 const CONTACT = {
   address: 'Надежда, ул. „Чудомир“ 5',
-  phone: '+359 888 123 456',
-  phoneTel: '+359888123456',
+  phone: '+359 895 809 634',
+  phoneTel: '+359895809634',
   workingHours: [{ line: 'Всеки ден: 08:00 - 21:00' }],
 } as const;
 
