@@ -14,11 +14,11 @@ import { STUDIO_BOOKING_URL } from '../seo';
 const FOOTER_SOCIAL = {
   instagram: 'https://www.instagram.com/petqqneva',
   facebook: 'https://www.facebook.com/petencet000',
+  tiktok: 'https://www.tiktok.com/@lashesbypetyayaneva',
 } as const;
 
-const MAP_EMBED_URL = `https://www.google.com/maps?q=${encodeURIComponent(
-  'ул. Чудомир 5, Надежда, София'
-)}&output=embed`;
+const MAP_EMBED_URL =
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.7747911689867!2d23.29498957664474!3d42.732054511518164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40aa9147f04740a9%3A0xbb841a4778e194f2!2zTGFzaGVzIGJ5IFBldHlhIFlhbmV2YS9Tb2ZpYSDQndCw0LTQtdC20LTQsA!5e1!3m2!1sbg!2sbg!4v1775191846723!5m2!1sbg!2sbg';
 
 /** Локална снимка за херо — файл: public/hero.jpg */
 const HERO_BACKGROUND_IMAGE = '/hero.jpg';
@@ -61,6 +61,14 @@ function LogoSvg() {
       >
         <path d="M7.22 11.46 l2.64 0 q2.2 0 2.2 -2.12 q0 -1.1 -0.55 -1.59 t-1.65 -0.49 l-5.48 0 l0 4.8 q0.62 -0.36 1.4 -0.5 q0.58 -0.1 1.44 -0.1 z M4.38 20 l-2.18 0 l0 -14.92 l7.66 0 q1.32 0 2.3 0.51 t1.52 1.47 t0.54 2.27 t-0.54 2.29 t-1.53 1.51 t-2.29 0.53 l-2.64 0 q-1.72 0 -2.84 0.6 l0 5.74 z M22.36 11.64 q1.34 -1.4 2.42 -3.12 t1.72 -3.44 l2.5 0 q-1.02 2.38 -2.48 4.56 q-1.32 1.98 -3.08 3.9 l0 6.46 l-2.16 0 l0 -6.46 q-1.76 -1.92 -3.08 -3.9 q-1.46 -2.18 -2.48 -4.56 l2.5 0 q0.64 1.72 1.72 3.44 t2.42 3.12 z" />
       </g>
+    </svg>
+  );
+}
+
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M13 3h3.17A5.03 5.03 0 0 0 21 8.83V12a8 8 0 0 1-5-1.74V16a7 7 0 1 1-7-7h.2v3.2A4 4 0 1 0 13 16z" />
     </svg>
   );
 }
@@ -360,6 +368,15 @@ export default function Home() {
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5 text-gold-500" aria-hidden />
+              </a>
+              <a
+                href={FOOTER_SOCIAL.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white transition-colors duration-300 hover:bg-gold-400/20"
+                aria-label="TikTok"
+              >
+                <TikTokIcon className="h-5 w-5 text-gold-500" />
               </a>
             </div>
           </div>

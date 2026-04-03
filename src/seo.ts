@@ -147,6 +147,7 @@ export function buildJsonLd(siteUrl: string) {
         sameAs: [
           'https://www.instagram.com/petqqneva',
           'https://www.facebook.com/petencet000',
+          'https://www.tiktok.com/@lashesbypetyayaneva',
         ],
         potentialAction: {
           '@type': 'ReserveAction',
